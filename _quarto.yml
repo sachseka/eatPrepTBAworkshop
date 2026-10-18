@@ -1,0 +1,60 @@
+project:
+  type: website
+  output-dir: _site
+  pre-render: python scripts/sync_snippets.py
+  render:
+    - index.qmd
+    - workshop.qmd
+    - setup.qmd
+    - handout.qmd
+    - reference.qmd
+    - '!workshop_mod*.qmd'
+    - '!integration/**'
+    - '!review/**'
+    - '!_site/**'
+    - '!.library/**'
+  resources:
+    - assets/**
+    - downloads/**
+    - data/**
+    - R/**
+    - checkpoints/**
+    - outputs/codebook.xlsx
+    - '!integration/**'
+    - '!review/**'
+    - '!_site/**'
+    - '!.library/**'
+    - '!workshop_mod*.qmd'
+website:
+  title: "eatPrepTBA · Workshop"
+  navbar:
+    logo: assets/iqb-logo.png
+    background: light
+    left:
+      - href: index.qmd
+        text: Überblick
+      - href: workshop.qmd
+        text: Folien
+      - href: setup.qmd
+        text: Vorbereitung
+      - href: handout.qmd
+        text: Handout
+      - href: reference.qmd
+        text: Nachschlagen
+  page-footer: "IQB · Team Methoden | eatPrepTBA-Workshop · Oktober 2026"
+  search: false
+lang: de
+format:
+  html:
+    theme: [cosmo, website.scss]
+    css: website.css
+    toc: true
+    code-copy: true
+    highlight-style: arrow
+    anchor-sections: true
+    link-external-newwindow: true
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: false

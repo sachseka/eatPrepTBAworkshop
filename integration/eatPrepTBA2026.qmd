@@ -1,0 +1,37 @@
+---
+title: "eatPrepTBA: Vom Testcenter zum Skalierungsdatensatz"
+description: "Praxisworkshop zu Paketaufbau, Daten und Schnittstellen, Skalierungsaufbereitung, ausgewählten Logs sowie Codebüchern als Excel und DOCX."
+author: "IQB · Team Methoden"
+date: "2026-10-18"
+categories: [eatPrepTBA, workshop, TBA, Datenaufbereitung]
+image: "eatPrepTBA2026_files/assets/eatPrepTBA-logo.png"
+---
+
+Der Workshop setzt R-Grundkenntnisse voraus. Themen sind der Aufbau von
+eatPrepTBA und seine Datenquellen, die Aufbereitung von Antworten und Metadaten
+für die Skalierung, ausgewählte Logauswertungen sowie Codebücher mit Excel-Export.
+Eine Vorlage zeigt den direkten DOCX-Download aus IQB-Studio.
+
+Die lokalen Beispiele funktionieren nach der Paketinstallation ohne IQB-Studio-
+oder Testcenter-Zugang. API-Vorlagen benötigen eigene Zugänge.
+Vorbereitung und Materialien werden vorab bereitgestellt.
+Die kommentierten R-Skripte dienen anschließend als Vorlage für eigene Daten.
+
+**Materialstand 18.10.2026; Workshop-Termin noch festzulegen.**
+
+- [Materialseite](eatPrepTBA2026_files/index.html)
+- [Quarto-Folien](eatPrepTBA2026_files/workshop.html)
+- [Folien als PDF](eatPrepTBA2026_files/downloads/workshop.pdf)
+- [Vorbereitung](eatPrepTBA2026_files/setup.html)
+- [Handout](eatPrepTBA2026_files/handout.html) und [Funktionsübersicht](eatPrepTBA2026_files/reference.html)
+- [Daten, R-Skripte und Quarto-Quellen herunterladen](eatPrepTBA2026_files/downloads/WSeatPrepTBA-material.zip)
+
+Einzelne R-Skripte:
+
+- [Installation und Funktionstest](eatPrepTBA2026_files/R/00_installation.R)
+- [Datenabruf mit eigenen Zugängen](eatPrepTBA2026_files/R/01_datenabruf.R)
+- [JSON, Partial Credit und gespeicherte Codes](eatPrepTBA2026_files/R/02_daten_verstehen.R)
+- [Datenaufbereitung und Skalierungsdatensatz](eatPrepTBA2026_files/R/03_datenaufbereitung.R)
+- [Logs: Überblick, Zeiten, Fokusverluste](eatPrepTBA2026_files/R/04_logs.R)
+- [Codebuch als Excel und CSV erstellen](eatPrepTBA2026_files/R/05_kodiermanuale.R)
+- [Codebuch und DOCX aus IQB-Studio beziehen](eatPrepTBA2026_files/R/06_kodiermanuale_studio.R)

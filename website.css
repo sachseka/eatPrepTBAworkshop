@@ -1,0 +1,19 @@
+
+@font-face {font-family:'Source Sans 3';src:url('assets/fonts/SourceSans3-Regular.ttf') format('truetype');font-weight:400;font-display:swap;}
+@font-face {font-family:'Source Sans 3';src:url('assets/fonts/SourceSans3-SemiBold.ttf') format('truetype');font-weight:600;font-display:swap;}
+@font-face {font-family:'Source Sans 3';src:url('assets/fonts/SourceSans3-Bold.ttf') format('truetype');font-weight:700;font-display:swap;}
+.navbar {border-bottom:4px solid #B40036;}
+.navbar-logo {max-height:36px;}
+h1,h2,h3 {font-weight:600;}
+.lead {font-size:1.35rem;}
+.hero-panel {padding:2rem;border-left:6px solid #B40036;background:#F4F2F2;margin:1.5rem 0;}
+.btn-primary {background:#B40036;border-color:#B40036;}
+.btn-secondary {background:#00818D;border-color:#00818D;color:white;}
+.card-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0;}
+.workshop-card {border-top:4px solid #00818D;background:#F4F2F2;padding:1.2rem;}
+.workshop-card h3 {margin-top:0;}
+.footer {border-top:4px solid #00818D;}
+div.sourceCode {background:#f1f3f5;border:1px solid #e1e5e8;border-radius:6px;}
+pre {border-left:0;}
+img {max-width:100%;}
+@media print {.navbar,#quarto-margin-sidebar,.nav-footer {display:none;} }

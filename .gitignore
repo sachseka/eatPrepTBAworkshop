@@ -1,0 +1,33 @@
+/.quarto/
+/_site/
+/.Rproj.user/
+/.Rhistory
+/.RData
+/outputs/
+/renv/library/
+/renv/staging/
+/.library/
+
+**/*.quarto_ipynb
+
+# Kommentierte Entwürfe bleiben lokal.
+/workshop_mod*
+/review/
+/integration/payload/
+/downloads/*
+!/downloads/workshop.pdf
+!/downloads/WSeatPrepTBA-material.zip
+/*.potx
+/IQB-Styleguide-*.pdf
+__pycache__/
+*.py[cod]
+
+# Eigene Zugänge und Erhebungsdaten gehören nicht ins Workshop-Repository.
+/.Renviron
+/.env
+/.env.*
+!/.env.example
+/data_eigen/
+/site_libs/
+/*.html
+/*_files/

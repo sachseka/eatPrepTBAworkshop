@@ -1,0 +1,20 @@
+--- a/_quarto.yml
++++ b/_quarto.yml
+@@ -1,5 +1,7 @@
+ project:
+   type: website
++  resources:
++    - docs/R_tutorials/eatPrepTBA2026_files/**
+ 
+ website:
+   title: "IQB Methods"
+--- a/docs/eat_workshops.qmd
++++ b/docs/eat_workshops.qmd
+@@ -11,6 +11,7 @@
+   - author
+   filter-ui: true
+   contents:
++    - "R_tutorials/eatPrepTBA2026.qmd"
+     - "R_tutorials/eatPrep2024_files/eatPrep2024.qmd"
+     - "R_tutorials/2024_eatGADS_Datenaufbereitung/quarto_eatGADS.qmd"
+     - "R_tutorials/2024_eatGADS_Datenbanknutzung/eatGADS_2024_Datenbanknutzung.qmd"
