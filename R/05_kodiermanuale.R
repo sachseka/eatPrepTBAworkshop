@@ -1,9 +1,12 @@
-# Ein lokales Codebuch auswählen und als Excel/CSV speichern.
+# Offlinebeispiel: Codebucheinträge auswählen und als Excel/CSV speichern.
+# Die vorbereitete Lehrtabelle ersetzt hier den Abruf aus IQB-Studio.
+# Für eigene Studien erstellt prepare_codebook() das Codebuch aus den
+# Kodierschemata; die Vorlage steht in R/06_kodiermanuale_studio.R.
 # Zuerst WSeatPrepTBA.Rproj öffnen. Benötigt dplyr, readr und writexl.
 library(dplyr)
 dir.create("outputs", showWarnings = FALSE)
 
-# 1. Lokales Codebuch einlesen und einen Überblick gewinnen.
+# 1. Vorbereitete synthetische Codebuchtabelle einlesen und ansehen.
 # ---- codebook-read ----
 cb <- readr::read_csv("data/codebook.csv", show_col_types = FALSE,
                       col_types = readr::cols(code_id = readr::col_character()))

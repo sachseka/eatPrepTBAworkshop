@@ -19,8 +19,11 @@
 5. Bei jedem Schritt zuerst den Code und danach die entstandene Tabelle
    erläutern: Was ist eine Zeile, welche Spalten sind neu, was folgt daraus?
 6. Logs auf Ereignisse, Zeiten und Fokusverluste beschränken.
-7. Das lokale Codebuch exportieren und den direkten DOCX-Download aus
-   IQB-Studio kurz zeigen.
+7. Den Zweck des Codebuchs erläutern: Codes und Bewertungen aus den
+   Kodierschemata für Auswertung und Weitergabe dokumentieren. Zuerst die
+   Erstellung mit `prepare_codebook()` und den DOCX-Download aus IQB-Studio
+   zeigen; anschließend Auswahl und Export an der vorbereiteten
+   synthetischen Tabelle ohne Zugang nachvollziehen.
 
 Die Kapitelanzeige markiert den aktuellen Abschnitt und die Position darin.
 Der Ablauf enthält keine festen Zeitvorgaben oder getrennten Übungsblöcke.

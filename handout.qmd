@@ -36,6 +36,12 @@ Die lokalen Skripte werden im geöffneten Projekt `WSeatPrepTBA.Rproj` von oben 
 
 Für Fehler, unerwartete Ergebnisse und Funktionswünsche steht der [Issue-Bereich](https://github.com/iqb-research/eatPrepTBA/issues) bereit. Eine hilfreiche Meldung nennt Paketversion, betroffenen Funktionsaufruf, erwartetes und beobachtetes Ergebnis sowie ein kleines Beispiel ohne vertrauliche Daten. Hinweise zu diesen Workshopmaterialien gehören in die [Workshop-Issues](https://github.com/sachseka/eatPrepTBAworkshop/issues).
 
+### Wie R mit den Webanwendungen kommuniziert
+
+Die **API** ist die Schnittstelle von IQB-Studio beziehungsweise Testcenter für den programmgesteuerten Zugriff. eatPrepTBA verwendet [httr2](https://httr2.r-lib.org/), um HTTP-Anfragen zu senden und Antworten zu empfangen. Die Basis-URL bezeichnet die Installation; der Endpunkt legt fest, welche Daten angefragt werden, beispielsweise die Units eines Workspaces.
+
+Nach der Anmeldung enthält das Login-Objekt einen Sitzungstoken, den eatPrepTBA für weitere Anfragen verwendet. Die Serverantwort enthält häufig JSON. Dieser Text wird zunächst als R-Liste gelesen und anschließend zu Tabellen aufbereitet. Einige Spalten können weiterhin Listen oder JSON enthalten. Die folgenden `login_*()`- und `get_*()`-Aufrufe übernehmen diese Kommunikationsschritte; eigene httr2-Aufrufe sind dafür nicht nötig. Weitere Einzelheiten zeigt die [API-Einführung](https://iqb-research.github.io/eatPrepTBA/articles/working-with-iqb-apis.html).
+
 ### Welche Aufgabe übernimmt welches Paket?
 
 `eatPrepTBA` bezieht Antworten und Metadaten, bringt sie in ein gemeinsames Tabellenformat und bereitet sie für die Auswertung auf. Für die automatische Kodierung arbeiten drei Komponenten zusammen:
@@ -1341,11 +1347,67 @@ session_overview |>
 
 ## 4. Codebücher und Kodiermanuale
 
-Ein **Codebuch** beschreibt Units, Variablen, Codes und Scores in Tabellenform. Ein **Kodiermanual** enthält zusätzlich Kodieranweisungen und Antwortbeispiele. Das lokale Beispiel zeigt den Tabellenexport; eine kurze Vorlage ergänzt den DOCX-Download aus IQB-Studio.
+Ein **Codebuch** macht die Kodierschemata einer Studie als Dokumentation der Codes und Bewertungen lesbar. Es hält fest, welche Variablen, Codes, Beschreibungen und Punktwerte für die Auswertung gelten, und lässt sich zur Weitergabe exportieren. Ein **Kodiermanual** enthält zusätzlich Kodieranweisungen und Antwortbeispiele.
 
-### 4.1 Lokales Codebuch auswählen und exportieren
+Ausgangspunkt für eigene Projekte sind die Kodierschemata in IQB-Studio. Daraus erstellt `prepare_codebook()` das tabellarische Codebuch. Der anschließende lokale Ablauf verwendet eine vorbereitete synthetische Tabelle, damit Auswahl und Export auch ohne Zugang nachvollziehbar sind.
 
-[05_kodiermanuale.R](R/05_kodiermanuale.R) verwendet eine Lehrtabelle aus den synthetischen Kodierschemata. Jede Zeile beschreibt einen Code einer Variable. Die Tabelle enthält eine numerische Spalte `code_score`.
+### 4.1 Codebuch aus den Kodierschemata in IQB-Studio erstellen
+
+[06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R) zeigt die Erstellung aus den Kodierschemata der eigenen Studie. Ein fertiges Codebuch ist dafür nicht erforderlich. Die Vorlage benötigt einen eigenen IQB-Studio-Zugang und wird hier nicht ausgeführt. Vor der Nutzung Serveradresse, Version, Workspace-ID, Unitnamen und Profilnamen anpassen. `NULL` bei `selected_units` wählt alle Units; `NULL` bei `missing_profile` verwendet kein Missing-Profil.
+
+<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-settings -->
+```{r}
+#| eval: false
+studio_url <- "https://STUDIO-ADRESSE/"
+studio_version <- "VERSION-DER-ANMELDESEITE"
+studio_workspace_id <- NA_integer_
+selected_units <- c("UNIT-1", "UNIT-2")  # NULL wählt alle Units.
+missing_profile <- "IQB-Standard"  # Name in IQB-Studio; NULL ohne Profil.
+export_path <- "outputs/codebooks_studio"
+if (is.na(studio_workspace_id)) {
+  stop("Zuerst IQB-Studio-Adresse, Version, Workspace, Units und Profil anpassen.")
+}
+dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
+```
+<!-- /r-source -->
+
+<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-login -->
+```{r}
+#| eval: false
+login <- login_studio(base_url = studio_url, app_version = studio_version)
+workspace <- access_workspace(login, ws_id = studio_workspace_id)
+```
+<!-- /r-source -->
+
+[`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html) erstellt aus den Kodierschemata der gewählten Units eine Codebuchtabelle. `head()` zeigt anschließend deren Aufbau. `show_score = TRUE` fordert Scoreangaben an; eine separate numerische Spalte `code_score` ist in dieser Rückgabe nicht garantiert. Das gewählte Missing-Profil ergänzt Codebeschreibungen und ersetzt keine Scorezuweisung im Aufbereitungsworkflow.
+
+<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-prepare -->
+```{r}
+#| eval: false
+cb_studio <- prepare_codebook(workspace, unit_keys = selected_units,
+                              missings_profile = missing_profile,
+                              only_coded = TRUE, show_score = TRUE,
+                              derived = TRUE, manual = TRUE, closed = TRUE)
+names(cb_studio)
+head(cb_studio)
+writexl::write_xlsx(cb_studio, file.path(export_path, "codebook.xlsx"))
+```
+<!-- /r-source -->
+
+[`download_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html) speichert das Kodiermanual direkt als DOCX. `general_instructions = TRUE` übernimmt auch die allgemeinen Kodieranweisungen. Der Dateiname richtet sich nach dem Workspace-Namen.
+
+<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-docx -->
+```{r}
+#| eval: false
+download_codebook(workspace, path = export_path, unit_keys = selected_units,
+                  format = "docx", general_instructions = TRUE,
+                  missings_profile = missing_profile, show_score = TRUE)
+```
+<!-- /r-source -->
+
+### 4.2 Offlinebeispiel: Einträge auswählen und exportieren
+
+[05_kodiermanuale.R](R/05_kodiermanuale.R) verwendet eine vorbereitete Tabelle aus den synthetischen Kodierschemata. Sie ersetzt den Abruf für die Demonstration ohne IQB-Studio-Zugang. Daran lassen sich Einträge auswählen und als Excel oder CSV exportieren. In eigenen Projekten liefert `prepare_codebook()` die Ausgangstabelle direkt aus den Kodierschemata. Jede Zeile der Lehrtabelle beschreibt einen Code einer Variablen; `code_score` enthält die Punktzahl.
 
 <!-- r-source: R/05_kodiermanuale.R#codebook-read -->
 ```{r}
@@ -1425,60 +1487,6 @@ codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
 tibble(Datei = basename(codebook_files),
        Bytes = file.info(codebook_files)$size) |> print()
 ```
-
-### 4.2 Codebuch und DOCX aus IQB-Studio
-
-[06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R) benötigt einen eigenen Zugang und wird hier nicht ausgeführt. Vor der Nutzung Serveradresse, Version, Workspace-ID, Unitnamen und Profilnamen anpassen. `NULL` bei `selected_units` wählt alle Units; `NULL` bei `missing_profile` verwendet kein Missing-Profil.
-
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-settings -->
-```{r}
-#| eval: false
-studio_url <- "https://STUDIO-ADRESSE/"
-studio_version <- "VERSION-DER-ANMELDESEITE"
-studio_workspace_id <- NA_integer_
-selected_units <- c("UNIT-1", "UNIT-2")  # NULL wählt alle Units.
-missing_profile <- "IQB-Standard"  # Name in IQB-Studio; NULL ohne Profil.
-export_path <- "outputs/codebooks_studio"
-if (is.na(studio_workspace_id)) {
-  stop("Zuerst IQB-Studio-Adresse, Version, Workspace, Units und Profil anpassen.")
-}
-dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
-```
-<!-- /r-source -->
-
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-login -->
-```{r}
-#| eval: false
-login <- login_studio(base_url = studio_url, app_version = studio_version)
-workspace <- access_workspace(login, ws_id = studio_workspace_id)
-```
-<!-- /r-source -->
-
-[`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html) erstellt eine Tabelle. `head()` zeigt anschließend deren Aufbau. `show_score = TRUE` fordert Scoreangaben an; eine separate numerische Spalte `code_score` ist in dieser Rückgabe nicht garantiert. Das gewählte Missing-Profil ergänzt Codebeschreibungen und ersetzt keine Scorezuweisung im Aufbereitungsworkflow.
-
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-prepare -->
-```{r}
-#| eval: false
-cb_studio <- prepare_codebook(workspace, unit_keys = selected_units,
-                              missings_profile = missing_profile,
-                              only_coded = TRUE, show_score = TRUE,
-                              derived = TRUE, manual = TRUE, closed = TRUE)
-names(cb_studio)
-head(cb_studio)
-writexl::write_xlsx(cb_studio, file.path(export_path, "codebook.xlsx"))
-```
-<!-- /r-source -->
-
-[`download_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html) speichert das Kodiermanual direkt als DOCX. `general_instructions = TRUE` übernimmt auch die allgemeinen Kodieranweisungen. Der Dateiname richtet sich nach dem Workspace-Namen.
-
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-docx -->
-```{r}
-#| eval: false
-download_codebook(workspace, path = export_path, unit_keys = selected_units,
-                  format = "docx", general_instructions = TRUE,
-                  missings_profile = missing_profile, show_score = TRUE)
-```
-<!-- /r-source -->
 
 ## Mit eigenen Daten weiterarbeiten
 

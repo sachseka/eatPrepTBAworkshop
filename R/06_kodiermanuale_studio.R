@@ -1,4 +1,7 @@
-# Vorlage für Codebuch und DOCX-Download aus IQB-Studio.
+# Aus den Kodierschemata der Studie in IQB-Studio ein Codebuch erstellen.
+# Das Codebuch dokumentiert Codes und Bewertungen für Auswertung/Weitergabe.
+# prepare_codebook() bereitet diese Angaben als Tabelle auf.
+# Ein vorhandenes Codebuch ist dafür nicht erforderlich.
 # Erst Adresse, Version, Workspace, Unit-Namen und Profilnamen anpassen.
 # Die unveränderte Vorlage stoppt vor der Anmeldung.
 library(eatPrepTBA)
@@ -23,7 +26,8 @@ login <- login_studio(base_url = studio_url, app_version = studio_version)
 workspace <- access_workspace(login, ws_id = studio_workspace_id)
 # ---- /studio-codebook-login ----
 
-# 2. Ausgewählte Units tabellarisch aufbereiten und nach Excel schreiben.
+# 2. Aus den Kodierschemata der ausgewählten Units ein Codebuch erstellen.
+# Die resultierende Tabelle ansehen und nach Excel schreiben.
 # only_coded: nur Variablen mit Codes. show_score: Scoreangaben anfordern.
 # derived: abgeleitete Variablen. manual: manuell kodierte Variablen.
 # closed: geschlossen kodierbare Variablen; TRUE nimmt sie jeweils mit auf.

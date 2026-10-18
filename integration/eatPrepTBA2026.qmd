@@ -1,8 +1,8 @@
 ---
 title: "eatPrepTBA: Vom Testcenter zum Skalierungsdatensatz"
 description: "Praxisworkshop zu Paketaufbau, Daten und Schnittstellen, Skalierungsaufbereitung, ausgewählten Logs sowie Codebüchern als Excel und DOCX."
-author: "IQB · Team Methoden"
-date: "2026-10-18"
+author: "Karoline Sachse · IQB Methoden-Team"
+date: "2026-10-26"
 categories: [eatPrepTBA, workshop, TBA, Datenaufbereitung]
 image: "eatPrepTBA2026_files/assets/eatPrepTBA-logo.png"
 ---
@@ -17,7 +17,7 @@ oder Testcenter-Zugang. API-Vorlagen benötigen eigene Zugänge.
 Vorbereitung und Materialien werden vorab bereitgestellt.
 Die kommentierten R-Skripte dienen anschließend als Vorlage für eigene Daten.
 
-**Materialstand 18.10.2026; Workshop-Termin noch festzulegen.**
+**Workshop am 26.10.2026 · Materialstand 18.10.2026.**
 
 - [Materialseite](eatPrepTBA2026_files/index.html)
 - [Quarto-Folien](eatPrepTBA2026_files/workshop.html)

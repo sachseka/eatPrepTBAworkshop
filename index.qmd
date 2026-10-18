@@ -8,6 +8,8 @@ toc: false
 
 [Vom Testcenter zum Skalierungsdatensatz]{.lead}
 
+**Karoline Sachse · IQB Methoden-Team · 26.10.2026**
+
 **R-Grundkenntnisse · geführte Beispiele · ohne IQB-Studio-/Testcenter-Zugang**
 
 Der Workshop behandelt den Paketaufbau, die Aufbereitung von Antworten und Metadaten für die Skalierung, ausgewählte Logs und Codebücher. Synthetische Beispieldaten machen die Schritte lokal nachvollziehbar.

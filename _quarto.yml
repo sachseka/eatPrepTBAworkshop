@@ -41,7 +41,7 @@ website:
         text: Handout
       - href: reference.qmd
         text: Nachschlagen
-  page-footer: "IQB · Team Methoden | eatPrepTBA-Workshop · Oktober 2026"
+  page-footer: "IQB · Methoden-Team | eatPrepTBA-Workshop · 26.10.2026"
   search: false
 lang: de
 format:

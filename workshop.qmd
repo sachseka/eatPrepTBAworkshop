@@ -20,7 +20,7 @@ format:
     slide-level: 2
     title-slide: false
     logo: assets/iqb-logo.png
-    footer: "IQB · eatPrepTBA | Workshop · Oktober 2026"
+    footer: "IQB · Methoden-Team | eatPrepTBA · 26.10.2026"
     code-copy: true
     code-line-numbers: true
     highlight-style: arrow
@@ -50,12 +50,13 @@ source("R/05_kodiermanuale.R", encoding = "UTF-8")
 ::: {.hero-panel}
 ::: {.hero-layout}
 ::: {.hero-copy}
-[IQB · Team Methoden]{.kicker}
+<div class="kicker">IQB · Methoden-Team · <span class="presenter">Karoline Sachse</span></div>
 
 <h1>eatPrepTBA</h1>
 
 [Vom Testcenter zum Skalierungsdatensatz]{.subtitle}
 
+[26.10.2026]{.small}
 
 [Aufbau des Pakets · Datenaufbereitung · Logdaten · Codebücher]{.small}
 :::
@@ -118,6 +119,26 @@ Zusätzlich: Logdaten auswerten und Codebücher erstellen.
 :::
 
 [Für einen Fehlerbericht: Paketversion, kleiner reproduzierbarer Code, Fehlermeldung und erwartetes Ergebnis; anonymisierte oder synthetische Daten verwenden.]{.small}
+
+## Wie kommuniziert R mit den Webanwendungen?
+
+Die **API** ist die Schnittstelle, über die R Daten aus IQB-Studio oder Testcenter anfordert.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-width: 11
+%%| fig-height: 2
+flowchart LR
+  R["R: eatPrepTBA + httr2"] -->|"HTTP-Anfrage: URL + Sitzungstoken"| A["API: IQB-Studio oder Testcenter"]
+  A -->|"HTTP-Antwort: häufig JSON"| R
+```
+
+- **eatPrepTBA** wählt den passenden Endpunkt, etwa die Units eines Workspaces. Die Anmeldung liefert einen Sitzungstoken für weitere Anfragen.
+- **[httr2](https://httr2.r-lib.org/)** sendet die HTTP-Anfragen und empfängt die Antworten.
+- **eatPrepTBA** bereitet die Antwort für R auf: JSON wird zunächst zu Listen, daraus entstehen Tabellen; einige Spalten bleiben verschachtelt.
+
+[API-Einführung: Kommunikation mit IQB-Studio und Testcenter](https://iqb-research.github.io/eatPrepTBA/articles/working-with-iqb-apis.html){.small}
 
 ## Datenquellen und Einlesefunktionen
 
@@ -1407,109 +1428,12 @@ Fokusdauer gilt pro Session, Bearbeitungszeit pro Unit. Die Session-Fokusdauer l
 
 ## 4 · Codebücher und Kodiermanuale {.chapter}
 
-**Kodierschema → Codebuch → CSV, Excel oder DOCX**
+**Kodierschemata dokumentieren und für die Auswertung oder Weitergabe aufbereiten.**
 
-Ein Codebuch dokumentiert Variablen, Codes, Beschreibungen und Scores.
-Ein Kodiermanual ergänzt Anweisungen für die Bewertung von Antworten.
+Ein **Codebuch** macht Variablen, Codes, Beschreibungen und Scores als Tabelle lesbar. Ein **Kodiermanual** ergänzt Anweisungen für die Bewertung von Antworten.
 
-`R/05_kodiermanuale.R`: lokales Codebuch als CSV und Excel.  
-`R/06_kodiermanuale_studio.R`: Codebuch und DOCX direkt aus IQB-Studio.
-
-## Lokales Codebuch einlesen {.compact-code}
-
-<!-- r-source: R/05_kodiermanuale.R#codebook-read -->
-```{r}
-#| eval: false
-cb <- readr::read_csv("data/codebook.csv", show_col_types = FALSE,
-                      col_types = readr::cols(code_id = readr::col_character()))
-count(cb, unit_key, variable_id)
-```
-<!-- /r-source -->
-
-<!-- r-source: R/05_kodiermanuale.R#codebuch-vorschau -->
-```{r}
-#| eval: false
-cb |>
-  select(unit_key, variable_id, code_id, code_label, code_score) |>
-  head(4) |> print()
-```
-<!-- /r-source -->
-
-::: {.r-console}
-```{r}
-#| eval: true
-#| echo: false
-cb |>
-  select(unit_key, variable_id, code_id, code_label, code_score) |>
-  head(4) |> print()
-```
-:::
-
-Die Lehrtabelle stammt aus den synthetischen Kodierschemata. Jede Zeile beschreibt einen Code einer Variablen.
-
-## Units auswählen und Code von Score unterscheiden {.compact-code}
-
-<!-- r-source: R/05_kodiermanuale.R#codebook-select -->
-```{r}
-#| eval: false
-selected_cb <- cb |>
-  filter(unit_key %in% c("U3", "U4")) |>
-  select(unit_key, variable_id, code_id, code_label, code_score)
-```
-<!-- /r-source -->
-
-<!-- r-source: R/05_kodiermanuale.R#codebuch-auswahl-vorschau -->
-```{r}
-#| eval: false
-selected_cb |>
-  filter(unit_key == "U4", variable_id == "TEXT") |>
-  print()
-```
-<!-- /r-source -->
-
-::: {.r-console}
-```{r}
-#| eval: true
-#| echo: false
-selected_cb |>
-  filter(unit_key == "U4", variable_id == "TEXT") |>
-  print()
-```
-:::
-
-Bei U4/TEXT bedeutet Code 2 einen Punkt, Code 1 einen halben Punkt. Die Code-ID ist keine Punktzahl.
-
-## Codebuch als Excel und CSV speichern {.compact-code}
-
-<!-- r-source: R/05_kodiermanuale.R#codebook-excel -->
-```{r}
-#| eval: false
-writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
-                    "outputs/codebook.xlsx")
-readr::write_csv(selected_cb, "outputs/codebook.csv")
-```
-<!-- /r-source -->
-
-<!-- r-source: R/05_kodiermanuale.R#codebuch-dateien-vorschau -->
-```{r}
-#| eval: false
-codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
-tibble(Datei = basename(codebook_files),
-       Bytes = file.info(codebook_files)$size) |> print()
-```
-<!-- /r-source -->
-
-::: {.r-console}
-```{r}
-#| eval: true
-#| echo: false
-codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
-tibble(Datei = basename(codebook_files),
-       Bytes = file.info(codebook_files)$size) |> print()
-```
-:::
-
-Excel enthält die Blätter `Codebuch` und `Auswahl`; die CSV enthält die ausgewählten Units.
+1. **Eigene Studie:** Codebuch aus den Kodierschemata in IQB-Studio erstellen; als Excel oder DOCX bereitstellen.
+2. **Ohne Zugang üben:** Eine vorbereitete synthetische Tabelle verwenden, Units auswählen und exportieren.
 
 ## Mit eigenem Zugang: IQB-Studio vorbereiten {.compact-code}
 
@@ -1577,6 +1501,102 @@ Die DOCX-Datei wird unter `export_path` gespeichert. Ihr Name stammt aus dem Wor
 
 [Hilfe: download_codebook()](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html)
 
+## Ohne Zugang: vorbereitete Codebuchtabelle laden {.compact-code}
+
+<!-- r-source: R/05_kodiermanuale.R#codebook-read -->
+```{r}
+#| eval: false
+cb <- readr::read_csv("data/codebook.csv", show_col_types = FALSE,
+                      col_types = readr::cols(code_id = readr::col_character()))
+count(cb, unit_key, variable_id)
+```
+<!-- /r-source -->
+
+<!-- r-source: R/05_kodiermanuale.R#codebuch-vorschau -->
+```{r}
+#| eval: false
+cb |>
+  select(unit_key, variable_id, code_id, code_label, code_score) |>
+  head(4) |> print()
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+cb |>
+  select(unit_key, variable_id, code_id, code_label, code_score) |>
+  head(4) |> print()
+```
+:::
+
+Die synthetische Datei ersetzt hier den Abruf aus IQB-Studio. Das Einlesen ist nur der Einstieg in die lokale Übung.
+
+## Units auswählen und Code von Score unterscheiden {.compact-code}
+
+<!-- r-source: R/05_kodiermanuale.R#codebook-select -->
+```{r}
+#| eval: false
+selected_cb <- cb |>
+  filter(unit_key %in% c("U3", "U4")) |>
+  select(unit_key, variable_id, code_id, code_label, code_score)
+```
+<!-- /r-source -->
+
+<!-- r-source: R/05_kodiermanuale.R#codebuch-auswahl-vorschau -->
+```{r}
+#| eval: false
+selected_cb |>
+  filter(unit_key == "U4", variable_id == "TEXT") |>
+  print()
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+selected_cb |>
+  filter(unit_key == "U4", variable_id == "TEXT") |>
+  print()
+```
+:::
+
+Bei U4/TEXT bedeutet Code 2 einen Punkt, Code 1 einen halben Punkt. Die Code-ID ist keine Punktzahl.
+
+## Codebuch als Excel und CSV speichern {.compact-code}
+
+<!-- r-source: R/05_kodiermanuale.R#codebook-excel -->
+```{r}
+#| eval: false
+writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
+                    "outputs/codebook.xlsx")
+readr::write_csv(selected_cb, "outputs/codebook.csv")
+```
+<!-- /r-source -->
+
+<!-- r-source: R/05_kodiermanuale.R#codebuch-dateien-vorschau -->
+```{r}
+#| eval: false
+codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
+tibble(Datei = basename(codebook_files),
+       Bytes = file.info(codebook_files)$size) |> print()
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
+tibble(Datei = basename(codebook_files),
+       Bytes = file.info(codebook_files)$size) |> print()
+```
+:::
+
+Excel enthält die Blätter `Codebuch` und `Auswahl`; die CSV enthält die ausgewählten Units.
+
 ## Auf eigene Daten übertragen {.workshop-end}
 
 1. **Daten beziehen:** In `01_datenabruf.R` Zugänge und Workspace eintragen oder vorhandene Exporte einlesen.
@@ -1598,6 +1618,6 @@ Die DOCX-Datei wird unter `export_path` gespeichert. Ihr Name stammt aus dem Wor
 
 [Lehrdaten synthetisch; Quellen und technische Prüfung im Materialpaket.]{.small}
 
-## Vielen Dank für die Aufmerksamkeit.
+## Vielen Dank für eure Aufmerksamkeit!
 
-Fragen und Diskussion.
+Gibt es Fragen?

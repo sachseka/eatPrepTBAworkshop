@@ -49,11 +49,17 @@ als Beschreibungen des protokollierten Verlaufs eingeordnet.
 
 ## 4. Codebücher und Kodiermanuale
 
-`R/05_kodiermanuale.R` wählt Einträge einer lokalen Codebuchtabelle aus und
-exportiert sie als Excel und CSV. `R/06_kodiermanuale_studio.R` zeigt kurz
-den Abruf mit `prepare_codebook()` und den direkten DOCX-Download mit
-`download_codebook()`. Diese API-Vorlage benötigt einen eigenen Zugang.
-Ein lokal erzeugtes Word-Beispiel ist nicht Bestandteil des Workshops.
+Ein Codebuch macht die Kodierschemata einer Studie als Dokumentation der
+Codes und Bewertungen für die Auswertung und Weitergabe lesbar.
+`R/06_kodiermanuale_studio.R` zeigt zuerst, wie `prepare_codebook()` das
+Codebuch aus den Kodierschemata in IQB-Studio erstellt. Anschließend folgt
+kurz der direkte DOCX-Download mit `download_codebook()`.
+
+Für die lokale Demonstration ohne Zugang verwendet
+`R/05_kodiermanuale.R` eine vorbereitete synthetische Tabelle. Daran werden
+Auswahl und Export als Excel und CSV gezeigt. Diese Tabelle ersetzt nur
+den Abruf im Workshop; bei eigenen Studien entsteht das Codebuch direkt
+aus den Kodierschemata. Ein lokal erzeugtes Word-Beispiel entfällt.
 
 ## Materialien und Prüfung
 

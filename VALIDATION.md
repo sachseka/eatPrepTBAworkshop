@@ -11,9 +11,9 @@ Browserprüfung sind erfolgreich abgeschlossen.
   131 eingebettete Abschnitte in Folien und Handout mit den R-Dateien abgeglichen.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
 - 24 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 77 Folien und 77 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 78 Folien und 78 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 76 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 77 PDF-Seiten
   enthalten die Abschnittsnavigation.
 
 ## Dokumentierte Umgebung

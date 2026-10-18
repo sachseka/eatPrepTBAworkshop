@@ -5,6 +5,8 @@ Quarto-Folien, Handout, kommentierte R-Skripte und synthetische Beispieldaten.
 R-Grundkenntnisse werden vorausgesetzt. Die lokalen Beispiele benötigen
 keinen Zugang zu IQB-Studio oder Testcenter.
 
+**Karoline Sachse · IQB Methoden-Team · 26.10.2026**
+
 [Workshop-Repository](https://github.com/sachseka/eatPrepTBAworkshop) ·
 [eatPrepTBA-Dokumentation](https://iqb-research.github.io/eatPrepTBA/) ·
 [eatPrepTBA-Repository](https://github.com/iqb-research/eatPrepTBA)
