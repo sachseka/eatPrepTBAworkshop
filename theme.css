@@ -36,7 +36,6 @@
 .reveal .structure-table table th:first-child {width:34%;}
 .reveal .script-table table th:first-child {width:38%;}
 .reveal .kicker {font-size:.58em;letter-spacing:.13em;text-transform:uppercase;color:#00818D;font-weight:600;}
-.reveal .kicker .presenter {font-weight:400;text-transform:none;letter-spacing:normal;}
 .reveal .small {font-size:.72em;color:#534856;}
 .reveal .takeaway {border-left:5px solid #B40036;padding:.45em .7em;background:#F4F2F2;margin-top:.8em;}
 .reveal .exercise {border-top:6px solid #00818D;padding-top:.3em;}

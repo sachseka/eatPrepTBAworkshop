@@ -50,13 +50,13 @@ source("R/05_kodiermanuale.R", encoding = "UTF-8")
 ::: {.hero-panel}
 ::: {.hero-layout}
 ::: {.hero-copy}
-<div class="kicker">IQB · Methoden-Team · <span class="presenter">Karoline Sachse</span></div>
+[IQB · Methoden-Team]{.kicker}
 
 <h1>eatPrepTBA</h1>
 
 [Vom Testcenter zum Skalierungsdatensatz]{.subtitle}
 
-[26.10.2026]{.small}
+[Karoline Sachse · 26.10.2026]{.small}
 
 [Aufbau des Pakets · Datenaufbereitung · Logdaten · Codebücher]{.small}
 :::
