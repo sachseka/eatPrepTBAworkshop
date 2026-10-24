@@ -71,3 +71,9 @@ Bewertungsregeln nach. Personen, Antworten und Metadaten sind synthetisch;
 die Dateien sind keine Originalexports. Zusätzliche Regeln für Schreibweisen
 von Tausenderzahlen sind in der Demo ausgelassen. Diese Bilder gehören zu
 dieser kleinen Demo, nicht zur separaten größeren Mini-Studie mit sechs Units.
+
+## API-Grafik
+
+`api-communication.svg` ist eine lokal erstellte Vektorgrafik des
+Anfrage-/Antwortablaufs zwischen eatPrepTBA, httr2 und den Webanwendungen.
+Sie ersetzt die automatisch skalierte Mermaid-Grafik auf der API-Folie.
