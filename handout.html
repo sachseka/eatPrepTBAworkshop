@@ -1429,6 +1429,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 <p><strong>−93 bedeutet <code>NO_CODING</code>:</strong> Für die Variable sind keine Codes definiert. Ein Rohwert oder ein erfolgreich abgeleiteter Wert kann trotzdem vorliegen. Bei einer Zusatzvariable wie Medienfortschritt kann das beabsichtigt sein. Bei einem vorgesehenen Auswertungsitem muss geklärt werden, ob im Kodierschema die Kodierung fehlt. <strong>−96 bedeutet dagegen <code>MISSING_NOT_REACHED</code></strong> und beschreibt eine Missing-Einordnung anhand von Bearbeitungsstand und Testreihenfolge. −93 ist keine Aussage darüber, ob die Aufgabe erreicht wurde.</p>
 <p>Die Tabelle beschreibt die abschließende Zuweisung. <a href="https://iqb-research.github.io/eatPrepTBA/reference/code_responses.html" target="_blank" rel="noopener noreferrer"><code>code_responses()</code></a> verwendet Missing-Codes beim Einfügen manueller Codes zunächst zur Zuordnung eines Status; seine Standardwerte sind nicht mit allen abschließenden Scores identisch. Bei eigenen Missing-Regeln wird dieselbe explizite Tabelle mit <code>code_id</code>, <code>code_status</code>, <code>code_score</code> und <code>code_type</code> über <code>missings</code> an beide relevanten Funktionen übergeben.</p>
+<section id="status-code-art-code-id-und-score-unterscheiden" class="level4">
+<h4 class="anchored" data-anchor-id="status-code-art-code-id-und-score-unterscheiden">Status, Code-Art, Code-ID und Score unterscheiden</h4>
+<p><strong>Beispiel: P006 · U5/Q1 nach <code>complete_design()</code></strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Spalte</th>
+<th>Aussage</th>
+<th>Wert im Beispiel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>code_status</code></td>
+<td>Technischer Bearbeitungs- bzw. Kodierstatus</td>
+<td><code>DISPLAYED</code>: angezeigt</td>
+</tr>
+<tr class="even">
+<td><code>code_type</code></td>
+<td>Bedeutung der Bewertung, einschließlich Missing-Art</td>
+<td><code>MISSING_BY_OMISSION</code>: ausgelassen</td>
+</tr>
+<tr class="odd">
+<td><code>code_id</code></td>
+<td>Kennnummer des Codes innerhalb der Variable</td>
+<td><code>-99</code></td>
+</tr>
+<tr class="even">
+<td><code>code_score</code></td>
+<td>Zugehörige Punktzahl für die Auswertung</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Mit der Regel „abschließende Auslassungen als nicht erreicht“ bleibt der Status <strong><code>DISPLAYED</code></strong>. Die übrigen Felder ändern sich zu <strong><code>MISSING_NOT_REACHED</code></strong>, <strong>−96</strong> und <strong><code>NA</code></strong>.</p>
+<p>Der Status allein beschreibt damit weder die endgültige Missing-Art noch die Punktzahl. Die Code-ID ist ebenfalls keine Punktzahl.</p>
 <p>Die erste Alternative setzt nur <code>recode_omissions_to_not_reached = TRUE</code>:</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-regeln-vergleichen -->
 <div class="cell">
@@ -1529,6 +1570,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 <p>Die Grenze wird innerhalb jedes Testlets bestimmt. Itemvariablen und ihre Quellen zählen für diese Grenze; unabhängige Hilfsvariablen und <code>NO_CODING</code> nicht. Die <a href="https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html" target="_blank" rel="noopener noreferrer">Missing-Vignette</a> erläutert weitere Fälle, darunter <a href="https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#beispiel-6" target="_blank" rel="noopener noreferrer">Testletwechsel</a>, <a href="https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#beispiel-8" target="_blank" rel="noopener noreferrer">komplett fehlende Antworten</a> und die <a href="https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#itemgrenze" target="_blank" rel="noopener noreferrer">Itemgrenze</a>.</p>
 <p><strong>Missing by Design:</strong> Eine gar nicht vorgesehene Aufgabe wird nicht nachträglich zum erwarteten Item. Die zugehörige Zelle im Datensatz bleibt später <code>NA</code>. Das ist ein anderer Fall als ein vorgesehenes, aber nicht erreichtes Item; Design und Long-Daten bewahren den Unterschied.</p>
+</section>
 </section>
 <section id="personen-auswählen-und-items-zuordnen" class="level3">
 <h3 class="anchored" data-anchor-id="personen-auswählen-und-items-zuordnen">2.4 Personen auswählen und Items zuordnen</h3>
@@ -1762,22 +1804,162 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>psychometrics <span class="ot">&lt;-</span> <span class="fu">evaluate_psychometrics</span>(analysis_data, units, <span class="at">domains =</span> domains)</span>
 <span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>psychometrics <span class="ot">&lt;-</span> <span class="fu">add_item_id</span>(psychometrics, units)</span>
 <span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>code_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
-<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(item_id)) <span class="sc">|&gt;</span></span>
-<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">paste0</span>(unit_key, item_id)) <span class="sc">|&gt;</span></span>
-<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(item, unit_key, variable_id, code_id, code_score,</span>
-<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>         code_n, code_p_valid, code_pbc) <span class="sc">|&gt;</span></span>
-<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>psychometrics <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(item_id), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(unit_key, item_id))) <span class="sc">|&gt;</span></span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(unit_key, variable_id, item, item_id)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
+<p>Die Ausgabe bleibt vollständig erhalten: <strong>37 Zeilen und 21 Spalten</strong>, einschließlich der Basisvariablen ohne eigene Item-Verknüpfung. Die Spalte <code>item</code> wird im Skript aus <code>unit_key</code> und <code>item_id</code> ergänzt; <code>domain</code> dokumentiert hier den Bereich Lesen. Die folgenden Ausschnitte dienen nur der Darstellung. Exportiert wird stets das gesamte Objekt <code>psychometrics</code>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Spalte</th>
+<th>Bedeutung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>unit_key</code></td>
+<td>Kurzname der Unit</td>
+</tr>
+<tr class="even">
+<td><code>variable_id</code></td>
+<td>Variable innerhalb der Unit, einschließlich abgeleiteter Variablen</td>
+</tr>
+<tr class="odd">
+<td><code>item</code></td>
+<td>Vollständige Itemkennung im Workshop, z. B. <code>U501</code>; ohne Verknüpfung <code>NA</code></td>
+</tr>
+<tr class="even">
+<td><code>item_id</code></td>
+<td>Itemnummer aus den Metadaten, als Text mit führender Null</td>
+</tr>
+<tr class="odd">
+<td><code>variable_source_type</code></td>
+<td>Herkunft der Variable, z. B. <code>BASE</code> oder <code>SUM_SCORE</code></td>
+</tr>
+<tr class="even">
+<td><code>code_id</code></td>
+<td>Zugewiesener Code einschließlich Missing-Codes</td>
+</tr>
+<tr class="odd">
+<td><code>code_type</code></td>
+<td>Art der Bewertung, z. B. <code>FULL_CREDIT</code>, <code>PARTIAL_CREDIT</code>, <code>RESIDUAL_AUTO</code> oder eine Missing-Art</td>
+</tr>
+<tr class="even">
+<td><code>code_score</code></td>
+<td>Zum Code gehörige Punktzahl</td>
+</tr>
+<tr class="odd">
+<td><code>code_n</code></td>
+<td>Häufigkeit des Codes</td>
+</tr>
+<tr class="even">
+<td><code>code_n_total</code></td>
+<td>Vorgesehene Fälle dieser Variable unter den verwendeten Personen</td>
+</tr>
+<tr class="odd">
+<td><code>code_n_valid</code></td>
+<td>Davon Fälle mit Score ungleich <code>NA</code>; auch 0 zählt</td>
+</tr>
+<tr class="even">
+<td><code>code_p_total</code></td>
+<td><code>code_n / code_n_total</code></td>
+</tr>
+<tr class="odd">
+<td><code>code_p_valid</code></td>
+<td><code>code_n / code_n_valid</code>; bei fehlendem Score ebenfalls <code>NA</code></td>
+</tr>
+<tr class="even">
+<td><code>code_pbc</code></td>
+<td>Korrelation des Code-Vorkommens mit dem Bereichsscore</td>
+</tr>
+<tr class="odd">
+<td><code>category_id</code></td>
+<td>Antwortkategorie, z. B. A, B oder C</td>
+</tr>
+<tr class="even">
+<td><code>category_label</code></td>
+<td>Bezeichnung der Antwortkategorie</td>
+</tr>
+<tr class="odd">
+<td><code>category_n</code></td>
+<td>Häufigkeit der Antwortkategorie</td>
+</tr>
+<tr class="even">
+<td><code>category_p_total</code></td>
+<td><code>category_n / code_n_total</code></td>
+</tr>
+<tr class="odd">
+<td><code>category_p_valid</code></td>
+<td><code>category_n / code_n_valid</code></td>
+</tr>
+<tr class="even">
+<td><code>category_pbc</code></td>
+<td>Korrelation des Kategorie-Vorkommens mit dem Bereichsscore</td>
+</tr>
+<tr class="odd">
+<td><code>domain</code></td>
+<td>Bereich, aus dessen Itemwerten der Vergleichsscore entsteht</td>
+</tr>
+</tbody>
+</table>
+<p>Die Kategorie- und Codekennwerte stehen in einer gemeinsamen Tabelle. Code 0 erscheint bei U101 deshalb zweimal: einmal für B, einmal für C. <strong><code>code_n</code> nicht über alle Exportzeilen summieren.</strong> Für eine reine Codetabelle zuerst die Codespalten auswählen und mit <code>distinct()</code> auf eine Zeile je Code reduzieren.</p>
+<p>Die Definitionen beziehen sich auf den dokumentierten Paketstand; <a href="https://iqb-research.github.io/eatPrepTBA/reference/evaluate_psychometrics.html" target="_blank" rel="noopener noreferrer">Funktionsreferenz zu <code>evaluate_psychometrics()</code></a>.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-csv -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/psychometrics.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(code_stats, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(psychometrics, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(psychometrics, <span class="st">"Daten/Ergebnisse/psychometrics.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
+<section id="kennungen-und-herkunft" class="level4">
+<h4 class="anchored" data-anchor-id="kennungen-und-herkunft">Kennungen und Herkunft</h4>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-variablen -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>variable_info <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U3"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(unit_key, variable_id, item, item_id, variable_source_type)</span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(variable_info) <span class="co"># Q1/Q2: BASE; TOTAL: SUM_SCORE</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  unit_key variable_id item  item_id variable_source_type
+  &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;               
+1 U3       Q1          &lt;NA&gt;  &lt;NA&gt;    BASE                
+2 U3       Q2          &lt;NA&gt;  &lt;NA&gt;    BASE                
+3 U3       TOTAL       U301  01      SUM_SCORE           </code></pre>
+</div>
+</div>
+</section>
+<section id="code-art-und-punktzahl" class="level4">
+<h4 class="anchored" data-anchor-id="code-art-und-punktzahl">Code-Art und Punktzahl</h4>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-codearten -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>code_info <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U301"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(code_id, code_type, code_score)</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(code_info) <span class="co"># Code 1: Teilpunkte; Code 2: volle Punktzahl</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  code_id code_type      code_score
+    &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt;
+1       0 RESIDUAL_AUTO         0  
+2       1 PARTIAL_CREDIT        0.5
+3       2 FULL_CREDIT           1  </code></pre>
+</div>
+</div>
 <p>Das Multiple-Choice-Item <code>U101</code> hat drei Antwortkategorien: A, B und C. A erhält Code 1 und einen Punkt. B und C erhalten gemeinsam Code 0 und null Punkte. Damit lassen sich drei Auswertungsebenen unterscheiden:</p>
 <table class="caption-top table">
 <thead>
@@ -1808,10 +1990,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Antwortkategorien:</strong> Die <code>category_*</code>-Spalten zeigen, wie häufig die einzelnen Antworten vorkommen. <code>category_p_valid</code> bezieht sich auf Antworten mit gültigem Score.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-kategorien -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>category_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
-<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
-<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(category_id, code_id, category_n, category_p_valid, category_pbc)</span>
-<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(category_stats) <span class="co"># sollte A: 21, B: 5 und C: 12 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>category_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(category_id, code_id, category_n, category_p_valid, category_pbc)</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(category_stats) <span class="co"># sollte A: 21, B: 5 und C: 12 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -1827,11 +2009,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Codes:</strong> Ein Code kann mehrere Antwortkategorien bündeln. Seine Kennwerte wiederholen sich deshalb in <code>psychometrics</code>; <code>distinct()</code> reduziert die Auswahl auf eine Zeile je Code.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-codes -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>code_stats_mc <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
-<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(code_id, code_score, code_n, code_p_valid, code_pbc) <span class="sc">|&gt;</span></span>
-<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
-<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(code_stats_mc) <span class="co"># sollte für Code 0 insgesamt 17 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>code_stats_mc <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(code_id, code_score, code_n, code_p_valid, code_pbc) <span class="sc">|&gt;</span></span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(code_stats_mc) <span class="co"># sollte für Code 0 insgesamt 17 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -1847,11 +2029,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Scores:</strong> <code>evaluate_psychometrics()</code> liefert keine eigene Tabelle mit <code>score_*</code>-Spalten. Die Scoreverteilung wird hier direkt aus den Itemdaten berechnet. <code>score_p</code> bezieht sich auf alle 39 ausgewählten Personen.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-scores -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>score_stats <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
-<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(code_score, <span class="at">name =</span> <span class="st">"score_n"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">score_p =</span> score_n <span class="sc">/</span> <span class="fu">sum</span>(score_n))</span>
-<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(score_stats) <span class="co"># sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>score_stats <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(code_score, <span class="at">name =</span> <span class="st">"score_n"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">score_p =</span> score_n <span class="sc">/</span> <span class="fu">sum</span>(score_n))</span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(score_stats) <span class="co"># sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -1864,25 +2046,110 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Die Kategorieauswertung enthält 38 regulär kodierte Antworten. Code- und Scoreauswertung enthalten zusätzlich eine ungültige Antwort, die nach der gewählten Missing-Regel null Punkte erhält. Der Nenner von <code>category_p_valid</code> beträgt trotzdem 39, weil auch diese Antwort einen gültigen Score hat. Die Anteile der drei Antwortkategorien summieren sich daher zu 38/39.</p>
-<p>Die <code>*_n</code>-Spalten zählen Fälle. <code>*_p_valid</code> beschreibt Anteile unter Antworten mit Score ungleich <code>NA</code>. <code>*_pbc</code> beschreibt den Zusammenhang zwischen dem Auftreten einer Kategorie oder eines Codes und dem mittleren Itemscore des Bereichs; der eigene Itemscore ist in diesem Mittelwert enthalten. Die kleine synthetische Studie erklärt den Rechenweg und erlaubt keine belastbare empirische Itembewertung.</p>
+</section>
+<section id="fallzahlen-anteile-und-zusammenhang" class="level4">
+<h4 class="anchored" data-anchor-id="fallzahlen-anteile-und-zusammenhang">Fallzahlen, Anteile und Zusammenhang</h4>
+<p>Bei <strong>U501</strong> sind 20 Personen für die Aufgabe vorgesehen. Ein Not-reached-Fall hat Score <code>NA</code>; deshalb beträgt <code>code_n_valid</code> 19. Eine Auslassung mit Score 0 zählt zum gültigen Nenner. Sechs richtige Antworten ergeben <code>code_p_total = 6/20 = 0.30</code> und <code>code_p_valid = 6/19 ≈ 0.316</code>. Für den Not-reached-Code bleibt <code>code_p_valid = NA</code>.</p>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-nenner -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>denominator_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U501"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(code_id, code_score, code_n, code_n_total, code_n_valid)</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(denominator_stats) <span class="co"># insgesamt 20 Fälle, davon 19 mit gültigem Score</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  code_id code_score code_n code_n_total code_n_valid
+    &lt;dbl&gt;      &lt;dbl&gt;  &lt;int&gt;        &lt;int&gt;        &lt;int&gt;
+1     -99          0      1           20           19
+2     -96         NA      1           20           19
+3       0          0     12           20           19
+4       1          1      6           20           19</code></pre>
+</div>
+</div>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-anteile -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>proportion_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U501"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(code_id, code_n, code_p_total, code_p_valid)</span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(proportion_stats) <span class="co"># Code 1: 6/20 = 0.30 und 6/19 = 0.316</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  code_id code_n code_p_total code_p_valid
+    &lt;dbl&gt;  &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+1     -99      1         0.05       0.0526
+2     -96      1         0.05      NA     
+3       0     12         0.6        0.632 
+4       1      6         0.3        0.316 </code></pre>
+</div>
+</div>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-kategoriedetails -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>category_details <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U501"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(category_id, category_label, category_n,</span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>         category_p_total, category_p_valid)</span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(category_details)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  category_id category_label category_n category_p_total category_p_valid
+  &lt;chr&gt;       &lt;chr&gt;               &lt;int&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+1 B           Distraktor B            7             0.35            0.368
+2 C           Distraktor C            5             0.25            0.263
+3 A           Richtig                 6             0.3             0.316</code></pre>
+</div>
+</div>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-pbc -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>discrimination_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U101"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(category_id, code_id, domain, category_pbc, code_pbc)</span>
+<span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(discrimination_stats)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  category_id code_id domain category_pbc code_pbc
+  &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;
+1 B                 0 Lesen       0.00492   -0.308
+2 C                 0 Lesen      -0.338     -0.308
+3 A                 1 Lesen       0.312      0.309</code></pre>
+</div>
+</div>
+<p>Die Kategorien verwenden dieselben Nenner: Sieben Antworten auf Distraktor B bei U501 ergeben <code>7/20 = 0.35</code> und <code>7/19 ≈ 0.368</code>. Die Kategorien müssen nicht alle Fälle mit gültigem Score abdecken: Eine Auslassung mit Score 0 zählt zum Nenner, ist aber keine reguläre Antwortkategorie.</p>
+<p>PBC steht für <strong>punktbiseriale Korrelation</strong>. Der Bereichsscore ist je Person der <strong>Mittelwert der verknüpften Item-Scores</strong> im Bereich; <code>NA</code> wird dabei ausgelassen. Der eigene Itemscore bleibt enthalten, es erfolgt <strong>keine Part-whole-Korrektur</strong>. <code>code_pbc</code> korreliert diesen Mittelwert mit dem Auftreten des jeweiligen Codes, <code>category_pbc</code> mit dem Auftreten der jeweiligen Kategorie. Positive Werte bedeuten häufigeres Auftreten bei höheren Bereichsscores, negative bei niedrigeren. Fehlende Variation kann zu <code>NA</code> führen.</p>
+<p>Die Fallbasis unterscheidet sich: Codekorrelationen berücksichtigen auch Missing-Codes, Kategorie-Korrelationen nur Antworten mit <code>code_id &gt;= 0</code>. Bei U101 ergeben Code 1 und Kategorie A deshalb leicht verschiedene Werte: etwa <strong>0,309</strong> bei 39 Fällen und <strong>0,312</strong> bei 38 Fällen. Bei abgeleiteten Variablen ohne Antwortkategorien können die <code>category_*</code>-Spalten <code>NA</code> enthalten. Die kleine synthetische Studie zeigt den Rechenweg; sie erlaubt keine belastbare empirische Itembewertung.</p>
+<p><code>psychometrics.rds</code> erhält alle Datentypen. Beim Rückimport der vollständigen CSV bleibt die führende Null von <code>item_id</code> mit einer expliziten Zeichenvariable erhalten:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read.csv2</span>(<span class="st">"Daten/Ergebnisse/psychometrics.csv"</span>, <span class="at">skip =</span> <span class="dv">1</span>,</span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">fileEncoding =</span> <span class="st">"UTF-16LE"</span>, <span class="at">colClasses =</span> <span class="fu">c</span>(<span class="at">item_id =</span> <span class="st">"character"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
 </section>
 <section id="skalierungsdatensatz-erstellen-und-exportieren" class="level3">
 <h3 class="anchored" data-anchor-id="skalierungsdatensatz-erstellen-und-exportieren">2.7 Skalierungsdatensatz erstellen und exportieren</h3>
 <p><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" target="_blank" rel="noopener noreferrer"><code>pivot_wider()</code></a> erzeugt eine Zeile je Person und eine Punktespalte je Item. Die drei ursprünglichen Testcenter-Kennungen bleiben erhalten.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#score-datensatz-erstellen -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>scaling_data <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
-<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group_id, login_name, login_code, item, code_score) <span class="sc">|&gt;</span></span>
-<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> item, <span class="at">values_from =</span> code_score) <span class="sc">|&gt;</span></span>
-<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(group_id, login_name, login_code)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>scaling_data <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group_id, login_name, login_code, item, code_score) <span class="sc">|&gt;</span></span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> item, <span class="at">values_from =</span> code_score) <span class="sc">|&gt;</span></span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(group_id, login_name, login_code)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Eine Zeile ist jetzt eine Person; jede Itemspalte enthält Punkte. Fehlende Werte bleiben NA.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>scaling_data <span class="sc">|&gt;</span></span>
-<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, U101, U301, U501) <span class="sc">|&gt;</span></span>
-<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a>scaling_data <span class="sc">|&gt;</span></span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, U101, U301, U501) <span class="sc">|&gt;</span></span>
+<span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -1899,36 +2166,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Die anschließende Prüfung vergleicht die Personenzahl mit den Long-Daten und prüft, ob alle Itemspalten numerisch sind. <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/lapply.html" target="_blank" rel="noopener noreferrer"><code>vapply()</code></a> wendet dafür dieselbe Prüfung auf jede Itemspalte an. Eine Listenspalte wäre beispielsweise ein Hinweis auf unaufgelöste Mehrfachwerte.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-pruefen -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>item_columns <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(scaling_data), person_columns)</span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>persons <span class="ot">&lt;-</span> <span class="fu">distinct</span>(item_data, group_id, login_name, login_code)</span>
-<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(scaling_data) <span class="sc">==</span> <span class="fu">nrow</span>(persons))</span>
-<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">vapply</span>(scaling_data[item_columns], is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>item_columns <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(scaling_data), person_columns)</span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>persons <span class="ot">&lt;-</span> <span class="fu">distinct</span>(item_data, group_id, login_name, login_code)</span>
+<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(scaling_data) <span class="sc">==</span> <span class="fu">nrow</span>(persons))</span>
+<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">vapply</span>(scaling_data[item_columns], is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Die vollständige Tabelle enthält 39 Personen und acht Itemspalten. Mit den drei ursprünglichen Testcenter-Kennungen sind es elf Spalten.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#daten-exportieren -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/scaling_data.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(scaling_data, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
-<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(analysis_data, <span class="st">"Daten/Ergebnisse/analysis_long.rds"</span>)</span>
-<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(design_items, <span class="st">"Daten/Ergebnisse/design_items.rds"</span>)</span>
-<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(scaling_data, <span class="st">"Daten/Ergebnisse/05_scaling_data.rds"</span>)</span>
-<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>missing_counts <span class="ot">&lt;-</span> <span class="fu">count</span>(design_coded, id_used, code_type)</span>
-<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/missing_counts.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(missing_counts, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/scaling_data.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
+<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(scaling_data, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
+<span id="cb112-5"><a href="#cb112-5" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(analysis_data, <span class="st">"Daten/Ergebnisse/analysis_long.rds"</span>)</span>
+<span id="cb112-6"><a href="#cb112-6" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(design_items, <span class="st">"Daten/Ergebnisse/design_items.rds"</span>)</span>
+<span id="cb112-7"><a href="#cb112-7" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(scaling_data, <span class="st">"Daten/Ergebnisse/05_scaling_data.rds"</span>)</span>
+<span id="cb112-8"><a href="#cb112-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb112-9"><a href="#cb112-9" aria-hidden="true" tabindex="-1"></a>missing_counts <span class="ot">&lt;-</span> <span class="fu">count</span>(design_coded, id_used, code_type)</span>
+<span id="cb112-10"><a href="#cb112-10" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/missing_counts.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
+<span id="cb112-11"><a href="#cb112-11" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
+<span id="cb112-12"><a href="#cb112-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(missing_counts, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb112-13"><a href="#cb112-13" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#export-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>export_files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"scaling_data.csv"</span>, <span class="st">"analysis_long.rds"</span>,</span>
-<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"design_items.rds"</span>, <span class="st">"missing_counts.csv"</span>)</span>
-<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">Datei =</span> export_files,</span>
-<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">Bytes =</span> <span class="fu">file.info</span>(<span class="fu">file.path</span>(<span class="st">"Daten/Ergebnisse"</span>, export_files))<span class="sc">$</span>size) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>export_files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"scaling_data.csv"</span>, <span class="st">"analysis_long.rds"</span>,</span>
+<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"design_items.rds"</span>, <span class="st">"missing_counts.csv"</span>)</span>
+<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">Datei =</span> export_files,</span>
+<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">Bytes =</span> <span class="fu">file.info</span>(<span class="fu">file.path</span>(<span class="st">"Daten/Ergebnisse"</span>, export_files))<span class="sc">$</span>size) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -1946,23 +2213,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Zum Export gehören auch Paketversionen, Fallzahlen und die getroffenen Regeln. Nach einer Änderung der Analyseentscheidung das Protokoll entsprechend anpassen.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#workflow-dokumentieren -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>report <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Workflow erfolgreich ausgeführt; allgemeine Prüfungen bestanden."</span>,</span>
-<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"eatPrepTBA:"</span>, <span class="fu">packageVersion</span>(<span class="st">"eatPrepTBA"</span>)),</span>
-<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"eatAutoCode:"</span>, <span class="fu">packageVersion</span>(<span class="st">"eatAutoCode"</span>)),</span>
-<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Units:"</span>, <span class="fu">nrow</span>(units)),</span>
-<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Designzeilen:"</span>, <span class="fu">nrow</span>(design)),</span>
-<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Antwortzeilen:"</span>, <span class="fu">nrow</span>(responses)),</span>
-<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Personen im Export:"</span>, <span class="fu">nrow</span>(scaling_data)),</span>
-<span id="cb102-9"><a href="#cb102-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Itemspalten:"</span>, <span class="fu">length</span>(item_columns)),</span>
-<span id="cb102-10"><a href="#cb102-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Missing-Regeln: Paketvoreinstellungen; beide NR-Optionen FALSE."</span>,</span>
-<span id="cb102-11"><a href="#cb102-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Auswahl: id_used = TRUE; verknüpfte Itemvariablen."</span>,</span>
-<span id="cb102-12"><a href="#cb102-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Keine offenen Itemkodierungen im exportierten Datensatz."</span>,</span>
-<span id="cb102-13"><a href="#cb102-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Fehlende Werte bleiben NA; Testcenter-Kennungen bleiben im Datensatz."</span>)</span>
-<span id="cb102-14"><a href="#cb102-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb102-15"><a href="#cb102-15" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(report, <span class="st">"Daten/Ergebnisse/validation.txt"</span>, <span class="at">useBytes =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb102-16"><a href="#cb102-16" aria-hidden="true" tabindex="-1"></a><span class="fu">capture.output</span>(<span class="fu">sessionInfo</span>(), <span class="at">file =</span> <span class="st">"Daten/Ergebnisse/session-info.txt"</span>)</span>
-<span id="cb102-17"><a href="#cb102-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(report, <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>report <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Workflow erfolgreich ausgeführt; allgemeine Prüfungen bestanden."</span>,</span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"eatPrepTBA:"</span>, <span class="fu">packageVersion</span>(<span class="st">"eatPrepTBA"</span>)),</span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"eatAutoCode:"</span>, <span class="fu">packageVersion</span>(<span class="st">"eatAutoCode"</span>)),</span>
+<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Units:"</span>, <span class="fu">nrow</span>(units)),</span>
+<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Designzeilen:"</span>, <span class="fu">nrow</span>(design)),</span>
+<span id="cb115-7"><a href="#cb115-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Antwortzeilen:"</span>, <span class="fu">nrow</span>(responses)),</span>
+<span id="cb115-8"><a href="#cb115-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Personen im Export:"</span>, <span class="fu">nrow</span>(scaling_data)),</span>
+<span id="cb115-9"><a href="#cb115-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">"Itemspalten:"</span>, <span class="fu">length</span>(item_columns)),</span>
+<span id="cb115-10"><a href="#cb115-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Missing-Regeln: Paketvoreinstellungen; beide NR-Optionen FALSE."</span>,</span>
+<span id="cb115-11"><a href="#cb115-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Auswahl: id_used = TRUE; verknüpfte Itemvariablen."</span>,</span>
+<span id="cb115-12"><a href="#cb115-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Keine offenen Itemkodierungen im exportierten Datensatz."</span>,</span>
+<span id="cb115-13"><a href="#cb115-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Fehlende Werte bleiben NA; Testcenter-Kennungen bleiben im Datensatz."</span>)</span>
+<span id="cb115-14"><a href="#cb115-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-15"><a href="#cb115-15" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(report, <span class="st">"Daten/Ergebnisse/validation.txt"</span>, <span class="at">useBytes =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb115-16"><a href="#cb115-16" aria-hidden="true" tabindex="-1"></a><span class="fu">capture.output</span>(<span class="fu">sessionInfo</span>(), <span class="at">file =</span> <span class="st">"Daten/Ergebnisse/session-info.txt"</span>)</span>
+<span id="cb115-17"><a href="#cb115-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(report, <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Die festgelegten synthetischen Lehrfälle werden separat in <code>scripts/validate_workflow.R</code> geprüft. Der exportierte Datensatz ist die Grundlage für die anschließende Skalierung.</p>
@@ -1978,22 +2245,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="einlesen-und-verlässlichkeit-prüfen">3.1 Einlesen und Verlässlichkeit prüfen</h3>
 <!-- r-source: Syntaxen/04_logs.R#logs-read -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>logs <span class="ot">&lt;-</span> <span class="fu">read_logs</span>(<span class="st">"Daten/Logs.csv"</span>)</span>
-<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternativ nach API-Abruf: logs &lt;- readRDS("Daten/EigeneDaten/logs.rds")</span></span>
-<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ältere Exporte haben keinen getrennten Unit-Alias.</span></span>
-<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"unit_alias"</span> <span class="sc">%in%</span> <span class="fu">names</span>(logs)) logs<span class="sc">$</span>unit_alias <span class="ot">&lt;-</span> logs<span class="sc">$</span>unit_key</span>
-<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(logs, group_id, login_name, booklet_id) <span class="co"># P001: 9, P002: 6 Ereignisse</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>logs <span class="ot">&lt;-</span> <span class="fu">read_logs</span>(<span class="st">"Daten/Logs.csv"</span>)</span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternativ nach API-Abruf: logs &lt;- readRDS("Daten/EigeneDaten/logs.rds")</span></span>
+<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-4"><a href="#cb116-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ältere Exporte haben keinen getrennten Unit-Alias.</span></span>
+<span id="cb116-5"><a href="#cb116-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"unit_alias"</span> <span class="sc">%in%</span> <span class="fu">names</span>(logs)) logs<span class="sc">$</span>unit_alias <span class="ot">&lt;-</span> logs<span class="sc">$</span>unit_key</span>
+<span id="cb116-6"><a href="#cb116-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-7"><a href="#cb116-7" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(logs, group_id, login_name, booklet_id) <span class="co"># P001: 9, P002: 6 Ereignisse</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Ein Ausschnitt der PLAYER- und FOCUS-Ereignisse: ts ist der Zeitstempel, log_entry das protokollierte Ereignis. Noch wurde keine Bearbeitungszeit berechnet.</p>
 <!-- r-source: Syntaxen/04_logs.R#logs-rohdaten-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>logs <span class="sc">|&gt;</span></span>
-<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">startsWith</span>(log_entry, <span class="st">"PLAYER"</span>) <span class="sc">|</span> <span class="fu">startsWith</span>(log_entry, <span class="st">"FOCUS"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, unit_key, ts, log_entry) <span class="sc">|&gt;</span></span>
-<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">90</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>logs <span class="sc">|&gt;</span></span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">startsWith</span>(log_entry, <span class="st">"PLAYER"</span>) <span class="sc">|</span> <span class="fu">startsWith</span>(log_entry, <span class="st">"FOCUS"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, unit_key, ts, log_entry) <span class="sc">|&gt;</span></span>
+<span id="cb117-4"><a href="#cb117-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">90</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2010,15 +2277,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Ältere Exporte haben keinen getrennten <code>unit_alias</code>. Das Skript verwendet dann <code>unit_key</code> als Alias. Bei eigenen Daten mit mehrfach verwendeten Units muss die Referenz zur Durchführung passen. <a href="https://iqb-research.github.io/eatPrepTBA/reference/summarise_log_inventory.html" target="_blank" rel="noopener noreferrer"><code>summarise_log_inventory()</code></a> zeigt anschließend, welche Ereignistypen vorkommen.</p>
 <!-- r-source: Syntaxen/04_logs.R#logs-inventory -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>inventory <span class="ot">&lt;-</span> <span class="fu">summarise_log_inventory</span>(logs)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>inventory <span class="ot">&lt;-</span> <span class="fu">summarise_log_inventory</span>(logs)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Das Inventar zeigt Anzahl und Unterstützung der beobachteten Ereignistypen.</p>
 <!-- r-source: Syntaxen/04_logs.R#logs-inventar-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>inventory <span class="sc">|&gt;</span></span>
-<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(log_type, n, known_log_type, supported_parser) <span class="sc">|&gt;</span></span>
-<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a>inventory <span class="sc">|&gt;</span></span>
+<span id="cb120-2"><a href="#cb120-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(log_type, n, known_log_type, supported_parser) <span class="sc">|&gt;</span></span>
+<span id="cb120-3"><a href="#cb120-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2036,19 +2303,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Die Anomalietabelle hält einzelne Auffälligkeiten fest; die QC-Tabelle fasst sie je Session zusammen. Eine Session wird hier durch Personenkennung und Booklet beschrieben.</p>
 <!-- r-source: Syntaxen/04_logs.R#logs-qc -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a>anomalies <span class="ot">&lt;-</span> <span class="fu">detect_log_anomalies</span>(logs)</span>
-<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a>qc <span class="ot">&lt;-</span> <span class="fu">summarise_log_qc</span>(logs, <span class="at">anomalies =</span> anomalies)</span>
-<span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb109-4"><a href="#cb109-4" aria-hidden="true" tabindex="-1"></a>anomalies <span class="sc">|&gt;</span></span>
-<span id="cb109-5"><a href="#cb109-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, booklet_id, anomaly_code, severity, evidence)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a>anomalies <span class="ot">&lt;-</span> <span class="fu">detect_log_anomalies</span>(logs)</span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a>qc <span class="ot">&lt;-</span> <span class="fu">summarise_log_qc</span>(logs, <span class="at">anomalies =</span> anomalies)</span>
+<span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>anomalies <span class="sc">|&gt;</span></span>
+<span id="cb122-5"><a href="#cb122-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, booklet_id, anomaly_code, severity, evidence)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Bei P002 sind Auffälligkeiten gespeichert. Das Flag ist ein Prüfhinweis und keine automatische Ausschlussregel.</p>
 <!-- r-source: Syntaxen/04_logs.R#logs-qc-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>qc <span class="sc">|&gt;</span></span>
-<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, booklet_id, log_qc_flag, n_anomalies) <span class="sc">|&gt;</span></span>
-<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># P001: ok; P002: critical</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>qc <span class="sc">|&gt;</span></span>
+<span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, booklet_id, log_qc_flag, n_anomalies) <span class="sc">|&gt;</span></span>
+<span id="cb123-3"><a href="#cb123-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># P001: ok; P002: critical</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2065,21 +2332,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="bearbeitungs--und-ladezeiten">3.2 Bearbeitungs- und Ladezeiten</h3>
 <!-- r-source: Syntaxen/04_logs.R#logs-times -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>unit_times <span class="ot">&lt;-</span> <span class="fu">estimate_unit_times</span>(logs, <span class="at">include_environment =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Millisekunden in Sekunden umrechnen:</span></span>
-<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> unit_times <span class="sc">|&gt;</span></span>
-<span id="cb112-5"><a href="#cb112-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id, unit_key,</span>
-<span id="cb112-6"><a href="#cb112-6" aria-hidden="true" tabindex="-1"></a>            unit_n_play, <span class="at">unit_time_s =</span> unit_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb112-7"><a href="#cb112-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">unit_loadtime_s =</span> unit_loadtime <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb112-8"><a href="#cb112-8" aria-hidden="true" tabindex="-1"></a>            n_run_no_load, n_failed_loadings)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a>unit_times <span class="ot">&lt;-</span> <span class="fu">estimate_unit_times</span>(logs, <span class="at">include_environment =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Millisekunden in Sekunden umrechnen:</span></span>
+<span id="cb125-4"><a href="#cb125-4" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> unit_times <span class="sc">|&gt;</span></span>
+<span id="cb125-5"><a href="#cb125-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id, unit_key,</span>
+<span id="cb125-6"><a href="#cb125-6" aria-hidden="true" tabindex="-1"></a>            unit_n_play, <span class="at">unit_time_s =</span> unit_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb125-7"><a href="#cb125-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">unit_loadtime_s =</span> unit_loadtime <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb125-8"><a href="#cb125-8" aria-hidden="true" tabindex="-1"></a>            n_run_no_load, n_failed_loadings)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/04_logs.R#logs-zeiten-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>times <span class="sc">|&gt;</span></span>
-<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, unit_key, unit_time_s, unit_loadtime_s) <span class="sc">|&gt;</span></span>
-<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># P001: 11,65 s Bearbeitung, 0,35 s Laden; P002: keine Zeitzeile</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb126"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a>times <span class="sc">|&gt;</span></span>
+<span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, unit_key, unit_time_s, unit_loadtime_s) <span class="sc">|&gt;</span></span>
+<span id="cb126-3"><a href="#cb126-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># P001: 11,65 s Bearbeitung, 0,35 s Laden; P002: keine Zeitzeile</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2096,20 +2363,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="fokusverluste-und-export">3.3 Fokusverluste und Export</h3>
 <!-- r-source: Syntaxen/04_logs.R#logs-focus -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>focus <span class="ot">&lt;-</span> <span class="fu">summarise_log_focus</span>(logs)</span>
-<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>focus_summary <span class="ot">&lt;-</span> focus <span class="sc">|&gt;</span></span>
-<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id,</span>
-<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>            n_focus_lost, n_focus_regained,</span>
-<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">focus_lost_s =</span> total_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_focus_lost_s =</span> max_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb115-7"><a href="#cb115-7" aria-hidden="true" tabindex="-1"></a>            has_unresolved_focus_loss)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a>focus <span class="ot">&lt;-</span> <span class="fu">summarise_log_focus</span>(logs)</span>
+<span id="cb128-2"><a href="#cb128-2" aria-hidden="true" tabindex="-1"></a>focus_summary <span class="ot">&lt;-</span> focus <span class="sc">|&gt;</span></span>
+<span id="cb128-3"><a href="#cb128-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id,</span>
+<span id="cb128-4"><a href="#cb128-4" aria-hidden="true" tabindex="-1"></a>            n_focus_lost, n_focus_regained,</span>
+<span id="cb128-5"><a href="#cb128-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">focus_lost_s =</span> total_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb128-6"><a href="#cb128-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_focus_lost_s =</span> max_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb128-7"><a href="#cb128-7" aria-hidden="true" tabindex="-1"></a>            has_unresolved_focus_loss)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/04_logs.R#logs-fokus-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>focus_summary <span class="sc">|&gt;</span></span>
-<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, n_focus_lost, focus_lost_s, has_unresolved_focus_loss) <span class="sc">|&gt;</span></span>
-<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># P001: 2,5 s; P002: offener Fokusverlust</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a>focus_summary <span class="sc">|&gt;</span></span>
+<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, n_focus_lost, focus_lost_s, has_unresolved_focus_loss) <span class="sc">|&gt;</span></span>
+<span id="cb129-3"><a href="#cb129-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># P001: 2,5 s; P002: offener Fokusverlust</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2125,43 +2392,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>QC und Fokus werden über die Sessionkennung zusammengeführt. Die Unit-Zeiten werden separat gespeichert, weil sie eine andere Auswertungsebene haben. Die Fokusdauer einer Session darf deshalb nicht von jeder Unit-Zeit abgezogen werden.</p>
 <!-- r-source: Syntaxen/04_logs.R#logs-session -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a>session_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"group_id"</span>, <span class="st">"login_name"</span>, <span class="st">"login_code"</span>, <span class="st">"booklet_id"</span>)</span>
-<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>session_overview <span class="ot">&lt;-</span> qc <span class="sc">|&gt;</span></span>
-<span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(session_keys), log_qc_flag) <span class="sc">|&gt;</span></span>
-<span id="cb118-4"><a href="#cb118-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(focus_summary, <span class="at">by =</span> session_keys)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a>session_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"group_id"</span>, <span class="st">"login_name"</span>, <span class="st">"login_code"</span>, <span class="st">"booklet_id"</span>)</span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>session_overview <span class="ot">&lt;-</span> qc <span class="sc">|&gt;</span></span>
+<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(session_keys), log_qc_flag) <span class="sc">|&gt;</span></span>
+<span id="cb131-4"><a href="#cb131-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(focus_summary, <span class="at">by =</span> session_keys)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/04_logs.R#logs-export -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_inventory.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(inventory, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb119-4"><a href="#cb119-4" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
-<span id="cb119-5"><a href="#cb119-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-6"><a href="#cb119-6" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_anomalies.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb119-7"><a href="#cb119-7" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb119-8"><a href="#cb119-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(anomalies, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb119-9"><a href="#cb119-9" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
-<span id="cb119-10"><a href="#cb119-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-11"><a href="#cb119-11" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_unit_times.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb119-12"><a href="#cb119-12" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb119-13"><a href="#cb119-13" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(times, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb119-14"><a href="#cb119-14" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
-<span id="cb119-15"><a href="#cb119-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-16"><a href="#cb119-16" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_sessions.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb119-17"><a href="#cb119-17" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb119-18"><a href="#cb119-18" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(session_overview, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb119-19"><a href="#cb119-19" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
-<span id="cb119-20"><a href="#cb119-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-21"><a href="#cb119-21" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(<span class="fu">list</span>(<span class="at">inventory =</span> inventory, <span class="at">anomalies =</span> anomalies, <span class="at">qc =</span> qc,</span>
-<span id="cb119-22"><a href="#cb119-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">unit_times =</span> unit_times, <span class="at">focus =</span> focus), <span class="st">"Daten/Ergebnisse/log_qc.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb132"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_inventory.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
+<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
+<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(inventory, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb132-4"><a href="#cb132-4" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
+<span id="cb132-5"><a href="#cb132-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-6"><a href="#cb132-6" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_anomalies.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
+<span id="cb132-7"><a href="#cb132-7" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
+<span id="cb132-8"><a href="#cb132-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(anomalies, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb132-9"><a href="#cb132-9" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
+<span id="cb132-10"><a href="#cb132-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-11"><a href="#cb132-11" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_unit_times.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
+<span id="cb132-12"><a href="#cb132-12" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
+<span id="cb132-13"><a href="#cb132-13" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(times, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb132-14"><a href="#cb132-14" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
+<span id="cb132-15"><a href="#cb132-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-16"><a href="#cb132-16" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_sessions.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
+<span id="cb132-17"><a href="#cb132-17" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
+<span id="cb132-18"><a href="#cb132-18" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(session_overview, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb132-19"><a href="#cb132-19" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span>
+<span id="cb132-20"><a href="#cb132-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-21"><a href="#cb132-21" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(<span class="fu">list</span>(<span class="at">inventory =</span> inventory, <span class="at">anomalies =</span> anomalies, <span class="at">qc =</span> qc,</span>
+<span id="cb132-22"><a href="#cb132-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">unit_times =</span> unit_times, <span class="at">focus =</span> focus), <span class="st">"Daten/Ergebnisse/log_qc.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/04_logs.R#logs-session-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a>session_overview <span class="sc">|&gt;</span></span>
-<span id="cb120-2"><a href="#cb120-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, log_qc_flag, n_focus_lost, focus_lost_s) <span class="sc">|&gt;</span></span>
-<span id="cb120-3"><a href="#cb120-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a>session_overview <span class="sc">|&gt;</span></span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, log_qc_flag, n_focus_lost, focus_lost_s) <span class="sc">|&gt;</span></span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2184,38 +2451,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="Syntaxen/06_kodiermanuale_studio.R" target="_blank" rel="noopener noreferrer">06_kodiermanuale_studio.R</a> zeigt die Erstellung aus den Kodierschemata der eigenen Studie. Ein fertiges Codebuch ist dafür nicht erforderlich. Die Vorlage benötigt einen eigenen IQB-Studio-Zugang und wird hier nicht ausgeführt. Vor der Nutzung Serveradresse, Version, Workspace-ID, Unitnamen und Profilnamen anpassen. <code>NULL</code> bei <code>selected_units</code> wählt alle Units; <code>NULL</code> bei <code>missing_profile</code> verwendet kein Missing-Profil.</p>
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-settings -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a>studio_version <span class="ot">&lt;-</span> <span class="st">"21.0.0"</span> <span class="co"># Version der eigenen Anmeldeseite übernehmen</span></span>
-<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a>studio_workspace_id <span class="ot">&lt;-</span> <span class="dv">1300</span> <span class="co"># Beispiel: eigene Workspace-ID einsetzen</span></span>
-<span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a>selected_units <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"UNIT-1"</span>, <span class="st">"UNIT-2"</span>) <span class="co"># Eigene Unit-Namen; NULL für alle</span></span>
-<span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>missing_profile <span class="ot">&lt;-</span> <span class="st">"IQB-Standard"</span> <span class="co"># Eigenen Profilnamen prüfen; NULL ohne Profil</span></span>
-<span id="cb122-5"><a href="#cb122-5" aria-hidden="true" tabindex="-1"></a>export_path <span class="ot">&lt;-</span> <span class="st">"Daten/Ergebnisse/codebooks_studio"</span></span>
-<span id="cb122-6"><a href="#cb122-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(export_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a>studio_version <span class="ot">&lt;-</span> <span class="st">"21.0.0"</span> <span class="co"># Version der eigenen Anmeldeseite übernehmen</span></span>
+<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>studio_workspace_id <span class="ot">&lt;-</span> <span class="dv">1300</span> <span class="co"># Beispiel: eigene Workspace-ID einsetzen</span></span>
+<span id="cb135-3"><a href="#cb135-3" aria-hidden="true" tabindex="-1"></a>selected_units <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"UNIT-1"</span>, <span class="st">"UNIT-2"</span>) <span class="co"># Eigene Unit-Namen; NULL für alle</span></span>
+<span id="cb135-4"><a href="#cb135-4" aria-hidden="true" tabindex="-1"></a>missing_profile <span class="ot">&lt;-</span> <span class="st">"IQB-Standard"</span> <span class="co"># Eigenen Profilnamen prüfen; NULL ohne Profil</span></span>
+<span id="cb135-5"><a href="#cb135-5" aria-hidden="true" tabindex="-1"></a>export_path <span class="ot">&lt;-</span> <span class="st">"Daten/Ergebnisse/codebooks_studio"</span></span>
+<span id="cb135-6"><a href="#cb135-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(export_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-login -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>login <span class="ot">&lt;-</span> <span class="fu">login_studio</span>(<span class="at">app_version =</span> studio_version, <span class="at">keyring =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a>workspace <span class="ot">&lt;-</span> <span class="fu">access_workspace</span>(login, <span class="at">ws_id =</span> studio_workspace_id)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a>login <span class="ot">&lt;-</span> <span class="fu">login_studio</span>(<span class="at">app_version =</span> studio_version, <span class="at">keyring =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>workspace <span class="ot">&lt;-</span> <span class="fu">access_workspace</span>(login, <span class="at">ws_id =</span> studio_workspace_id)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p><a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html" target="_blank" rel="noopener noreferrer"><code>prepare_codebook()</code></a> erstellt aus den Kodierschemata der gewählten Units eine Codebuchtabelle. <code>head()</code> zeigt anschließend deren Aufbau. <code>show_score = TRUE</code> fordert Scoreangaben an; eine separate numerische Spalte <code>code_score</code> ist in dieser Rückgabe nicht garantiert. Das gewählte Missing-Profil ergänzt Codebeschreibungen und ersetzt keine Scorezuweisung im Aufbereitungsworkflow.</p>
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-prepare -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb124"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a>cb_studio <span class="ot">&lt;-</span> <span class="fu">prepare_codebook</span>(workspace, <span class="at">unit_keys =</span> selected_units,</span>
-<span id="cb124-2"><a href="#cb124-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">missings_profile =</span> missing_profile,</span>
-<span id="cb124-3"><a href="#cb124-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">only_coded =</span> <span class="cn">TRUE</span>, <span class="at">show_score =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb124-4"><a href="#cb124-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">derived =</span> <span class="cn">TRUE</span>, <span class="at">manual =</span> <span class="cn">TRUE</span>, <span class="at">closed =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb124-5"><a href="#cb124-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cb_studio)</span>
-<span id="cb124-6"><a href="#cb124-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cb_studio)</span>
-<span id="cb124-7"><a href="#cb124-7" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(cb_studio, <span class="fu">file.path</span>(export_path, <span class="st">"codebook.xlsx"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a>cb_studio <span class="ot">&lt;-</span> <span class="fu">prepare_codebook</span>(workspace, <span class="at">unit_keys =</span> selected_units,</span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">missings_profile =</span> missing_profile,</span>
+<span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">only_coded =</span> <span class="cn">TRUE</span>, <span class="at">show_score =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb137-4"><a href="#cb137-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">derived =</span> <span class="cn">TRUE</span>, <span class="at">manual =</span> <span class="cn">TRUE</span>, <span class="at">closed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb137-5"><a href="#cb137-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cb_studio)</span>
+<span id="cb137-6"><a href="#cb137-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cb_studio)</span>
+<span id="cb137-7"><a href="#cb137-7" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(cb_studio, <span class="fu">file.path</span>(export_path, <span class="st">"codebook.xlsx"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p><a href="https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html" target="_blank" rel="noopener noreferrer"><code>download_codebook()</code></a> speichert das Kodiermanual direkt als DOCX. <code>general_instructions = TRUE</code> übernimmt auch die allgemeinen Kodieranweisungen. Der Dateiname richtet sich nach dem Workspace-Namen.</p>
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-docx -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="fu">download_codebook</span>(workspace, <span class="at">path =</span> export_path, <span class="at">unit_keys =</span> selected_units,</span>
-<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"docx"</span>, <span class="at">general_instructions =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">missings_profile =</span> missing_profile, <span class="at">show_score =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb138"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="fu">download_codebook</span>(workspace, <span class="at">path =</span> export_path, <span class="at">unit_keys =</span> selected_units,</span>
+<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"docx"</span>, <span class="at">general_instructions =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb138-3"><a href="#cb138-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">missings_profile =</span> missing_profile, <span class="at">show_score =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 </section>
@@ -2224,16 +2491,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="Syntaxen/05_kodiermanuale.R" target="_blank" rel="noopener noreferrer">05_kodiermanuale.R</a> verwendet eine vorbereitete Tabelle aus den synthetischen Kodierschemata. Sie ersetzt den Abruf für die Demonstration ohne IQB-Studio-Zugang. Daran lassen sich Einträge auswählen und als Excel oder CSV exportieren. In eigenen Projekten liefert <code>prepare_codebook()</code> die Ausgangstabelle direkt aus den Kodierschemata. Jede Zeile der Lehrtabelle beschreibt einen Code einer Variablen; <code>code_score</code> enthält die Punktzahl.</p>
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-read -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb126"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a>cb <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"Daten/codebook.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> readr<span class="sc">::</span><span class="fu">cols</span>(<span class="at">code_id =</span> readr<span class="sc">::</span><span class="fu">col_character</span>()))</span>
-<span id="cb126-3"><a href="#cb126-3" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(cb, unit_key, variable_id) <span class="co"># 10 Variablen aus 6 Units</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a>cb <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"Daten/codebook.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> readr<span class="sc">::</span><span class="fu">cols</span>(<span class="at">code_id =</span> readr<span class="sc">::</span><span class="fu">col_character</span>()))</span>
+<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(cb, unit_key, variable_id) <span class="co"># 10 Variablen aus 6 Units</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a>cb <span class="sc">|&gt;</span></span>
-<span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score) <span class="sc">|&gt;</span></span>
-<span id="cb127-3"><a href="#cb127-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb140"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a>cb <span class="sc">|&gt;</span></span>
+<span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score) <span class="sc">|&gt;</span></span>
+<span id="cb140-3"><a href="#cb140-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2250,16 +2517,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Für den Export werden U3 und U4 ausgewählt. Bei U4/TEXT steht Code 2 für einen Punkt und Code 1 für einen halben Punkt: Code-ID und Score haben unterschiedliche Funktionen.</p>
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-select -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a>selected_cb <span class="ot">&lt;-</span> cb <span class="sc">|&gt;</span></span>
-<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U3"</span>, <span class="st">"U4"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb129-3"><a href="#cb129-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb142"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb142-1"><a href="#cb142-1" aria-hidden="true" tabindex="-1"></a>selected_cb <span class="ot">&lt;-</span> cb <span class="sc">|&gt;</span></span>
+<span id="cb142-2"><a href="#cb142-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U3"</span>, <span class="st">"U4"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb142-3"><a href="#cb142-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-auswahl-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a>selected_cb <span class="sc">|&gt;</span></span>
-<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U4"</span>, variable_id <span class="sc">==</span> <span class="st">"TEXT"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># Code 2: Score 1; Code 1: Score 0.5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a>selected_cb <span class="sc">|&gt;</span></span>
+<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U4"</span>, variable_id <span class="sc">==</span> <span class="st">"TEXT"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="co"># Code 2: Score 1; Code 1: Score 0.5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2275,21 +2542,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Die Excel-Datei enthält das gesamte Codebuch und die Auswahl als zwei Tabellenblätter. Die CSV-Datei enthält nur die Auswahl.</p>
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-excel -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb132"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(<span class="fu">list</span>(<span class="at">Codebuch =</span> cb, <span class="at">Auswahl =</span> selected_cb),</span>
-<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>)</span>
-<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb132-4"><a href="#cb132-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sep=; gibt Excel das Trennzeichen beim Öffnen vor.</span></span>
-<span id="cb132-5"><a href="#cb132-5" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/codebook.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb132-6"><a href="#cb132-6" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb132-7"><a href="#cb132-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(selected_cb, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb132-8"><a href="#cb132-8" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(<span class="fu">list</span>(<span class="at">Codebuch =</span> cb, <span class="at">Auswahl =</span> selected_cb),</span>
+<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>)</span>
+<span id="cb145-3"><a href="#cb145-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-4"><a href="#cb145-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sep=; gibt Excel das Trennzeichen beim Öffnen vor.</span></span>
+<span id="cb145-5"><a href="#cb145-5" aria-hidden="true" tabindex="-1"></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/codebook.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
+<span id="cb145-6"><a href="#cb145-6" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
+<span id="cb145-7"><a href="#cb145-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv2</span>(selected_cb, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb145-8"><a href="#cb145-8" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-dateien-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a>codebook_files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>, <span class="st">"Daten/Ergebnisse/codebook.csv"</span>)</span>
-<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">Datei =</span> <span class="fu">basename</span>(codebook_files),</span>
-<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">Bytes =</span> <span class="fu">file.info</span>(codebook_files)<span class="sc">$</span>size) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb146"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb146-1"><a href="#cb146-1" aria-hidden="true" tabindex="-1"></a>codebook_files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>, <span class="st">"Daten/Ergebnisse/codebook.csv"</span>)</span>
+<span id="cb146-2"><a href="#cb146-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">Datei =</span> <span class="fu">basename</span>(codebook_files),</span>
+<span id="cb146-3"><a href="#cb146-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">Bytes =</span> <span class="fu">file.info</span>(codebook_files)<span class="sc">$</span>size) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
@@ -2297,7 +2564,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 2 × 2
   Datei         Bytes
   &lt;chr&gt;         &lt;dbl&gt;
-1 codebook.xlsx  6817
+1 codebook.xlsx  6818
 2 codebook.csv   1032</code></pre>
 </div>
 </div>

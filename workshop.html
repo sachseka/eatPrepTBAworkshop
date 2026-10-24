@@ -1437,6 +1437,48 @@ eatPrepTBA
 </table>
 <p><span class="small">Das sind Paketvoreinstellungen. Studienspezifische Regeln ausdrücklich festlegen.</span></p>
 </section>
+<section id="status-code-art-code-id-und-score-unterscheiden" class="slide level2">
+<h2>Status, Code-Art, Code-ID und Score unterscheiden</h2>
+<p><strong>Beispiel: P006 · U5/Q1 nach <code>complete_design()</code></strong></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Spalte</th>
+<th>Aussage</th>
+<th>Wert im Beispiel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>code_status</code></td>
+<td>Technischer Bearbeitungs- bzw. Kodierstatus</td>
+<td><code>DISPLAYED</code>: angezeigt</td>
+</tr>
+<tr class="even">
+<td><code>code_type</code></td>
+<td>Bedeutung der Bewertung, einschließlich Missing-Art</td>
+<td><code>MISSING_BY_OMISSION</code>: ausgelassen</td>
+</tr>
+<tr class="odd">
+<td><code>code_id</code></td>
+<td>Kennnummer des Codes innerhalb der Variable</td>
+<td><code>-99</code></td>
+</tr>
+<tr class="even">
+<td><code>code_score</code></td>
+<td>Zugehörige Punktzahl für die Auswertung</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Mit der Regel „abschließende Auslassungen als nicht erreicht“ bleibt der Status <strong><code>DISPLAYED</code></strong>. Die übrigen Felder ändern sich zu <strong><code>MISSING_NOT_REACHED</code></strong>, <strong>−96</strong> und <strong><code>NA</code></strong>.</p>
+<p>Der Status allein beschreibt damit weder die endgültige Missing-Art noch die Punktzahl. Die Code-ID ist ebenfalls keine Punktzahl.</p>
+</section>
 <section id="abschließende-auslassungen-umkodieren" class="slide level2 compact-code object-preview">
 <h2>Abschließende Auslassungen umkodieren</h2>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-regeln-vergleichen -->
@@ -1706,9 +1748,8 @@ eatPrepTBA
 </div>
 <p><code>n_items</code> zählt vorgesehene Items. Nicht vorgesehene Aufgaben gehen nicht als fehlende Antworten in den Nenner ein.</p>
 </section>
-<section id="psychometrische-kennwerte-berechnen" class="slide level2 compact-code">
+<section id="psychometrische-kennwerte-berechnen" class="slide level2 compact-code object-preview">
 <h2>Psychometrische Kennwerte berechnen</h2>
-<p>Die Bereichszuordnung muss zur eigenen Studie passen.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-berechnen -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a></a>domains <span class="ot">&lt;-</span> <span class="fu">distinct</span>(units, unit_key)</span>
@@ -1717,16 +1758,75 @@ eatPrepTBA
 <span id="cb70-4"><a></a>psychometrics <span class="ot">&lt;-</span> <span class="fu">evaluate_psychometrics</span>(analysis_data, units, <span class="at">domains =</span> domains)</span>
 <span id="cb70-5"><a></a>psychometrics <span class="ot">&lt;-</span> <span class="fu">add_item_id</span>(psychometrics, units)</span>
 <span id="cb70-6"><a></a></span>
-<span id="cb70-7"><a></a>code_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
-<span id="cb70-8"><a></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(item_id)) <span class="sc">|&gt;</span></span>
-<span id="cb70-9"><a></a>  <span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">paste0</span>(unit_key, item_id)) <span class="sc">|&gt;</span></span>
-<span id="cb70-10"><a></a>  <span class="fu">select</span>(item, unit_key, variable_id, code_id, code_score,</span>
-<span id="cb70-11"><a></a>         code_n, code_p_valid, code_pbc) <span class="sc">|&gt;</span></span>
-<span id="cb70-12"><a></a>  <span class="fu">distinct</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb70-7"><a></a>psychometrics <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb70-8"><a></a>  <span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(item_id), <span class="cn">NA_character_</span>, <span class="fu">paste0</span>(unit_key, item_id))) <span class="sc">|&gt;</span></span>
+<span id="cb70-9"><a></a>  <span class="fu">relocate</span>(unit_key, variable_id, item, item_id)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
-<p>Die Kennwerte der synthetischen Studie zeigen, wie die Ausgabe zu lesen ist.</p>
-<p><a href="Syntaxen/03_datenaufbereitung.R" class="script-link" target="_blank" rel="noopener noreferrer">Zum Skript: 03_datenaufbereitung.R</a></p>
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  item  code_id code_n category_id category_n
+  &lt;chr&gt;   &lt;dbl&gt;  &lt;int&gt; &lt;chr&gt;            &lt;int&gt;
+1 U101      -98      1 &lt;NA&gt;                NA
+2 U101        0     17 B                    5
+3 U101        0     17 C                   12
+4 U101        1     21 A                   21</code></pre>
+</div>
+</div>
+</div>
+<p>Vollständige Ausgabe: <strong>37 Zeilen, 21 Spalten</strong>. Codes wiederholen sich je Antwortkategorie.</p>
+</section>
+<section id="kennungen-und-herkunft-der-variablen" class="slide level2 compact-code object-preview">
+<h2>Kennungen und Herkunft der Variablen</h2>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-variablen -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a></a>variable_info <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb72-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U3"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb72-3"><a></a>  <span class="fu">distinct</span>(unit_key, variable_id, item, item_id, variable_source_type)</span>
+<span id="cb72-4"><a></a><span class="fu">print</span>(variable_info) <span class="co"># Q1/Q2: BASE; TOTAL: SUM_SCORE</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  unit_key variable_id item  item_id variable_source_type
+  &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;               
+1 U3       Q1          &lt;NA&gt;  &lt;NA&gt;    BASE                
+2 U3       Q2          &lt;NA&gt;  &lt;NA&gt;    BASE                
+3 U3       TOTAL       U301  01      SUM_SCORE           </code></pre>
+</div>
+</div>
+</div>
+<p><code>unit_key</code> und <code>variable_id</code> identifizieren die Variable. <code>item_id</code> ist die Itemnummer aus den Metadaten, <code>item</code> die zusammengesetzte Kennung.</p>
+<p><strong><code>BASE</code>:</strong> direkte Antwortvariable. <strong><code>SUM_SCORE</code>:</strong> aus den Scores anderer Variablen abgeleitet. Q1 und Q2 bleiben in der Kennwertetabelle, auch ohne eigene Item-ID.</p>
+</section>
+<section id="code-id-code-art-und-punktzahl" class="slide level2 compact-code object-preview">
+<h2>Code-ID, Code-Art und Punktzahl</h2>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-codearten -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a></a>code_info <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb74-2"><a></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U301"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb74-3"><a></a>  <span class="fu">distinct</span>(code_id, code_type, code_score)</span>
+<span id="cb74-4"><a></a><span class="fu">print</span>(code_info) <span class="co"># Code 1: Teilpunkte; Code 2: volle Punktzahl</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  code_id code_type      code_score
+    &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt;
+1       0 RESIDUAL_AUTO         0  
+2       1 PARTIAL_CREDIT        0.5
+3       2 FULL_CREDIT           1  </code></pre>
+</div>
+</div>
+</div>
+<p><code>code_id</code> bezeichnet den Code; <code>code_type</code> beschreibt seine Bedeutung. <code>code_score</code> ist die zugehörige Punktzahl.</p>
+<p>Bei U301 bedeutet Code 1 <strong>Teilpunkte</strong> (<code>PARTIAL_CREDIT</code>), Code 2 <strong>volle Punktzahl</strong> (<code>FULL_CREDIT</code>). <code>RESIDUAL_AUTO</code> ist hier der automatische Restcode mit 0 Punkten; Missing-Arten stehen ebenfalls in <code>code_type</code>.</p>
 </section>
 <section id="antwortkategorie-code-und-score" class="slide level2">
 <h2>Antwortkategorie, Code und Score</h2>
@@ -1770,10 +1870,10 @@ eatPrepTBA
 <h2>Antwortkategorien: Welche Auswahl tritt wie oft auf?</h2>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-kategorien -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a>category_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
-<span id="cb71-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
-<span id="cb71-3"><a></a>  <span class="fu">select</span>(category_id, code_id, category_n, category_p_valid, category_pbc)</span>
-<span id="cb71-4"><a></a><span class="fu">print</span>(category_stats) <span class="co"># sollte A: 21, B: 5 und C: 12 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a></a>category_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb76-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
+<span id="cb76-3"><a></a>  <span class="fu">select</span>(category_id, code_id, category_n, category_p_valid, category_pbc)</span>
+<span id="cb76-4"><a></a><span class="fu">print</span>(category_stats) <span class="co"># sollte A: 21, B: 5 und C: 12 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -1794,11 +1894,11 @@ eatPrepTBA
 <h2>Codes: Welche Bewertungen treten wie oft auf?</h2>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-codes -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a>code_stats_mc <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
-<span id="cb73-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb73-3"><a></a>  <span class="fu">select</span>(code_id, code_score, code_n, code_p_valid, code_pbc) <span class="sc">|&gt;</span></span>
-<span id="cb73-4"><a></a>  <span class="fu">distinct</span>()</span>
-<span id="cb73-5"><a></a><span class="fu">print</span>(code_stats_mc) <span class="co"># sollte für Code 0 insgesamt 17 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a></a>code_stats_mc <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb78-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb78-3"><a></a>  <span class="fu">select</span>(code_id, code_score, code_n, code_p_valid, code_pbc) <span class="sc">|&gt;</span></span>
+<span id="cb78-4"><a></a>  <span class="fu">distinct</span>()</span>
+<span id="cb78-5"><a></a><span class="fu">print</span>(code_stats_mc) <span class="co"># sollte für Code 0 insgesamt 17 Antworten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -1815,15 +1915,130 @@ eatPrepTBA
 </div>
 <p>Code 0 umfasst B und C: <strong>5 + 12 = 17 Antworten</strong>. Die ungültige Antwort bleibt als Code −98 erkennbar. <code>distinct()</code> entfernt wiederholte Codezeilen aus der gemeinsamen Kategorie- und Codeausgabe.</p>
 </section>
+<section id="fallzahlen-insgesamt-und-mit-gültigem-score" class="slide level2 compact-code object-preview">
+<h2>Fallzahlen: insgesamt und mit gültigem Score</h2>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-nenner -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a></a>denominator_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb80-2"><a></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U501"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb80-3"><a></a>  <span class="fu">distinct</span>(code_id, code_score, code_n, code_n_total, code_n_valid)</span>
+<span id="cb80-4"><a></a><span class="fu">print</span>(denominator_stats) <span class="co"># insgesamt 20 Fälle, davon 19 mit gültigem Score</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  code_id code_score code_n code_n_total code_n_valid
+    &lt;dbl&gt;      &lt;dbl&gt;  &lt;int&gt;        &lt;int&gt;        &lt;int&gt;
+1     -99          0      1           20           19
+2     -96         NA      1           20           19
+3       0          0     12           20           19
+4       1          1      6           20           19</code></pre>
+</div>
+</div>
+</div>
+<p><strong>U501:</strong> <code>code_n</code> zählt den jeweiligen Code. <code>code_n_total</code> zählt alle <strong>20 vorgesehenen Fälle</strong> unter den ausgewählten Personen; <code>code_n_valid</code> die <strong>19 Fälle mit Score ungleich <code>NA</code></strong>.</p>
+<p>„Valid“ bedeutet hier <strong>vorhandener Score</strong>. Die Auslassung mit Score 0 zählt mit, Not reached mit <code>NA</code> nicht.</p>
+</section>
+<section id="anteile-der-nenner-macht-den-unterschied" class="slide level2 compact-code object-preview">
+<h2>Anteile: Der Nenner macht den Unterschied</h2>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-anteile -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a></a>proportion_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb82-2"><a></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U501"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb82-3"><a></a>  <span class="fu">distinct</span>(code_id, code_n, code_p_total, code_p_valid)</span>
+<span id="cb82-4"><a></a><span class="fu">print</span>(proportion_stats) <span class="co"># Code 1: 6/20 = 0.30 und 6/19 = 0.316</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  code_id code_n code_p_total code_p_valid
+    &lt;dbl&gt;  &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+1     -99      1         0.05       0.0526
+2     -96      1         0.05      NA     
+3       0     12         0.6        0.632 
+4       1      6         0.3        0.316 </code></pre>
+</div>
+</div>
+</div>
+<p><strong>Code 1:</strong> <code>code_p_total</code> = 6/20 = <strong>30 %</strong>; <code>code_p_valid</code> = 6/19 ≈ <strong>31,6 %</strong>.</p>
+<p>Die Spalten enthalten Anteile zwischen 0 und 1. Für einen Code mit <code>code_score = NA</code> bleibt auch <code>code_p_valid</code> gleich <code>NA</code>.</p>
+<p>Die wiederholten Codezeilen werden vor der Darstellung mit <code>distinct()</code> zusammengefasst.</p>
+</section>
+<section id="antwortkategorien-bezeichnungen-und-anteile" class="slide level2 compact-code object-preview">
+<h2>Antwortkategorien: Bezeichnungen und Anteile</h2>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-kategoriedetails -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a></a>category_details <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb84-2"><a></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U501"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
+<span id="cb84-3"><a></a>  <span class="fu">select</span>(category_id, category_label, category_n,</span>
+<span id="cb84-4"><a></a>         category_p_total, category_p_valid)</span>
+<span id="cb84-5"><a></a><span class="fu">print</span>(category_details)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  category_id category_label category_n category_p_total category_p_valid
+  &lt;chr&gt;       &lt;chr&gt;               &lt;int&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+1 B           Distraktor B            7             0.35            0.368
+2 C           Distraktor C            5             0.25            0.263
+3 A           Richtig                 6             0.3             0.316</code></pre>
+</div>
+</div>
+</div>
+<p><code>category_id</code> ist der Antwortwert, <code>category_label</code> seine Bezeichnung. <code>category_n</code> zählt diese Kategorie.</p>
+<p>Auch hier gelten die Nenner <strong>20 insgesamt</strong> und <strong>19 mit gültigem Score</strong>: Distraktor B wurde siebenmal gewählt → <code>category_p_total</code> = <strong>35 %</strong>, <code>category_p_valid</code> ≈ <strong>36,8 %</strong>.</p>
+<p>Bei Variablen ohne solche Antwortkategorien können die <code>category_*</code>-Spalten <code>NA</code> enthalten.</p>
+</section>
+<section id="pbc-punktbiseriale-korrelation" class="slide level2 compact-code object-preview">
+<h2>PBC: punktbiseriale Korrelation</h2>
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-pbc -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a></a>discrimination_stats <span class="ot">&lt;-</span> psychometrics <span class="sc">|&gt;</span></span>
+<span id="cb86-2"><a></a>  <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"U101"</span>, <span class="sc">!</span><span class="fu">is.na</span>(category_id)) <span class="sc">|&gt;</span></span>
+<span id="cb86-3"><a></a>  <span class="fu">select</span>(category_id, code_id, domain, category_pbc, code_pbc)</span>
+<span id="cb86-4"><a></a><span class="fu">print</span>(discrimination_stats)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  category_id code_id domain category_pbc code_pbc
+  &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;
+1 B                 0 Lesen       0.00492   -0.308
+2 C                 0 Lesen      -0.338     -0.308
+3 A                 1 Lesen       0.312      0.309</code></pre>
+</div>
+</div>
+</div>
+<p><code>code_pbc</code> und <code>category_pbc</code> korrelieren das <strong>Auftreten</strong> eines Codes bzw. einer Kategorie mit dem mittleren Itemscore der Person im Bereich <code>domain</code>.</p>
+</section>
+<section id="pbc-richtig-einordnen" class="slide level2">
+<h2>PBC richtig einordnen</h2>
+<ul>
+<li><strong>Vergleichsscore:</strong> mittlerer Score der verknüpften Items im Bereich. Fehlende Scores werden ausgelassen.</li>
+<li><strong>Positives Vorzeichen:</strong> Der Code bzw. die Kategorie tritt häufiger bei höheren Bereichsscores auf; bei negativem Vorzeichen häufiger bei niedrigeren.</li>
+<li><strong>Keine Part-whole-Korrektur:</strong> Der eigene Itemscore bleibt im Bereichsmittelwert enthalten.</li>
+<li><strong>Unterschiedliche Fallbasis:</strong> Codes berücksichtigen auch Missing-Codes; Kategorien nur Antworten mit <code>code_id &gt;= 0</code>.</li>
+</ul>
+<p>Bei U101: <strong>Code 1 ≈ 0,309</strong> auf Basis von 39 Fällen; <strong>Kategorie A ≈ 0,312</strong> auf Basis von 38 Fällen.</p>
+<p><a href="https://iqb-research.github.io/eatPrepTBA/reference/evaluate_psychometrics.html" class="small" target="_blank" rel="noopener noreferrer"><code>evaluate_psychometrics()</code>: Funktionsreferenz</a></p>
+</section>
 <section id="scores-welche-punktzahlen-gehen-in-die-skalierung" class="slide level2 compact-code object-preview">
 <h2>Scores: Welche Punktzahlen gehen in die Skalierung?</h2>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-scores -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a>score_stats <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
-<span id="cb75-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb75-3"><a></a>  <span class="fu">count</span>(code_score, <span class="at">name =</span> <span class="st">"score_n"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb75-4"><a></a>  <span class="fu">mutate</span>(<span class="at">score_p =</span> score_n <span class="sc">/</span> <span class="fu">sum</span>(score_n))</span>
-<span id="cb75-5"><a></a><span class="fu">print</span>(score_stats) <span class="co"># sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a></a>score_stats <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
+<span id="cb88-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U1"</span>, item_id <span class="sc">==</span> <span class="st">"01"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb88-3"><a></a>  <span class="fu">count</span>(code_score, <span class="at">name =</span> <span class="st">"score_n"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb88-4"><a></a>  <span class="fu">mutate</span>(<span class="at">score_p =</span> score_n <span class="sc">/</span> <span class="fu">sum</span>(score_n))</span>
+<span id="cb88-5"><a></a><span class="fu">print</span>(score_stats) <span class="co"># sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -1857,10 +2072,10 @@ eatPrepTBA
 <h2>Den Skalierungsdatensatz erstellen</h2>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#score-datensatz-erstellen -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a>scaling_data <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
-<span id="cb77-2"><a></a>  <span class="fu">select</span>(group_id, login_name, login_code, item, code_score) <span class="sc">|&gt;</span></span>
-<span id="cb77-3"><a></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> item, <span class="at">values_from =</span> code_score) <span class="sc">|&gt;</span></span>
-<span id="cb77-4"><a></a>  <span class="fu">arrange</span>(group_id, login_name, login_code)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a></a>scaling_data <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
+<span id="cb90-2"><a></a>  <span class="fu">select</span>(group_id, login_name, login_code, item, code_score) <span class="sc">|&gt;</span></span>
+<span id="cb90-3"><a></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> item, <span class="at">values_from =</span> code_score) <span class="sc">|&gt;</span></span>
+<span id="cb90-4"><a></a>  <span class="fu">arrange</span>(group_id, login_name, login_code)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -1882,10 +2097,10 @@ eatPrepTBA
 <h2>Den Skalierungsdatensatz prüfen</h2>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-pruefen -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a>item_columns <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(scaling_data), person_columns)</span>
-<span id="cb79-2"><a></a>persons <span class="ot">&lt;-</span> <span class="fu">distinct</span>(item_data, group_id, login_name, login_code)</span>
-<span id="cb79-3"><a></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(scaling_data) <span class="sc">==</span> <span class="fu">nrow</span>(persons))</span>
-<span id="cb79-4"><a></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">vapply</span>(scaling_data[item_columns], is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a></a>item_columns <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(scaling_data), person_columns)</span>
+<span id="cb92-2"><a></a>persons <span class="ot">&lt;-</span> <span class="fu">distinct</span>(item_data, group_id, login_name, login_code)</span>
+<span id="cb92-3"><a></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(scaling_data) <span class="sc">==</span> <span class="fu">nrow</span>(persons))</span>
+<span id="cb92-4"><a></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">vapply</span>(scaling_data[item_columns], is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -1899,35 +2114,6 @@ eatPrepTBA
 </div>
 </div>
 <p>Die drei Testcenter-Kennungen bleiben im Datensatz. Die Prüfungen kontrollieren die Personenzahl und numerische Itemspalten.</p>
-</section>
-<section id="kennwerte-und-skalierungsdaten-für-excel-speichern" class="slide level2 compact-code object-preview">
-<h2>Kennwerte und Skalierungsdaten für Excel speichern</h2>
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-csv -->
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/psychometrics.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb81-2"><a></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb81-3"><a></a><span class="fu">write.csv2</span>(code_stats, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb81-4"><a></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<!-- /r-source -->
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#skalierung-csv -->
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/scaling_data.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb82-2"><a></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb82-3"><a></a><span class="fu">write.csv2</span>(scaling_data, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb82-4"><a></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<!-- /r-source -->
-<div class="r-console">
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>             Datei Bytes
-  scaling_data.csv  3404
- psychometrics.csv  3292</code></pre>
-</div>
-</div>
-</div>
-<p><strong><code>sep=;</code> gibt Excel das Trennzeichen vor.</strong> UTF-16LE erhält Umlaute; <code>write.csv2()</code> schreibt Dezimalkommas. Zum Wiedereinlesen in R: <code>read.csv2(pfad, skip = 1, fileEncoding = "UTF-16LE")</code>.</p>
 </section>
 <section id="ergebnisse-aus-einer-durchgehenden-aufbereitung" class="slide level2 compact-code">
 <h2>Ergebnisse aus einer durchgehenden Aufbereitung</h2>
@@ -1968,9 +2154,9 @@ eatPrepTBA
 </table>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#long-rds -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a></a><span class="fu">saveRDS</span>(analysis_data, <span class="st">"Daten/Ergebnisse/analysis_long.rds"</span>)</span>
-<span id="cb84-2"><a></a><span class="fu">saveRDS</span>(design_items, <span class="st">"Daten/Ergebnisse/design_items.rds"</span>)</span>
-<span id="cb84-3"><a></a><span class="fu">saveRDS</span>(scaling_data, <span class="st">"Daten/Ergebnisse/05_scaling_data.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a></a><span class="fu">saveRDS</span>(analysis_data, <span class="st">"Daten/Ergebnisse/analysis_long.rds"</span>)</span>
+<span id="cb94-2"><a></a><span class="fu">saveRDS</span>(design_items, <span class="st">"Daten/Ergebnisse/design_items.rds"</span>)</span>
+<span id="cb94-3"><a></a><span class="fu">saveRDS</span>(scaling_data, <span class="st">"Daten/Ergebnisse/05_scaling_data.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p><code>analysis_long.rds</code> und <code>design_items.rds</code> bewahren zusätzlich Codes, Status und Missing-Arten.</p>
@@ -1995,13 +2181,13 @@ eatPrepTBA
 <h2>Logdaten einlesen und einzelne Ereignisse ansehen</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-read -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a>logs <span class="ot">&lt;-</span> <span class="fu">read_logs</span>(<span class="st">"Daten/Logs.csv"</span>)</span>
-<span id="cb85-2"><a></a><span class="co"># Alternativ nach API-Abruf: logs &lt;- readRDS("Daten/EigeneDaten/logs.rds")</span></span>
-<span id="cb85-3"><a></a></span>
-<span id="cb85-4"><a></a><span class="co"># Ältere Exporte haben keinen getrennten Unit-Alias.</span></span>
-<span id="cb85-5"><a></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"unit_alias"</span> <span class="sc">%in%</span> <span class="fu">names</span>(logs)) logs<span class="sc">$</span>unit_alias <span class="ot">&lt;-</span> logs<span class="sc">$</span>unit_key</span>
-<span id="cb85-6"><a></a></span>
-<span id="cb85-7"><a></a><span class="fu">count</span>(logs, group_id, login_name, booklet_id) <span class="co"># P001: 9, P002: 6 Ereignisse</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a></a>logs <span class="ot">&lt;-</span> <span class="fu">read_logs</span>(<span class="st">"Daten/Logs.csv"</span>)</span>
+<span id="cb95-2"><a></a><span class="co"># Alternativ nach API-Abruf: logs &lt;- readRDS("Daten/EigeneDaten/logs.rds")</span></span>
+<span id="cb95-3"><a></a></span>
+<span id="cb95-4"><a></a><span class="co"># Ältere Exporte haben keinen getrennten Unit-Alias.</span></span>
+<span id="cb95-5"><a></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"unit_alias"</span> <span class="sc">%in%</span> <span class="fu">names</span>(logs)) logs<span class="sc">$</span>unit_alias <span class="ot">&lt;-</span> logs<span class="sc">$</span>unit_key</span>
+<span id="cb95-6"><a></a></span>
+<span id="cb95-7"><a></a><span class="fu">count</span>(logs, group_id, login_name, booklet_id) <span class="co"># P001: 9, P002: 6 Ereignisse</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2023,7 +2209,7 @@ eatPrepTBA
 <h2>Welche Ereignistypen sind vorhanden?</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-inventory -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a>inventory <span class="ot">&lt;-</span> <span class="fu">summarise_log_inventory</span>(logs)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a></a>inventory <span class="ot">&lt;-</span> <span class="fu">summarise_log_inventory</span>(logs)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2047,11 +2233,11 @@ eatPrepTBA
 <h2>Auffälligkeiten vor der Zeitinterpretation prüfen</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-qc -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a>anomalies <span class="ot">&lt;-</span> <span class="fu">detect_log_anomalies</span>(logs)</span>
-<span id="cb89-2"><a></a>qc <span class="ot">&lt;-</span> <span class="fu">summarise_log_qc</span>(logs, <span class="at">anomalies =</span> anomalies)</span>
-<span id="cb89-3"><a></a></span>
-<span id="cb89-4"><a></a>anomalies <span class="sc">|&gt;</span></span>
-<span id="cb89-5"><a></a>  <span class="fu">select</span>(login_name, booklet_id, anomaly_code, severity, evidence)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a>anomalies <span class="ot">&lt;-</span> <span class="fu">detect_log_anomalies</span>(logs)</span>
+<span id="cb99-2"><a></a>qc <span class="ot">&lt;-</span> <span class="fu">summarise_log_qc</span>(logs, <span class="at">anomalies =</span> anomalies)</span>
+<span id="cb99-3"><a></a></span>
+<span id="cb99-4"><a></a>anomalies <span class="sc">|&gt;</span></span>
+<span id="cb99-5"><a></a>  <span class="fu">select</span>(login_name, booklet_id, anomaly_code, severity, evidence)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2071,14 +2257,14 @@ eatPrepTBA
 <h2>Beobachtete Unit- und Ladezeiten in Sekunden</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-times -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a></a>unit_times <span class="ot">&lt;-</span> <span class="fu">estimate_unit_times</span>(logs, <span class="at">include_environment =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb91-2"><a></a></span>
-<span id="cb91-3"><a></a><span class="co"># Millisekunden in Sekunden umrechnen:</span></span>
-<span id="cb91-4"><a></a>times <span class="ot">&lt;-</span> unit_times <span class="sc">|&gt;</span></span>
-<span id="cb91-5"><a></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id, unit_key,</span>
-<span id="cb91-6"><a></a>            unit_n_play, <span class="at">unit_time_s =</span> unit_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb91-7"><a></a>            <span class="at">unit_loadtime_s =</span> unit_loadtime <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb91-8"><a></a>            n_run_no_load, n_failed_loadings)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a>unit_times <span class="ot">&lt;-</span> <span class="fu">estimate_unit_times</span>(logs, <span class="at">include_environment =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb101-2"><a></a></span>
+<span id="cb101-3"><a></a><span class="co"># Millisekunden in Sekunden umrechnen:</span></span>
+<span id="cb101-4"><a></a>times <span class="ot">&lt;-</span> unit_times <span class="sc">|&gt;</span></span>
+<span id="cb101-5"><a></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id, unit_key,</span>
+<span id="cb101-6"><a></a>            unit_n_play, <span class="at">unit_time_s =</span> unit_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb101-7"><a></a>            <span class="at">unit_loadtime_s =</span> unit_loadtime <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb101-8"><a></a>            n_run_no_load, n_failed_loadings)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2097,13 +2283,13 @@ eatPrepTBA
 <h2>Abgeschlossene und offene Fokusverluste unterscheiden</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-focus -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a></a>focus <span class="ot">&lt;-</span> <span class="fu">summarise_log_focus</span>(logs)</span>
-<span id="cb93-2"><a></a>focus_summary <span class="ot">&lt;-</span> focus <span class="sc">|&gt;</span></span>
-<span id="cb93-3"><a></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id,</span>
-<span id="cb93-4"><a></a>            n_focus_lost, n_focus_regained,</span>
-<span id="cb93-5"><a></a>            <span class="at">focus_lost_s =</span> total_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb93-6"><a></a>            <span class="at">max_focus_lost_s =</span> max_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb93-7"><a></a>            has_unresolved_focus_loss)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a></a>focus <span class="ot">&lt;-</span> <span class="fu">summarise_log_focus</span>(logs)</span>
+<span id="cb103-2"><a></a>focus_summary <span class="ot">&lt;-</span> focus <span class="sc">|&gt;</span></span>
+<span id="cb103-3"><a></a>  <span class="fu">transmute</span>(group_id, login_name, login_code, booklet_id,</span>
+<span id="cb103-4"><a></a>            n_focus_lost, n_focus_regained,</span>
+<span id="cb103-5"><a></a>            <span class="at">focus_lost_s =</span> total_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb103-6"><a></a>            <span class="at">max_focus_lost_s =</span> max_focus_lost_time <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb103-7"><a></a>            has_unresolved_focus_loss)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2123,10 +2309,10 @@ eatPrepTBA
 <h2>Sessionübersicht erstellen</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-session -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a></a>session_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"group_id"</span>, <span class="st">"login_name"</span>, <span class="st">"login_code"</span>, <span class="st">"booklet_id"</span>)</span>
-<span id="cb95-2"><a></a>session_overview <span class="ot">&lt;-</span> qc <span class="sc">|&gt;</span></span>
-<span id="cb95-3"><a></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(session_keys), log_qc_flag) <span class="sc">|&gt;</span></span>
-<span id="cb95-4"><a></a>  <span class="fu">left_join</span>(focus_summary, <span class="at">by =</span> session_keys)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a></a>session_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"group_id"</span>, <span class="st">"login_name"</span>, <span class="st">"login_code"</span>, <span class="st">"booklet_id"</span>)</span>
+<span id="cb105-2"><a></a>session_overview <span class="ot">&lt;-</span> qc <span class="sc">|&gt;</span></span>
+<span id="cb105-3"><a></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(session_keys), log_qc_flag) <span class="sc">|&gt;</span></span>
+<span id="cb105-4"><a></a>  <span class="fu">left_join</span>(focus_summary, <span class="at">by =</span> session_keys)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2144,18 +2330,10 @@ eatPrepTBA
 </section>
 <section id="logergebnisse-speichern" class="slide level2 compact-code">
 <h2>Logergebnisse speichern</h2>
-<!-- r-source: Syntaxen/04_logs.R#logs-zeiten-csv -->
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/log_unit_times.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb97-2"><a></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb97-3"><a></a><span class="fu">write.csv2</span>(times, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb97-4"><a></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<!-- /r-source -->
 <!-- r-source: Syntaxen/04_logs.R#logs-rds -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a></a><span class="fu">saveRDS</span>(<span class="fu">list</span>(<span class="at">inventory =</span> inventory, <span class="at">anomalies =</span> anomalies, <span class="at">qc =</span> qc,</span>
-<span id="cb98-2"><a></a>             <span class="at">unit_times =</span> unit_times, <span class="at">focus =</span> focus), <span class="st">"Daten/Ergebnisse/log_qc.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a></a><span class="fu">saveRDS</span>(<span class="fu">list</span>(<span class="at">inventory =</span> inventory, <span class="at">anomalies =</span> anomalies, <span class="at">qc =</span> qc,</span>
+<span id="cb107-2"><a></a>             <span class="at">unit_times =</span> unit_times, <span class="at">focus =</span> focus), <span class="st">"Daten/Ergebnisse/log_qc.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Das Skript speichert außerdem Ereignisinventar, Auffälligkeiten und Sessionübersicht als CSV. Die RDS-Datei bewahrt die Tabellen für die weitere Arbeit in R.</p>
@@ -2173,18 +2351,18 @@ eatPrepTBA
 <h2>Mit eigenem Zugang: IQB-Studio vorbereiten</h2>
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-settings -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a>studio_version <span class="ot">&lt;-</span> <span class="st">"21.0.0"</span> <span class="co"># Version der eigenen Anmeldeseite übernehmen</span></span>
-<span id="cb99-2"><a></a>studio_workspace_id <span class="ot">&lt;-</span> <span class="dv">1300</span> <span class="co"># Beispiel: eigene Workspace-ID einsetzen</span></span>
-<span id="cb99-3"><a></a>selected_units <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"UNIT-1"</span>, <span class="st">"UNIT-2"</span>) <span class="co"># Eigene Unit-Namen; NULL für alle</span></span>
-<span id="cb99-4"><a></a>missing_profile <span class="ot">&lt;-</span> <span class="st">"IQB-Standard"</span> <span class="co"># Eigenen Profilnamen prüfen; NULL ohne Profil</span></span>
-<span id="cb99-5"><a></a>export_path <span class="ot">&lt;-</span> <span class="st">"Daten/Ergebnisse/codebooks_studio"</span></span>
-<span id="cb99-6"><a></a><span class="fu">dir.create</span>(export_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a></a>studio_version <span class="ot">&lt;-</span> <span class="st">"21.0.0"</span> <span class="co"># Version der eigenen Anmeldeseite übernehmen</span></span>
+<span id="cb108-2"><a></a>studio_workspace_id <span class="ot">&lt;-</span> <span class="dv">1300</span> <span class="co"># Beispiel: eigene Workspace-ID einsetzen</span></span>
+<span id="cb108-3"><a></a>selected_units <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"UNIT-1"</span>, <span class="st">"UNIT-2"</span>) <span class="co"># Eigene Unit-Namen; NULL für alle</span></span>
+<span id="cb108-4"><a></a>missing_profile <span class="ot">&lt;-</span> <span class="st">"IQB-Standard"</span> <span class="co"># Eigenen Profilnamen prüfen; NULL ohne Profil</span></span>
+<span id="cb108-5"><a></a>export_path <span class="ot">&lt;-</span> <span class="st">"Daten/Ergebnisse/codebooks_studio"</span></span>
+<span id="cb108-6"><a></a><span class="fu">dir.create</span>(export_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-login -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a></a>login <span class="ot">&lt;-</span> <span class="fu">login_studio</span>(<span class="at">app_version =</span> studio_version, <span class="at">keyring =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb100-2"><a></a>workspace <span class="ot">&lt;-</span> <span class="fu">access_workspace</span>(login, <span class="at">ws_id =</span> studio_workspace_id)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a></a>login <span class="ot">&lt;-</span> <span class="fu">login_studio</span>(<span class="at">app_version =</span> studio_version, <span class="at">keyring =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb109-2"><a></a>workspace <span class="ot">&lt;-</span> <span class="fu">access_workspace</span>(login, <span class="at">ws_id =</span> studio_workspace_id)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Vorlage für eigene Daten: Version, Workspace und Unit-Auswahl anpassen. Die Anmeldung verwendet www.iqb-studio.de und den lokalen Passwortspeicher.</p>
@@ -2193,13 +2371,13 @@ eatPrepTBA
 <h2>Codebuch aus IQB-Studio abrufen</h2>
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-prepare -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a>cb_studio <span class="ot">&lt;-</span> <span class="fu">prepare_codebook</span>(workspace, <span class="at">unit_keys =</span> selected_units,</span>
-<span id="cb101-2"><a></a>                              <span class="at">missings_profile =</span> missing_profile,</span>
-<span id="cb101-3"><a></a>                              <span class="at">only_coded =</span> <span class="cn">TRUE</span>, <span class="at">show_score =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb101-4"><a></a>                              <span class="at">derived =</span> <span class="cn">TRUE</span>, <span class="at">manual =</span> <span class="cn">TRUE</span>, <span class="at">closed =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb101-5"><a></a><span class="fu">names</span>(cb_studio)</span>
-<span id="cb101-6"><a></a><span class="fu">head</span>(cb_studio)</span>
-<span id="cb101-7"><a></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(cb_studio, <span class="fu">file.path</span>(export_path, <span class="st">"codebook.xlsx"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a></a>cb_studio <span class="ot">&lt;-</span> <span class="fu">prepare_codebook</span>(workspace, <span class="at">unit_keys =</span> selected_units,</span>
+<span id="cb110-2"><a></a>                              <span class="at">missings_profile =</span> missing_profile,</span>
+<span id="cb110-3"><a></a>                              <span class="at">only_coded =</span> <span class="cn">TRUE</span>, <span class="at">show_score =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb110-4"><a></a>                              <span class="at">derived =</span> <span class="cn">TRUE</span>, <span class="at">manual =</span> <span class="cn">TRUE</span>, <span class="at">closed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb110-5"><a></a><span class="fu">names</span>(cb_studio)</span>
+<span id="cb110-6"><a></a><span class="fu">head</span>(cb_studio)</span>
+<span id="cb110-7"><a></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(cb_studio, <span class="fu">file.path</span>(export_path, <span class="st">"codebook.xlsx"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p><code>only_coded</code> wählt Variablen mit Codes. <code>derived</code>, <code>manual</code> und <code>closed</code> nehmen abgeleitete, manuell kodierte und geschlossen kodierbare Variablen auf.</p>
@@ -2210,9 +2388,9 @@ eatPrepTBA
 <h2>DOCX-Kodiermanual direkt aus IQB-Studio herunterladen</h2>
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-docx -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a></a><span class="fu">download_codebook</span>(workspace, <span class="at">path =</span> export_path, <span class="at">unit_keys =</span> selected_units,</span>
-<span id="cb102-2"><a></a>                  <span class="at">format =</span> <span class="st">"docx"</span>, <span class="at">general_instructions =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb102-3"><a></a>                  <span class="at">missings_profile =</span> missing_profile, <span class="at">show_score =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a></a><span class="fu">download_codebook</span>(workspace, <span class="at">path =</span> export_path, <span class="at">unit_keys =</span> selected_units,</span>
+<span id="cb111-2"><a></a>                  <span class="at">format =</span> <span class="st">"docx"</span>, <span class="at">general_instructions =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb111-3"><a></a>                  <span class="at">missings_profile =</span> missing_profile, <span class="at">show_score =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p><code>general_instructions = TRUE</code> übernimmt allgemeine Kodieranweisungen. <code>missings_profile</code> ergänzt das in IQB-Studio ausgewählte Missing-Profil.</p>
@@ -2223,16 +2401,16 @@ eatPrepTBA
 <h2>Ohne Zugang: vorbereitete Codebuchtabelle laden</h2>
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-read -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a></a>cb <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"Daten/codebook.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb103-2"><a></a>                      <span class="at">col_types =</span> readr<span class="sc">::</span><span class="fu">cols</span>(<span class="at">code_id =</span> readr<span class="sc">::</span><span class="fu">col_character</span>()))</span>
-<span id="cb103-3"><a></a><span class="fu">count</span>(cb, unit_key, variable_id) <span class="co"># 10 Variablen aus 6 Units</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a></a>cb <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"Daten/codebook.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb112-2"><a></a>                      <span class="at">col_types =</span> readr<span class="sc">::</span><span class="fu">cols</span>(<span class="at">code_id =</span> readr<span class="sc">::</span><span class="fu">col_character</span>()))</span>
+<span id="cb112-3"><a></a><span class="fu">count</span>(cb, unit_key, variable_id) <span class="co"># 10 Variablen aus 6 Units</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a></a>cb <span class="sc">|&gt;</span></span>
-<span id="cb104-2"><a></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score) <span class="sc">|&gt;</span></span>
-<span id="cb104-3"><a></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a></a>cb <span class="sc">|&gt;</span></span>
+<span id="cb113-2"><a></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score) <span class="sc">|&gt;</span></span>
+<span id="cb113-3"><a></a>  <span class="fu">head</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2254,16 +2432,16 @@ eatPrepTBA
 <h2>Units auswählen und Code von Score unterscheiden</h2>
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-select -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a></a>selected_cb <span class="ot">&lt;-</span> cb <span class="sc">|&gt;</span></span>
-<span id="cb106-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U3"</span>, <span class="st">"U4"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb106-3"><a></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a></a>selected_cb <span class="ot">&lt;-</span> cb <span class="sc">|&gt;</span></span>
+<span id="cb115-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U3"</span>, <span class="st">"U4"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb115-3"><a></a>  <span class="fu">select</span>(unit_key, variable_id, code_id, code_label, code_score)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-auswahl-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a></a>selected_cb <span class="sc">|&gt;</span></span>
-<span id="cb107-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U4"</span>, variable_id <span class="sc">==</span> <span class="st">"TEXT"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb107-3"><a></a>  <span class="fu">print</span>() <span class="co"># Code 2: Score 1; Code 1: Score 0.5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a></a>selected_cb <span class="sc">|&gt;</span></span>
+<span id="cb116-2"><a></a>  <span class="fu">filter</span>(unit_key <span class="sc">==</span> <span class="st">"U4"</span>, variable_id <span class="sc">==</span> <span class="st">"TEXT"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb116-3"><a></a>  <span class="fu">print</span>() <span class="co"># Code 2: Score 1; Code 1: Score 0.5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2280,25 +2458,19 @@ eatPrepTBA
 </div>
 <p>Bei U4/TEXT bedeutet Code 2 einen Punkt, Code 1 einen halben Punkt. Die Code-ID ist keine Punktzahl.</p>
 </section>
-<section id="codebuch-als-excel-und-csv-speichern" class="slide level2 compact-code">
-<h2>Codebuch als Excel und CSV speichern</h2>
-<!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-excel -->
+<section id="codebuch-als-excel-speichern" class="slide level2 compact-code">
+<h2>Codebuch als Excel speichern</h2>
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-xlsx -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(<span class="fu">list</span>(<span class="at">Codebuch =</span> cb, <span class="at">Auswahl =</span> selected_cb),</span>
-<span id="cb109-2"><a></a>                    <span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>)</span>
-<span id="cb109-3"><a></a></span>
-<span id="cb109-4"><a></a><span class="co"># sep=; gibt Excel das Trennzeichen beim Öffnen vor.</span></span>
-<span id="cb109-5"><a></a>csv <span class="ot">&lt;-</span> <span class="fu">file</span>(<span class="st">"Daten/Ergebnisse/codebook.csv"</span>, <span class="st">"wt"</span>, <span class="at">encoding =</span> <span class="st">"UTF-16LE"</span>)</span>
-<span id="cb109-6"><a></a><span class="fu">writeLines</span>(<span class="st">"sep=;"</span>, csv)</span>
-<span id="cb109-7"><a></a><span class="fu">write.csv2</span>(selected_cb, csv, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb109-8"><a></a><span class="fu">close</span>(csv)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(<span class="fu">list</span>(<span class="at">Codebuch =</span> cb, <span class="at">Auswahl =</span> selected_cb),</span>
+<span id="cb118-2"><a></a>                    <span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-dateien-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a></a>codebook_files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>, <span class="st">"Daten/Ergebnisse/codebook.csv"</span>)</span>
-<span id="cb110-2"><a></a><span class="fu">tibble</span>(<span class="at">Datei =</span> <span class="fu">basename</span>(codebook_files),</span>
-<span id="cb110-3"><a></a>       <span class="at">Bytes =</span> <span class="fu">file.info</span>(codebook_files)<span class="sc">$</span>size) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a></a>codebook_files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>, <span class="st">"Daten/Ergebnisse/codebook.csv"</span>)</span>
+<span id="cb119-2"><a></a><span class="fu">tibble</span>(<span class="at">Datei =</span> <span class="fu">basename</span>(codebook_files),</span>
+<span id="cb119-3"><a></a>       <span class="at">Bytes =</span> <span class="fu">file.info</span>(codebook_files)<span class="sc">$</span>size) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2307,12 +2479,12 @@ eatPrepTBA
 <pre><code># A tibble: 2 × 2
   Datei         Bytes
   &lt;chr&gt;         &lt;dbl&gt;
-1 codebook.xlsx  6817
+1 codebook.xlsx  6819
 2 codebook.csv   1032</code></pre>
 </div>
 </div>
 </div>
-<p>Excel enthält die Blätter <code>Codebuch</code> und <code>Auswahl</code>; die CSV enthält die ausgewählten Units.</p>
+<p>Excel enthält die Blätter <code>Codebuch</code> und <code>Auswahl</code>. Das Skript speichert die Auswahl außerdem als CSV.</p>
 </section>
 <section id="pause-und-ausprobieren-2" class="slide level2 pause exercise">
 <h2>Pause und Ausprobieren</h2>

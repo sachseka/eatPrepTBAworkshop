@@ -213,21 +213,32 @@ domains$domain <- "Lesen"
 psychometrics <- evaluate_psychometrics(analysis_data, units, domains = domains)
 psychometrics <- add_item_id(psychometrics, units)
 
-code_stats <- psychometrics |>
-  filter(!is.na(item_id)) |>
-  mutate(item = paste0(unit_key, item_id)) |>
-  select(item, unit_key, variable_id, code_id, code_score,
-         code_n, code_p_valid, code_pbc) |>
-  distinct()
+psychometrics <- psychometrics |>
+  mutate(item = if_else(is.na(item_id), NA_character_, paste0(unit_key, item_id))) |>
+  relocate(unit_key, variable_id, item, item_id)
+
+# Alle Spalten und Kategoriezeilen exportieren, auch die der Basisvariablen.
 csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(code_stats, csv, row.names = FALSE)
+write.csv2(psychometrics, csv, row.names = FALSE)
 close(csv)
+saveRDS(psychometrics, "Daten/Ergebnisse/psychometrics.rds")
 
-code_stats |>
+psychometrics |>
   filter(item == "U101") |>
-  select(item, code_id, code_n, code_p_valid, code_pbc) |>
+  select(item, code_id, code_n, category_id, category_n) |>
   head(4) |> print()
+
+# Kennungen und Herkunft der Variablen ansehen.
+variable_info <- psychometrics |>
+  filter(unit_key == "U3") |>
+  distinct(unit_key, variable_id, item, item_id, variable_source_type)
+print(variable_info) # Q1/Q2: BASE; TOTAL: SUM_SCORE
+
+code_info <- psychometrics |>
+  filter(item == "U301") |>
+  distinct(code_id, code_type, code_score)
+print(code_info) # Code 1: Teilpunkte; Code 2: volle Punktzahl
 
 # Antwortkategorien unterscheiden die gewählten Antworten: A, B und C.
 category_stats <- psychometrics |>
@@ -241,6 +252,30 @@ code_stats_mc <- psychometrics |>
   select(code_id, code_score, code_n, code_p_valid, code_pbc) |>
   distinct()
 print(code_stats_mc) # sollte für Code 0 insgesamt 17 Antworten zeigen
+
+# Total zählt alle vorgesehenen Fälle; valid zählt Scores ungleich NA.
+denominator_stats <- psychometrics |>
+  filter(item == "U501") |>
+  distinct(code_id, code_score, code_n, code_n_total, code_n_valid)
+print(denominator_stats) # insgesamt 20 Fälle, davon 19 mit gültigem Score
+
+proportion_stats <- psychometrics |>
+  filter(item == "U501") |>
+  distinct(code_id, code_n, code_p_total, code_p_valid)
+print(proportion_stats) # Code 1: 6/20 = 0.30 und 6/19 = 0.316
+
+# Kategorien verwenden dieselben Nenner, zählen aber einzelne Antwortwerte.
+category_details <- psychometrics |>
+  filter(item == "U501", !is.na(category_id)) |>
+  select(category_id, category_label, category_n,
+         category_p_total, category_p_valid)
+print(category_details)
+
+# PBC: Zusammenhang mit dem mittleren Itemscore im Bereich.
+discrimination_stats <- psychometrics |>
+  filter(item == "U101", !is.na(category_id)) |>
+  select(category_id, code_id, domain, category_pbc, code_pbc)
+print(discrimination_stats)
 
 # Scorehäufigkeiten direkt zählen; evaluate_psychometrics() liefert sie nicht.
 score_stats <- item_data |>
