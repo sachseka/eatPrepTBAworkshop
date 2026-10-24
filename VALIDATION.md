@@ -8,17 +8,21 @@ Browserprüfung sind erfolgreich abgeschlossen.
 - Vier R-Prüfskripte erfolgreich: Rechenaufgabe, vollständige Aufbereitung,
   Ausführung der Folienblöcke sowie Log- und Excel-Ergebnisse.
 - 52 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
-  160 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
-- 103 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
+  161 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
+- 104 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
   die R-Skripte benötigen keine technischen Abschnittsmarker mehr.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
 - 26 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 103 Folien und 103 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 102 Folien und 102 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 102 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 101 PDF-Seiten
   enthalten die Abschnittsnavigation.
 - Einstieg und drei Arbeitsblöcke in der Navigation; drei Ausführungsphasen
   von ca. zehn Minuten, jeweils unmittelbar gefolgt von „Fragen?“.
+- Block 1 behandelt zuerst IQB-Studio, Metadaten und Kodierschema,
+  danach Testcenter und Antwortdaten. Das lokale Laden von Units und Antworten
+  ist entsprechend getrennt. Das zusätzliche Beispiel zu `prepare_coded()`
+  bleibt eine optionale Vertiefung in Skript und Handout.
 - Alle Inhaltslinks der Folien öffnen ein neues Tab; Kapitelsprünge
   bleiben innerhalb der Präsentation.
 - Die öffentliche Materialseite liegt unter
@@ -64,6 +68,9 @@ Browserprüfung sind erfolgreich abgeschlossen.
   `psychometrics.rds` bewahrt zusätzlich die ursprünglichen Datentypen.
   Die lokale Itemnummer `01` bleibt beim CSV-Rückimport mit
   `colClasses = c(item_id = "character")` erhalten; Excel liest sie als Zahl.
+  Leere Missing-Zellen der Kennwerte- und Skalierungsdatei werden mit `na = ""`
+  ausgegeben; beim Kennwerte-Rückimport erhält `na.strings = ""` die fehlenden
+  Zeichenwerte. Der vollständige Kennwertexport wurde damit erneut in Excel geprüft.
 - Nennerbeispiel U501 geprüft: 20 vorgesehene Fälle, 19 mit Score ungleich
   `NA`; sechs richtige Antworten ergeben 6/20 bzw. 6/19. Kategorie B ergibt
   entsprechend 7/20 bzw. 7/19. Wiederholte Codezeilen bleiben für die

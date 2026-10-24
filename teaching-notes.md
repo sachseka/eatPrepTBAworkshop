@@ -22,15 +22,23 @@ Das ZIP enthält nur die Ordner `Syntaxen` und `Daten` sowie die Projektdatei;
 die PDF-Folien stehen separat bereit.
 
 **1 · Paket und erste Kodierung:** Paket, Dokumentation und
-Rückmeldemöglichkeiten für beide Pakete vorstellen. Datenquellen zuordnen
-und den Abruf anhand der R-Objekte erklären. Das Rechenbeispiel in
-`02_daten_verstehen.R` vollständig behandeln: JSON entpacken, Partial
-Credit nachvollziehen, selbst kodieren, das Item auswählen und gespeicherte
-Codes einlesen.
-Den API-Prüfbericht `get_coding_report()` und die Metadatenaufbereitung
-mit `add_metadata()` am passenden Arbeitsschritt einordnen. Letztere kann
-Profildefinitionen aus dem Internet nachladen; im Offlinebeispiel die
-vorbereitete Ausgabe verwenden.
+Rückmeldemöglichkeiten für beide Pakete vorstellen. Den IQB-Autocoder direkt
+über sein [Repository](https://github.com/iqb-berlin/responses) verlinken.
+
+Die IQB-Studio-Themen zunächst zusammenhängend behandeln: Zugang und
+Aufgabenabruf, Prüfbericht, Metadaten und Unit-Tabellen. Anschließend am
+Rechenbeispiel Basisvariablen, Ableitung und Partial Credit in IQB-Studio
+zeigen und das Kodierschema in R nachvollziehen. `get_coding_report()`
+und `add_metadata()` am jeweiligen Arbeitsschritt einordnen; für das
+Offlinebeispiel die vorbereiteten synthetischen Ausgaben verwenden.
+
+Erst danach zum Testcenter wechseln: Workspace-ID und Testmodus erklären,
+Antworten und Design abrufen. Nun die lokale Antwortdatei laden, JSON
+ansehen und entpacken. Mit den zuvor erklärten Regeln kodieren und das
+Auswertungsitem auswählen. Die Skripte folgen derselben Reihenfolge.
+
+Das zusätzliche Beispiel zu `prepare_coded()` bleibt als optionaler
+Abschnitt 8 in Skript `02` und im Handout. Es erhält keine eigene Folie.
 
 **Pause und Ausprobieren, etwa zehn Minuten:** Skripte `00`, `01` und `02`
 ansehen. In `00` Pakete laden und Dateien prüfen, dann `02` ausführen,

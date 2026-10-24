@@ -63,7 +63,7 @@ stopifnot(isTRUE(all.equal(sum(category_stats$category_p_valid), 38 / 39)))
 
 # Der vollständige Export erhält Kennwerte und die ursprüngliche Zeilenstruktur.
 exported_stats <- read.csv2("Daten/Ergebnisse/psychometrics.csv", skip = 1,
-                            fileEncoding = "UTF-16LE",
+                            fileEncoding = "UTF-16LE", na.strings = "",
                             colClasses = c(item_id = "character"))
 expected_stats_columns <- c(
   "unit_key", "variable_id", "item", "item_id", "variable_source_type",

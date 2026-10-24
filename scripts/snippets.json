@@ -129,7 +129,7 @@
         "library(eatPrepTBA) # eatAutoCode nicht separat laden."
       ],
       "end": [
-        "select(pc_responses, login_name, unit_key, response_progress)"
+        "select(pc_units, unit_key, unit_label)"
       ]
     },
     "demo-units-vorschau": {
@@ -226,6 +226,14 @@
       ],
       "end": [
         "coding_report_demo$validation_problems[[2]]"
+      ]
+    },
+    "demo-antworten": {
+      "start": [
+        "pc_responses <- read_responses(\"Daten/demo-pc-responses.csv\")"
+      ],
+      "end": [
+        "select(pc_responses, login_name, unit_key, response_progress)"
       ]
     }
   },
@@ -513,7 +521,7 @@
         "csv <- file(\"Daten/Ergebnisse/scaling_data.csv\", \"wt\", encoding = \"UTF-16LE\")"
       ],
       "end": [
-        "write.csv2(missing_counts, csv, row.names = FALSE)",
+        "write.csv2(missing_counts, csv, row.names = FALSE, na=\"\")",
         "close(csv)"
       ]
     },
@@ -566,7 +574,7 @@
         "csv <- file(\"Daten/Ergebnisse/scaling_data.csv\", \"wt\", encoding = \"UTF-16LE\")"
       ],
       "end": [
-        "write.csv2(scaling_data, csv, row.names = FALSE)",
+        "write.csv2(scaling_data, csv, row.names = FALSE, na=\"\")",
         "close(csv)"
       ]
     },

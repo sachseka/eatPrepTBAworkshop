@@ -20,7 +20,7 @@ Dieses Handout folgt den drei Arbeitsblöcken des Workshops: Paket und erste Kod
 |---|---|
 | [00_installation.R](Syntaxen/00_installation.R) | Pakete installieren, laden und Dateien prüfen |
 | [01_datenabruf.R](Syntaxen/01_datenabruf.R) | Vorlage für den Abruf eigener IQB-Studio- und Testcenter-Daten |
-| [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R) | JSON, gespeicherte Codes und Partial Credit an einer Rechenaufgabe nachvollziehen |
+| [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R) | Units, Kodierschema und Antworten an einer Rechenaufgabe nachvollziehen; gespeicherte Codes optional |
 | [03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R) | Antworten kodieren, Missing-Regeln vergleichen und Skalierungsdaten exportieren |
 | [04_logs.R](Syntaxen/04_logs.R) | Lokale Logs prüfen, Zeiten und Fokusverluste auswerten |
 | [05_kodiermanuale.R](Syntaxen/05_kodiermanuale.R) | Lokales Codebuch als Excel und CSV exportieren |
@@ -98,15 +98,13 @@ Ein **RDS** speichert ein R-Objekt einschließlich seiner Struktur. Ein **CSV** 
 
 Für Antworten und Logs gibt es zwei alternative Einstiege: [`get_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/get_responses.html) beziehungsweise [`get_logs()`](https://iqb-research.github.io/eatPrepTBA/reference/get_logs.html) liefert direkt ein R-Objekt aus dem Workspace. Wer bereits eine heruntergeladene Exportdatei besitzt, liest diese mit [`read_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/read_responses.html) beziehungsweise [`read_logs()`](https://iqb-research.github.io/eatPrepTBA/reference/read_logs.html) ein. Ein zusätzlicher Download ist nach einem erfolgreichen direkten Abruf nicht erforderlich. [`saveRDS()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRDS.html) sichert das R-Objekt anschließend für die weitere lokale Arbeit.
 
-### Version und Workspace-IDs ablesen
+### IQB-Studio-Version und Workspace-ID ablesen
 
 Die Version steht auf der IQB-Studio-Anmeldeseite. Nach Auswahl eines Workspaces steht seine ID in der Adresse, beispielsweise `…/#/a/918`. Die [eatPrepTBA-Vignette](https://iqb-research.github.io/eatPrepTBA/articles/eatPrepTBA.html#accessing-a-workspace) erläutert diese Zuordnung.
 
 ![Position der IQB-Studio-Version auf einer älteren Anmeldeseite. Die eigene Versionsangabe vollständig übernehmen.](assets/screenshots/Studio_Login.png){width=800}
 
 ![Workspaceauswahl und ID 918 in der IQB-Studio-Adresse.](assets/screenshots/Studio_Access_Workspace.png){width=800}
-
-Im Testcenter den Workspace in der Administration öffnen. Die Zahl nach `/admin/` ist die Workspace-ID; die Beispieladresse `https://iqb-testcenter2.de/#/admin/35/files` bezeichnet Workspace 35. IQB-Studio und Testcenter haben voneinander unabhängige Workspace-IDs.
 
 ### Vorlage: Daten für eine eigene Erhebung beziehen
 
@@ -123,8 +121,6 @@ testcenter_url <- "https://iqb-testcenter2.de/" # Beispiel
 testcenter_workspace_id <- 35 # Beispiel; eigenen Workspace eintragen
 ```
 <!-- /r-source -->
-
-Der Modus wird in der Testpersonen-XML am Element `Login` festgelegt; beim Einlesen heißt die Spalte `login_mode`. `get_design()` filtert standardmäßig auf `run-hot-return`. `get_responses()` und `get_logs()` besitzen diesen Modusfilter nicht; über `groups` können Gruppen ausgewählt werden. Deshalb werden die bezogenen Antworten später mit dem Design abgeglichen. Deshalb genügt im Beispiel `get_design(testcenter, units = units)`. Bei einem anderen Modus wird `mode` ausdrücklich gesetzt. Der Filter betrifft Angaben aus der Testpersonen-XML, nicht die Anmeldung des Administrationskontos. `run-hot-return` bedeutet: Antworten und Logs speichern, Zeit- und Navigationsbeschränkungen anwenden und bei erneuter Anmeldung die bisherige Testsitzung fortsetzen. Die [Testcenter-Dokumentation](https://iqb.pages.cms.hu-berlin.de/testcenter/pages/test-mode.html) erläutert die verfügbaren Modi.
 
 Vor dem Abruf einen Ordner für die Daten anlegen:
 
@@ -245,6 +241,127 @@ Die äußere Tabelle `units` bündelt mehrere Arten von Informationen. Der genau
 
 `unit_variables` beschreibt die Antwortvariablen, `items_list` ihre Item-Verknüpfungen und `variable_pages` ihre Positionen innerhalb der Unit. Das lokale Beispiel weiter unten zeigt diese verschachtelten Tabellen in R; es bildet nicht sämtliche optionalen Serverfelder nach.
 
+### Eine Rechenaufgabe: von der IQB-Studio-Oberfläche zu R
+
+Die folgenden Screenshots stammen aus dem [IQB-Tutorial zu Partial Credit](https://iqb-research.github.io/IQB-Methods/docs/studio/partial_credit.html). Die lokale Mini-Demo bildet die dort gezeigten Rechenaufgaben und zentralen Kodierregeln nach. Ihre vier Antwortverläufe sind erfunden. Zusätzliche Regeln für Tausender-Schreibweisen bleiben hier ausgespart.
+
+![Die drei Eingabefelder gehören zu den Variablen 01a, 01b und 01c.](assets/screenshots/partial-credit-aufgabe.png){width=650}
+
+| Ebene | Im Beispiel |
+|---|---|
+| Unit | Die gesamte Rechenaufgabe |
+| Basisvariablen | `01a`, `01b`, `01c`: drei eingegebene Antworten |
+| Abgeleitete Variable | `01`: Summe der Punkte aus den drei Basisvariablen |
+| Auswertungsitem | `RECHNEN_01`: verknüpft mit der abgeleiteten Variable `01` |
+
+Die richtigen Antworten lauten **21, 112 und 1102**. Die führende Null in den Variablennamen gehört zur Kennung. Die Kennungen bleiben daher Zeichenketten.
+
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-einlesen -->
+```{r}
+#| eval: false
+library(eatPrepTBA) # eatAutoCode nicht separat laden.
+library(dplyr)
+library(tidyr)
+
+pc_units <- readRDS("Daten/demo-pc-units.rds")
+
+select(pc_units, unit_key, unit_label)
+```
+<!-- /r-source -->
+
+coding_scheme enthält die JSON-Regeln. unit_variables und items_list sind verschachtelte Tabellen; [`names()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/names.html) zeigt alle verfügbaren Spalten.
+
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-units-vorschau -->
+```{r}
+#| eval: false
+pc_units |>
+  select(unit_key, unit_label, coding_scheme, unit_variables, items_list) |>
+  print(width = 90)
+names(pc_units)
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+pc_units |>
+  select(unit_key, unit_label, coding_scheme, unit_variables, items_list) |>
+  print(width = 90)
+names(pc_units)
+```
+
+`[[1]]` öffnet die Tabelle für die erste Unit innerhalb einer Listenspalte. Die Variablenliste enthält die Antwortfelder, die Item-Verknüpfung bestimmt die Auswertungsvariable.
+
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-unit-tabellen -->
+```{r}
+#| eval: false
+print(pc_units$unit_variables[[1]] |> select(variable_id, variable_type))
+print(pc_units$items_list[[1]] |> select(variable_id, item_id))
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+print(pc_units$unit_variables[[1]] |> select(variable_id, variable_type))
+print(pc_units$items_list[[1]] |> select(variable_id, item_id))
+```
+
+### Partial Credit: das Kodierschema der Rechenaufgabe
+
+Jede richtige Basisantwort erhält einen Punkt. Die abgeleitete Variable `01` summiert diese drei Punkte. Ihr eigenes Kodierschema legt anschließend die Punkte für das Auswertungsitem fest.
+
+![IQB-Studio-Kodierung einer Basisvariable.](assets/screenshots/partial-credit-basis.png){width=850}
+
+![IQB-Studio-Kodierung der abgeleiteten Summenvariable.](assets/screenshots/partial-credit-summe.png){width=850}
+
+| Summe der Basispunkte | Code der Variable `01` | Score des Items |
+|---|---:|---:|
+| 3 | 1 | 2 |
+| 2 | 2 | 1 |
+| 0 oder 1 | 0 | 0 |
+
+**Code und Score sind unterschiedliche Angaben:** Code 1 steht hier für zwei Punkte, Code 2 für einen Punkt. Im R-Objekt sind die Kodierinformationen verschachtelt. Die folgenden Schritte machen daraus eine Tabelle.
+
+<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-schema-ansehen -->
+```{r}
+#| eval: false
+pc_rules <- pc_units |>
+  select(unit_key, unit_codes) |>
+  unnest(unit_codes) |>
+  unnest(variable_codes) |>
+  select(variable_id, variable_source_type, code_id, code_score)
+pc_rules
+```
+<!-- /r-source -->
+
+01a wird direkt bewertet. Die abgeleitete Variable 01 bildet daraus 0, 1 oder 2 Punkte; Code und Score unterscheiden sich.
+
+<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-regeln-vorschau -->
+```{r}
+#| eval: false
+pc_rules |>
+  filter(variable_id %in% c("01a", "01")) |>
+  print()
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+pc_rules |>
+  filter(variable_id %in% c("01a", "01")) |>
+  print()
+```
+
+```{r}
+#| echo: false
+pc_rules
+```
+
+### Testcenter: Workspace, Antworten und Design
+
+Im Testcenter den Workspace in der Administration öffnen. Die Zahl nach `/admin/` ist die Workspace-ID; die Beispieladresse `https://iqb-testcenter2.de/#/admin/35/files` bezeichnet Workspace 35. IQB-Studio und Testcenter haben voneinander unabhängige Workspace-IDs.
+
+Der Modus wird in der Testpersonen-XML am Element `Login` festgelegt; beim Einlesen heißt die Spalte `login_mode`. `get_design()` filtert standardmäßig auf `run-hot-return`. `get_responses()` und `get_logs()` besitzen diesen Modusfilter nicht; über `groups` können Gruppen ausgewählt werden. Deshalb werden die bezogenen Antworten später mit dem Design abgeglichen. Im Beispiel genügt `get_design(testcenter, units = units)`. Bei einem anderen Modus wird `mode` ausdrücklich gesetzt. Der Filter betrifft Angaben aus der Testpersonen-XML, nicht die Anmeldung des Administrationskontos. `run-hot-return` bedeutet: Antworten und Logs speichern, Zeit- und Navigationsbeschränkungen anwenden und bei erneuter Anmeldung die bisherige Testsitzung fortsetzen. Die [Testcenter-Dokumentation](https://iqb.pages.cms.hu-berlin.de/testcenter/pages/test-mode.html) erläutert die verfügbaren Modi.
+
 Nun den Testcenter-Workspace der Durchführung auswählen:
 
 <!-- r-source: Syntaxen/01_datenabruf.R#testcenter-verbinden -->
@@ -312,70 +429,21 @@ capture.output(sessionInfo(), file = "Daten/EigeneDaten/session-info.txt")
 
 Die gespeicherten RDS-Dateien lassen sich später ohne erneuten Serverabruf mit [`readRDS()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRDS.html) laden. In `Syntaxen/03_datenaufbereitung.R` dafür die drei Importzeilen durch die entsprechenden Pfade unter `Daten/EigeneDaten/` ersetzen. Bei Verbindungsproblemen zuerst Serveradresse, Version, Workspace-ID und Zugriffsrechte prüfen.
 
-### Eine Rechenaufgabe: von der IQB-Studio-Oberfläche zu R
+### Lokale Antworten zum Rechenbeispiel laden
 
-Die folgenden Screenshots stammen aus dem [IQB-Tutorial zu Partial Credit](https://iqb-research.github.io/IQB-Methods/docs/studio/partial_credit.html). Die lokale Mini-Demo bildet die dort gezeigten Rechenaufgaben und zentralen Kodierregeln nach. Ihre vier Antwortverläufe sind erfunden. Zusätzliche Regeln für Tausender-Schreibweisen bleiben hier ausgespart.
+Nach den Aufgabeninformationen und Kodierregeln folgen die Antworten. Die lokale Datei enthält vier synthetische Antwortmuster auf dieselbe Unit.
 
-![Die drei Eingabefelder gehören zu den Variablen 01a, 01b und 01c.](assets/screenshots/partial-credit-aufgabe.png){width=650}
-
-| Ebene | Im Beispiel |
-|---|---|
-| Unit | Die gesamte Rechenaufgabe |
-| Basisvariablen | `01a`, `01b`, `01c`: drei eingegebene Antworten |
-| Abgeleitete Variable | `01`: Summe der Punkte aus den drei Basisvariablen |
-| Auswertungsitem | `RECHNEN_01`: verknüpft mit der abgeleiteten Variable `01` |
-
-Die richtigen Antworten lauten **21, 112 und 1102**. Die führende Null in den Variablennamen gehört zur Kennung. Die Kennungen bleiben daher Zeichenketten.
-
-<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-einlesen -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-antworten -->
 ```{r}
 #| eval: false
-library(eatPrepTBA) # eatAutoCode nicht separat laden.
-library(dplyr)
-library(tidyr)
-
-pc_units <- readRDS("Daten/demo-pc-units.rds")
 pc_responses <- read_responses("Daten/demo-pc-responses.csv")
-
-select(pc_units, unit_key, unit_label)
 select(pc_responses, login_name, unit_key, response_progress)
 ```
 <!-- /r-source -->
 
-coding_scheme enthält die JSON-Regeln. unit_variables und items_list sind verschachtelte Tabellen; [`names()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/names.html) zeigt alle verfügbaren Spalten.
-
-<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-units-vorschau -->
-```{r}
-#| eval: false
-pc_units |>
-  select(unit_key, unit_label, coding_scheme, unit_variables, items_list) |>
-  print(width = 90)
-names(pc_units)
-```
-<!-- /r-source -->
-
 ```{r}
 #| echo: false
-pc_units |>
-  select(unit_key, unit_label, coding_scheme, unit_variables, items_list) |>
-  print(width = 90)
-names(pc_units)
-```
-
-`[[1]]` öffnet die Tabelle für die erste Unit innerhalb einer Listenspalte. Die Variablenliste enthält die Antwortfelder, die Item-Verknüpfung bestimmt die Auswertungsvariable.
-
-<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-unit-tabellen -->
-```{r}
-#| eval: false
-print(pc_units$unit_variables[[1]] |> select(variable_id, variable_type))
-print(pc_units$items_list[[1]] |> select(variable_id, item_id))
-```
-<!-- /r-source -->
-
-```{r}
-#| echo: false
-print(pc_units$unit_variables[[1]] |> select(variable_id, variable_type))
-print(pc_units$items_list[[1]] |> select(variable_id, item_id))
+select(pc_responses, login_name, unit_key, response_progress)
 ```
 
 ### Antworten und Kodierungen auseinanderhalten
@@ -417,56 +485,7 @@ prepare_responses(pc_responses) |>
   head(3)
 ```
 
-### Partial Credit: Basisvariablen und Summenvariable kodieren
-
-Jede richtige Basisantwort erhält einen Punkt. Die abgeleitete Variable `01` summiert diese drei Punkte. Ihr eigenes Kodierschema legt anschließend die Punkte für das Auswertungsitem fest.
-
-![IQB-Studio-Kodierung einer Basisvariable.](assets/screenshots/partial-credit-basis.png){width=850}
-
-![IQB-Studio-Kodierung der abgeleiteten Summenvariable.](assets/screenshots/partial-credit-summe.png){width=850}
-
-| Summe der Basispunkte | Code der Variable `01` | Score des Items |
-|---|---:|---:|
-| 3 | 1 | 2 |
-| 2 | 2 | 1 |
-| 0 oder 1 | 0 | 0 |
-
-**Code und Score sind unterschiedliche Angaben:** Code 1 steht hier für zwei Punkte, Code 2 für einen Punkt. Im R-Objekt sind die Kodierinformationen verschachtelt. Die folgenden Schritte machen daraus eine Tabelle.
-
-<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-schema-ansehen -->
-```{r}
-#| eval: false
-pc_rules <- pc_units |>
-  select(unit_key, unit_codes) |>
-  unnest(unit_codes) |>
-  unnest(variable_codes) |>
-  select(variable_id, variable_source_type, code_id, code_score)
-pc_rules
-```
-<!-- /r-source -->
-
-01a wird direkt bewertet. Die abgeleitete Variable 01 bildet daraus 0, 1 oder 2 Punkte; Code und Score unterscheiden sich.
-
-<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-regeln-vorschau -->
-```{r}
-#| eval: false
-pc_rules |>
-  filter(variable_id %in% c("01a", "01")) |>
-  print()
-```
-<!-- /r-source -->
-
-```{r}
-#| echo: false
-pc_rules |>
-  filter(variable_id %in% c("01a", "01")) |>
-  print()
-```
-
-```{r}
-#| echo: false
-pc_rules
-```
+### Die Antworten mit dem Kodierschema kodieren
 
 [`code_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/code_responses.html) erhält die ursprünglichen Antworten und die Units mit ihren Regeln. Über `eatAutoCode` werden erst die Basisvariablen kodiert und danach die abhängige Variable berechnet und kodiert.
 
@@ -523,9 +542,9 @@ select(pc_items, login_name, item_id, value, code_id, code_score)
 select(pc_items, login_name, item_id, value, code_id, code_score)
 ```
 
-### Wenn Codes bereits gespeichert sind: zum Beispiel StarS
+### Optional: bereits gespeicherte Codes einlesen
 
-Bei einem Export mit bereits gespeicherten Kodierungen, etwa aus StarS, kann [`prepare_coded()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_coded.html) die Codes und Scores direkt entpacken. Die Funktion benötigt dafür kein Kodierschema und kodiert die Antworten nicht neu. Das ist ein anderer Ausgangspunkt als die automatische Kodierung einer regulären Studie mit passenden IQB-Studio-Units.
+Abschnitt 8 von `Syntaxen/02_daten_verstehen.R` ist eine optionale Ergänzung zum Nachlesen. Bei einem Export mit bereits gespeicherten Kodierungen, etwa aus StarS, kann [`prepare_coded()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_coded.html) die Codes und Scores direkt entpacken. Die Funktion benötigt dafür kein Kodierschema und kodiert die Antworten nicht neu. Das ist ein anderer Ausgangspunkt als die automatische Kodierung einer regulären Studie mit passenden IQB-Studio-Units.
 
 Die folgende Datei bildet diesen Fall mit denselben vier erfundenen Antwortverläufen nach. Sie ist kein Originalexport aus StarS.
 
@@ -551,7 +570,7 @@ Welche Variablen als Items gelten, welche Missing-Regeln anzuwenden sind und wel
 
 Der vollständige Aufbereitungsweg verwendet eine **separate synthetische Lesestudie**: 40 vorgesehene Personen, sechs Units und acht Auswertungsitems in zwei Booklets. Sie enthält geschlossene, abgeleitete und manuell kodierte Antworten. Die zuvor gezeigten IQB-Studio-Screenshots gehören zur Rechenaufgabe, nicht zu dieser Lesestudie.
 
-Das Skript legt für alle Ausgaben `Daten/Ergebnisse/` an. Der Ordner ist im Download zunächst nicht enthalten. Die RDS-Dateien `01_responses` bis `05_scaling_data` dokumentieren nacheinander die Aufbereitung derselben Beispielstudie; die letzte Datei enthält den breiten Skalierungsdatensatz. Ergebnis-CSV werden mit `write.csv2()` gespeichert: Semikolon als Trennzeichen, Dezimalkomma und keine zusätzliche Zeilennummernspalte. Die erste Zeile `sep=;` teilt Excel das Trennzeichen mit; UTF-16LE erhält Umlaute. Beim erneuten Einlesen dieser Ergebnisdateien in R wird die erste Zeile übersprungen: `read.csv2(pfad, skip = 1, fileEncoding = "UTF-16LE")`. Die Eingabedateien im Materialpaket behalten ihr ursprüngliches Format.
+Das Skript legt für alle Ausgaben `Daten/Ergebnisse/` an. Der Ordner ist im Download zunächst nicht enthalten. Die RDS-Dateien `01_responses` bis `05_scaling_data` dokumentieren nacheinander die Aufbereitung derselben Beispielstudie; die letzte Datei enthält den breiten Skalierungsdatensatz. Ergebnis-CSV werden mit `write.csv2()` gespeichert: Semikolon als Trennzeichen, Dezimalkomma und keine zusätzliche Zeilennummernspalte. Die erste Zeile `sep=;` teilt Excel das Trennzeichen mit; UTF-16LE erhält Umlaute. Beim erneuten Einlesen dieser Ergebnisdateien in R wird die erste Zeile übersprungen: `read.csv2(pfad, skip = 1, fileEncoding = "UTF-16LE", na.strings = "")`. Die Eingabedateien im Materialpaket behalten ihr ursprüngliches Format.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#workflow-start -->
 ```{r}
@@ -1146,6 +1165,14 @@ missing_summary |>
 ```
 
 
+Das Multiple-Choice-Item `U101` hat drei Antwortkategorien: A, B und C. A erhält Code 1 und einen Punkt. B und C erhalten gemeinsam Code 0 und null Punkte. Damit lassen sich drei Auswertungsebenen unterscheiden:
+
+| Ebene | Was wird zusammengefasst? | Beispiel |
+|---|---|---|
+| Antwortkategorie | Derselbe Antwortwert | B und C bleiben getrennt |
+| Code | Dieselbe Kodierung | B und C gehören zu Code 0 |
+| Score | Dieselbe Punktzahl | Alle Antworten mit 0 Punkten |
+
 Für psychometrische Kennwerte wird jede Unit einem Bereich zugeordnet. Hier gehören alle Units zum Bereich Lesen. Bei eigenen Daten muss `domains` die tatsächliche Zuordnung enthalten.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-berechnen -->
@@ -1198,7 +1225,7 @@ Die Definitionen beziehen sich auf den dokumentierten Paketstand; [Funktionsrefe
 #| eval: false
 csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(psychometrics, csv, row.names = FALSE)
+write.csv2(psychometrics, csv, row.names = FALSE, na="")
 close(csv)
 saveRDS(psychometrics, "Daten/Ergebnisse/psychometrics.rds")
 ```
@@ -1237,14 +1264,6 @@ print(code_info) # Code 1: Teilpunkte; Code 2: volle Punktzahl
 #| echo: false
 print(code_info)
 ```
-
-Das Multiple-Choice-Item `U101` hat drei Antwortkategorien: A, B und C. A erhält Code 1 und einen Punkt. B und C erhalten gemeinsam Code 0 und null Punkte. Damit lassen sich drei Auswertungsebenen unterscheiden:
-
-| Ebene | Was wird zusammengefasst? | Beispiel |
-|---|---|---|
-| Antwortkategorie | Derselbe Antwortwert | B und C bleiben getrennt |
-| Code | Dieselbe Kodierung | B und C gehören zu Code 0 |
-| Score | Dieselbe Punktzahl | Alle Antworten mit 0 Punkten |
 
 **Antwortkategorien:** Die `category_*`-Spalten zeigen, wie häufig die einzelnen Antworten vorkommen. `category_p_valid` bezieht sich auf Antworten mit gültigem Score.
 
@@ -1387,7 +1406,8 @@ Die Fallbasis unterscheidet sich: Codekorrelationen berücksichtigen auch Missin
 
 ```r
 read.csv2("Daten/Ergebnisse/psychometrics.csv", skip = 1,
-          fileEncoding = "UTF-16LE", colClasses = c(item_id = "character"))
+          fileEncoding = "UTF-16LE", na.strings = "",
+          colClasses = c(item_id = "character"))
 ```
 
 
@@ -1443,7 +1463,7 @@ Die vollständige Tabelle enthält 39 Personen und acht Itemspalten. Mit den dre
 #| eval: false
 csv <- file("Daten/Ergebnisse/scaling_data.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(scaling_data, csv, row.names = FALSE)
+write.csv2(scaling_data, csv, row.names = FALSE, na="")
 close(csv)
 saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
 saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
@@ -1452,7 +1472,7 @@ saveRDS(scaling_data, "Daten/Ergebnisse/05_scaling_data.rds")
 missing_counts <- count(design_coded, id_used, code_type)
 csv <- file("Daten/Ergebnisse/missing_counts.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(missing_counts, csv, row.names = FALSE)
+write.csv2(missing_counts, csv, row.names = FALSE, na="")
 close(csv)
 ```
 <!-- /r-source -->

@@ -18,20 +18,23 @@ Projektdatei. Die PDF-Folien werden separat heruntergeladen.
 ## 1. Paket und erste Kodierung
 
 - Paketdokumentation, GitHub-Repository und Issues als Anlaufstellen zeigen.
-- eatPrepTBA, eatAutoCode und den IQB-Autocoder einordnen.
+- eatPrepTBA, eatAutoCode und den [IQB-Autocoder](https://github.com/iqb-berlin/responses) einordnen.
 - IQB-Studio-Metadaten, Testcenter-Antworten und Testdesign unterscheiden.
-- Abrufvorlagen zeigen; API, RDS, CSV und JSON am Ergebnis erklären.
-- `get_coding_report()` als Prüfbericht aus IQB-Studio und
-  `add_metadata()` zur Aufbereitung geladener Metadaten zeigen. Der Aufruf
-  kann Profildefinitionen aus dem Internet nachladen; für das Offlinebeispiel
-  liegt eine vorbereitete Ausgabe vor.
-- Beispieladressen und Workspace-IDs als anzupassende Angaben kennzeichnen;
-  Passwortspeicher sowie HTTP 401 und 521 beim IQB-Studio-Zugang erklären.
-- An der Rechenaufgabe Antwortvariablen, Kodierschema und abgeleitetes
-  Item verbinden. Die synthetischen Daten entsprechen den gezeigten Regeln.
-- `Syntaxen/02_daten_verstehen.R` bis zum Ende erklären: Rohantworten entpacken,
-  automatisch kodieren, das Auswertungsitem auswählen und bereits
-  gespeicherte Codes mit `prepare_coded()` einlesen.
+- Zunächst die IQB-Studio-Themen zusammenhängend behandeln: Version,
+  Workspace, Anmeldung, Aufgabenabruf und verschachtelte Unit-Tabellen.
+- `get_coding_report()` als Prüfbericht und `add_metadata()` zur Aufbereitung
+  geladener Metadaten zeigen. Für das Offlinebeispiel liegen synthetische
+  Ausgaben vor; Profildefinitionen können Internetzugriff erfordern.
+- An der Rechenaufgabe Basisvariablen, Item-Verknüpfung und Kodierschema
+  erklären. Die Partial-Credit-Regeln zuerst in IQB-Studio und danach in R
+  nachvollziehen; dafür werden noch keine Antworten geladen.
+- Anschließend zum Testcenter wechseln: Workspace-ID, Testmodus,
+  Antwortabruf und vollständiges Testdesign erläutern.
+- Die lokalen Antworten in `Syntaxen/02_daten_verstehen.R` laden,
+  JSON ansehen und mit `prepare_responses()` entpacken.
+- Mit dem zuvor erklärten Kodierschema neu kodieren und das Auswertungsitem
+  auswählen. Das Einlesen bereits gespeicherter Codes mit `prepare_coded()`
+  bleibt als optionaler Abschnitt in Skript und Handout; die eigene Folie entfällt.
 
 Die Funktionsreferenz bleibt im Handout verlinkt. Wiederholte vollständige
 Funktionslisten sind im Vortrag nicht erforderlich.
