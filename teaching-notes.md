@@ -81,7 +81,7 @@ Funktionsübersichten unterbrechen den Ablauf nicht.
 
 ## Wiedereinstieg und eigene Daten
 
-Die Dateien unter `Daten/Zwischenstaende/` entstehen beim Ausführen von Skript `03`.
+Die Dateien unter `Daten/Ergebnisse/` entstehen beim Ausführen von Skript `03`.
 Log- und Codebuchskripte können unabhängig ausgeführt werden. Für eigene
 Daten zunächst Pfade, Metadatenstand, Kennungen und Bereichszuordnung
 anpassen. Missing-Regeln und Personenauswahl werden anhand des

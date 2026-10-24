@@ -76,7 +76,7 @@ und die Aufbereitung von IQB-Studio-Metadaten mit `add_metadata()`.
 Dabei können Profildefinitionen oder Vokabulare aus dem Internet nachgeladen
 werden. Das Offlinebeispiel verwendet eine vorbereitete Ausgabe.
 CSV-Ergebnisse werden mit `write.csv2(..., row.names = FALSE)` gespeichert:
-Semikolon als Trennzeichen und Komma als Dezimalzeichen für deutsches Excel.
+eine vorangestellte `sep=;`-Zeile für Excel, Semikolon als Trennzeichen und Komma als Dezimalzeichen für deutsches Excel.
 Die mitgelieferten Eingabedateien behalten ihr jeweiliges Exportformat.
 
 ## Materialien neu erzeugen
@@ -116,8 +116,7 @@ auf `main`; auf GitHub ist kein erneuter R-Durchlauf erforderlich.
 Die Generatoren `scripts/generate_data.R` und
 `scripts/generate_demonstration_data.R` erzeugen die synthetischen Daten
 neu und überschreiben deren lokale Dateien. Für die normale Nutzung sind
-die Daten bereits enthalten. Die Arbeitsskripte schreiben nach `Daten/Ergebnisse/`
-und `Daten/Zwischenstaende/`.
+die Daten bereits enthalten. Die Arbeitsskripte schreiben nach `Daten/Ergebnisse/`.
 
 ## Datenstand und Quellen
 

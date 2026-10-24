@@ -9,8 +9,11 @@ case <- function(person, unit, variable) {
 
 # Umfang der unabhängig festgelegten Mini-Studie.
 stopifnot(nrow(units) == 6L, nrow(design) == 340L, nrow(responses) == 193L)
-stopifnot(nrow(scaling_data) == 39L, ncol(scaling_data) == 12L)
+stopifnot(nrow(scaling_data) == 39L, ncol(scaling_data) == 11L)
 stopifnot(length(item_columns) == 8L)
+stopifnot(setequal(item_columns, c("U101", "U102", "U201", "U301",
+                                  "U401", "U501", "U502", "U601")))
+stopifnot(!anyDuplicated(item_data[c(person_columns, "item")]))
 
 # Innere Auslassung, Not reached, ungültige Antwort und manuelle Auslassung.
 stopifnot(case("P002", "U2", "Q1")$code_type == "MISSING_BY_OMISSION")
@@ -23,14 +26,22 @@ stopifnot(all(is.na(case("P003", "U5", "Q1")$code_score)))
 # Die Person ohne gespeicherte Antwort bleibt im Design, nicht im Export.
 stopifnot(!any(dplyr::filter(design_coded, login_name == "P040")$id_used))
 stopifnot(!"P040" %in% scaling_data$login_name)
-stopifnot(is.na(dplyr::filter(scaling_data, login_name == "P001")$U6__U6_Q1))
+stopifnot(is.na(dplyr::filter(scaling_data, login_name == "P001")$U601))
 stopifnot(all(na.omit(unlist(scaling_data[item_columns])) %in% c(0, 0.5, 1)))
 
-# Beide Regeln müssen den beabsichtigten Unterschied bei P006 zeigen.
+# Die erste Option ändert P006, die zweite unabhängig davon P002.
 reclassified <- dplyr::filter(omissions_reclassified, login_name == "P006",
                               unit_key == "U5", variable_id == "Q1")
 stopifnot(reclassified$code_type == "MISSING_NOT_REACHED")
 stopifnot(is.na(reclassified$code_score))
+preserved <- dplyr::filter(not_reached_preserved, login_name == "P002",
+                           unit_key == "U2", variable_id == "Q1")
+stopifnot(preserved$code_id == -96L, is.na(preserved$code_score))
+stopifnot(is.na(preserved$code_status))
+stopifnot(dplyr::filter(omissions_reclassified, login_name == "P002",
+                       unit_key == "U2")$code_id == -99L)
+stopifnot(all(dplyr::filter(not_reached_preserved, login_name == "P006",
+                          unit_key == "U5")$code_id == -99L))
 
 # Die Zusammenfassung zählt Items, nicht die zusätzlichen Basisvariablen.
 stopifnot(nrow(missing_summary) == 40L, nrow(missing_summary_used) == 39L)
@@ -50,18 +61,28 @@ stopifnot(all(score_stats$score_n == c(18, 21)))
 stopifnot(!any(grepl("^score_", names(psychometrics))))
 stopifnot(isTRUE(all.equal(sum(category_stats$category_p_valid), 38 / 39)))
 
+# Der Kennwertexport enthält volle Itemkennungen, keine zusätzlichen Basisvariablen.
+exported_stats <- read.csv2("Daten/Ergebnisse/psychometrics.csv", skip = 1,
+                            fileEncoding = "UTF-16LE")
+stopifnot(setequal(exported_stats$item, item_columns))
+stopifnot(!any(exported_stats$unit_key == "U3" &
+               exported_stats$variable_id %in% c("Q1", "Q2")))
+stopifnot(isTRUE(all.equal(exported_stats, as.data.frame(code_stats),
+                           check.attributes = FALSE)))
+
 # Der CSV-Export erhält die Werte und die Zuordnung zu den Personen.
-exported <- read.csv2("Daten/Ergebnisse/scaling_data.csv", fileEncoding = "UTF-16LE")
+exported <- read.csv2("Daten/Ergebnisse/scaling_data.csv", skip = 1,
+                      fileEncoding = "UTF-16LE")
 stopifnot(identical(names(exported), names(scaling_data)))
 stopifnot(isTRUE(all.equal(as.data.frame(exported), as.data.frame(scaling_data),
                            check.attributes = FALSE)))
 csv_connection <- file("Daten/Ergebnisse/scaling_data.csv", encoding = "UTF-16LE")
 csv_lines <- readLines(csv_connection)
 close(csv_connection)
-stopifnot(grepl(';', csv_lines[1], fixed = TRUE),
+stopifnot(csv_lines[1] == "sep=;", grepl(';', csv_lines[2], fixed = TRUE),
           any(grepl('0,5', csv_lines, fixed = TRUE)))
-stopifnot(identical(readRDS("Daten/Zwischenstaende/05_scaling_data.rds"), scaling_data))
-stopifnot(nrow(person_key) == 39L, !anyDuplicated(person_key$person_id))
+stopifnot(identical(readRDS("Daten/Ergebnisse/05_scaling_data.rds"), scaling_data))
+stopifnot(!anyDuplicated(scaling_data[person_columns]))
 
 report <- c(report, "Workshop-Lehrfälle und Export erfolgreich geprüft.")
 writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)

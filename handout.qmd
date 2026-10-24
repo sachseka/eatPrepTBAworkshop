@@ -551,7 +551,7 @@ Welche Variablen als Items gelten, welche Missing-Regeln anzuwenden sind und wel
 
 Der vollständige Aufbereitungsweg verwendet eine **separate synthetische Lesestudie**: 40 vorgesehene Personen, sechs Units und acht Auswertungsitems in zwei Booklets. Sie enthält geschlossene, abgeleitete und manuell kodierte Antworten. Die zuvor gezeigten IQB-Studio-Screenshots gehören zur Rechenaufgabe, nicht zu dieser Lesestudie.
 
-Das Skript legt `Daten/Zwischenstaende/` und `Daten/Ergebnisse/` beim Ausführen an. Diese Ordner sind im Download zunächst nicht enthalten. Ergebnis-CSV werden mit `write.csv2()` gespeichert: Semikolon als Trennzeichen, Dezimalkomma und keine zusätzliche Zeilennummernspalte. Die UTF-16LE-Kodierung erhält Umlaute beim direkten Öffnen in Excel.
+Das Skript legt für alle Ausgaben `Daten/Ergebnisse/` an. Der Ordner ist im Download zunächst nicht enthalten. Die RDS-Dateien `01_responses` bis `05_scaling_data` dokumentieren nacheinander die Aufbereitung derselben Beispielstudie; die letzte Datei enthält den breiten Skalierungsdatensatz. Ergebnis-CSV werden mit `write.csv2()` gespeichert: Semikolon als Trennzeichen, Dezimalkomma und keine zusätzliche Zeilennummernspalte. Die erste Zeile `sep=;` teilt Excel das Trennzeichen mit; UTF-16LE erhält Umlaute. Beim erneuten Einlesen dieser Ergebnisdateien in R wird die erste Zeile übersprungen: `read.csv2(pfad, skip = 1, fileEncoding = "UTF-16LE")`. Die Eingabedateien im Materialpaket behalten ihr ursprüngliches Format.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#workflow-start -->
 ```{r}
@@ -562,7 +562,6 @@ library(tidyr)
 person_columns <- c("group_id", "login_name", "login_code")
 
 dir.create("Daten/Ergebnisse", showWarnings = FALSE)
-dir.create("Daten/Zwischenstaende", showWarnings = FALSE)
 ```
 <!-- /r-source -->
 
@@ -579,7 +578,7 @@ responses <- read_responses("Daten/Responses.csv")
 # responses <- readRDS("Daten/EigeneDaten/responses.rds")
 
 count(responses, booklet_id)
-saveRDS(responses, "Daten/Zwischenstaende/01_responses.rds")
+saveRDS(responses, "Daten/Ergebnisse/01_responses.rds")
 ```
 <!-- /r-source -->
 
@@ -689,7 +688,7 @@ Die folgende Aufbereitung verwendet `prepare = TRUE`. Die endgültige Missing-Ei
 #| eval: false
 coded_auto <- code_responses(responses, units, prepare = TRUE)
 count(coded_auto, unit_key, code_status)
-saveRDS(coded_auto, "Daten/Zwischenstaende/02_coded_auto.rds")
+saveRDS(coded_auto, "Daten/Ergebnisse/02_coded_auto.rds")
 ```
 <!-- /r-source -->
 
@@ -754,7 +753,7 @@ Erneut die ursprünglichen `responses` übergeben. So werden manuelle Codes eing
 coded <- code_responses(responses, units, prepare = TRUE,
                        codes_manual = codes_manual)
 count(coded, code_status, code_type)
-saveRDS(coded, "Daten/Zwischenstaende/03_coded.rds")
+saveRDS(coded, "Daten/Ergebnisse/03_coded.rds")
 ```
 <!-- /r-source -->
 
@@ -795,7 +794,7 @@ Die synthetischen Codes sind bereits vorbereitet. Für eigene Erhebungen werden 
 | `recode_omissions_to_not_reached = FALSE` | Bei `TRUE` abschließende Auslassungen innerhalb eines Testlets als nicht erreicht behandeln |
 | `preserve_not_reached = FALSE` | Bei `TRUE` bestehende oder beim Ergänzen erkannte Not-reached-Fälle beibehalten, auch wenn später eine Bearbeitung folgt |
 
-Die beiden letzten Optionen sind unabhängig. Im ersten Durchlauf gelten die Paketvoreinstellungen; anschließend folgt ein Vergleich mit beiden Optionen auf `TRUE`.
+Die beiden letzten Optionen sind unabhängig. Im ersten Durchlauf gelten die Paketvoreinstellungen; anschließend werden beide Optionen einzeln auf `TRUE` gesetzt und mit dem Ausgangsergebnis verglichen.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#design-ergaenzen -->
 ```{r}
@@ -804,7 +803,7 @@ design_coded <- complete_design(coded, units, design,
   recode_omissions_to_not_reached = FALSE, preserve_not_reached = FALSE)
 
 count(design_coded, id_used, code_type)
-saveRDS(design_coded, "Daten/Zwischenstaende/04_design_coded.rds")
+saveRDS(design_coded, "Daten/Ergebnisse/04_design_coded.rds")
 ```
 <!-- /r-source -->
 
@@ -830,6 +829,37 @@ design_coded |>
   print()
 ```
 
+| Fall | Situation | Ergebnis mit Paketvoreinstellungen |
+|---|---|---|
+| **P002 · U2** | Antwortzeile fehlt, danach weitere Bearbeitung | Auslassung: −99 / 0 Punkte |
+| **P003 · U5** | Antwortzeilen fehlen am Testletende | Not reached: −96 / NA |
+| **P004 · U1/Q1** | Ungültige Antwort | Invalid response: −98 / 0 Punkte |
+| **P005 · U4/TEXT** | Manuell als Auslassung kodiert, danach Bearbeitung | Auslassung: −99 / 0 Punkte |
+| **P006 · U5** | Angezeigt, aber leer; danach keine Bearbeitung | Auslassung: −99 / 0 Punkte |
+
+**Fehlende Zeile und angezeigte, leere Antwort sind unterschiedliche Ausgangsfälle.**
+
+[Szenarien: fehlende Zeilen](https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#beispiel-7) · [Ungültige Antworten](https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#beispiel-9){.small}
+
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-faelle -->
+```{r}
+#| eval: false
+design_coded |>
+  filter(code_id < 0, id_used) |>
+  select(login_name, unit_key, variable_id, code_status, code_id, code_score) |>
+  print()
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+design_coded |>
+  filter(code_id < 0, id_used) |>
+  select(login_name, unit_key, variable_id, code_status, code_id, code_score) |>
+  print()
+```
+
 Der Ausgangsworkflow verwendet ausdrücklich die Paketvoreinstellungen. Die endgültige Missing-Art steht in `code_type`; `code_status` bleibt erhalten, auch wenn neu ergänzte Zeilen dort `NA` haben.
 
 | Code- oder Missing-Art | Standardcode | Score nach [`complete_design()`](https://iqb-research.github.io/eatPrepTBA/reference/complete_design.html) |
@@ -844,13 +874,13 @@ Der Ausgangsworkflow verwendet ausdrücklich die Paketvoreinstellungen. Die endg
 
 Die Tabelle beschreibt die abschließende Zuweisung. [`code_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/code_responses.html) verwendet Missing-Codes beim Einfügen manueller Codes zunächst zur Zuordnung eines Status; seine Standardwerte sind nicht mit allen abschließenden Scores identisch. Bei eigenen Missing-Regeln wird dieselbe explizite Tabelle mit `code_id`, `code_status`, `code_score` und `code_type` über `missings` an beide relevanten Funktionen übergeben.
 
-Der folgende Vergleich verwendet beide Optionen auf `TRUE` und speichert das Ergebnis in einem eigenen Objekt:
+Die erste Alternative setzt nur `recode_omissions_to_not_reached = TRUE`:
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-regeln-vergleichen -->
 ```{r}
 #| eval: false
 omissions_reclassified <- complete_design(coded, units, design,
-  recode_omissions_to_not_reached = TRUE, preserve_not_reached = TRUE)
+  recode_omissions_to_not_reached = TRUE, preserve_not_reached = FALSE)
 
 count(omissions_reclassified, id_used, code_type)
 ```
@@ -877,6 +907,47 @@ bind_rows(Standard = design_coded, Alternative = omissions_reclassified,
 ```
 
 Bei P006 werden dadurch die abschließenden Auslassungen zu NR und erhalten `NA`. Für die eigene Auswertung wird die gewünschte Regel im ursprünglichen `design_coded`-Aufruf eingestellt und dokumentiert.
+
+Die zweite Alternative setzt nur `preserve_not_reached = TRUE`:
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#not-reached-erhalten -->
+```{r}
+#| eval: false
+not_reached_preserved <- complete_design(coded, units, design,
+  recode_omissions_to_not_reached = FALSE, preserve_not_reached = TRUE)
+```
+<!-- /r-source -->
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#not-reached-vorschau -->
+```{r}
+#| eval: false
+bind_rows(Standard = design_coded, Alternative = not_reached_preserved,
+          .id = "Regel") |>
+  filter(login_name == "P002", unit_key == "U2") |>
+  select(Regel, login_name, unit_key, code_type, code_score) |>
+  print()
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+bind_rows(Standard = design_coded, Alternative = not_reached_preserved,
+          .id = "Regel") |>
+  filter(login_name == "P002", unit_key == "U2") |>
+  select(Regel, login_name, unit_key, code_type, code_score) |>
+  print()
+```
+
+Beim Ergänzen der fehlenden Antwortzeile von P002/U2 wird zunächst Not reached erkannt. Diese Option erhält die Einordnung trotz späterer Bearbeitung. Der technische Status bleibt `NA`; bei P006 bleibt er `DISPLAYED`, auch wenn die erste Option die abschließenden Auslassungen umkodiert.
+
+| `recode_omissions_to_not_reached` | `preserve_not_reached` | P002/U2 | P006/U5 |
+|---|---|---|---|
+| FALSE | FALSE | Auslassung / 0 | Auslassung / 0 |
+| TRUE | FALSE | Auslassung / 0 | Not reached / NA |
+| FALSE | TRUE | Not reached / NA | Auslassung / 0 |
+| TRUE | TRUE | Not reached / NA | Not reached / NA |
+
+Die Grenze wird innerhalb jedes Testlets bestimmt. Itemvariablen und ihre Quellen zählen für diese Grenze; unabhängige Hilfsvariablen und `NO_CODING` nicht. Die [Missing-Vignette](https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html) erläutert weitere Fälle, darunter [Testletwechsel](https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#beispiel-6), [komplett fehlende Antworten](https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#beispiel-8) und die [Itemgrenze](https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html#itemgrenze).
 
 **Missing by Design:** Eine gar nicht vorgesehene Aufgabe wird nicht nachträglich zum erwarteten Item. Die zugehörige Zelle im Datensatz bleibt später `NA`. Das ist ein anderer Fall als ein vorgesehenes, aber nicht erreichtes Item; Design und Long-Daten bewahren den Unterschied.
 
@@ -913,6 +984,39 @@ analysis_data |>
 distinct(analysis_data, login_name) |> summarise(n_personen = n()) |> print()
 ```
 
+#### Item-ID-Konventionen
+
+Die vom IQB bereitgestellte Konvention vom **14.03.2025** gilt für Erhebungen in TBA, zunächst für den **Bildungstrend ab 2027**. Die vollständige Item-ID setzt sich aus fünf Bestandteilen zusammen:
+
+| Bestandteil | Stellen | Beispiel |
+|---|---:|---|
+| Fach und Schulstufe | 1 | `D`: Deutsch Primar |
+| Kompetenzbereich | 1 | `H`: Zuhören |
+| Projekt / Pool | 1 | `B`: BiStaTest / BT |
+| Aufgaben-/Unitnummer | 3 | `001` |
+| Itemnummer | 2 | `01` |
+
+Der Unit-Kurzname enthält die ersten sechs Stellen, z. B. `DHB001`. In den Item-Metadaten wird die Itemnummer fortlaufend als `01`, `02`, … vergeben. Direktes Zusammenfügen ergibt **`DHB00101`**. Das zweite Beispiel **`GXK00203`** bezeichnet Deutsch Sekundar, keinen Kompetenzbereich, den Pool kognitiver Grundfähigkeiten, Unit 002 und Item 03.
+
+| Bereich | Kürzel und Bedeutung |
+|---|---|
+| Fach / Schulstufe | `D` Deutsch Primar · `M` Mathematik Primar · `G` Deutsch Sekundar · `N` Mathematik Sekundar · `F` Französisch Sekundar · `E` Englisch Sekundar · `B` Biologie · `P` Physik · `C` Chemie (jeweils Sekundar) · `K` kognitive Grundfähigkeiten ohne Fachzuordnung |
+| Mathematik | `Z` Zahlen und Operationen / Zahl · `G` Größen und Messen / Messen · `M` Muster und Strukturen / Funktionaler Zusammenhang · `R` Raum und Form · `D` Daten, Häufigkeit und Wahrscheinlichkeit / Daten und Zufall · `O` Overall |
+| Sprachen | `A` audiovisuelles Hörverstehen · `H` Hörverstehen / Zuhören · `O` Orthografie · `(P)` Sprechen · `L` Leseverstehen / Lesen · `T` Texte und Medien · `S` Sprachgebrauch · `V` Texte verfassen |
+| Naturwissenschaften | `F` Fachwissen / Sachkompetenz · `E` Erkenntnisgewinnung · `B` Bewertung · `(K)` Kommunikation |
+| Ohne Kompetenzbereich | `X`, z. B. kognitive Grundfähigkeiten |
+| Projekt / Pool | `B` BiStaTest / BT · `V` VERA · `K` kognitive Grundfähigkeiten, auch allgemeine Sprachindikatoren · `S` BiStaTest speziell für SPF · `P` BiStaTest Papier · `T` BKT (Basiskompetenztests TBA II); weitere möglich |
+
+Kompetenzkürzel werden im jeweiligen Fach interpretiert; `O` steht beispielsweise in Deutsch für Orthografie, in Mathematik für Overall. Die Klammern bei Sprechen und Kommunikation sind aus der bereitgestellten Konvention übernommen.
+
+[Quelle: Anlage von Metadaten, IQB-intern](http://iqbstaff.pbworks.com/w/page/160099128/Meth*%20Anlage%20von%20Metadaten). Der Workshop verwendet vereinfachte Unitnamen `U1` bis `U6`, aber dieselbe direkte Verbindung mit zweistelligen Itemnummern.
+
+#### Variablen und Items
+
+Der [Leitfaden für Elemente und Variablen](https://iqb-berlin.github.io/tba-info/tasks/coding-scheme/steps.html) kennzeichnet die Benennungskonventionen noch als nicht abschließend abgestimmt. Itemwerte heißen dort `01`, `02`, …; Basisvariablen einer Ableitung beispielsweise `01a` und `01b`, ihr Ziel `01`. Eine Einzigartigkeitsprüfung heißt `01_unique`. Weitere Ableitungsebenen verwenden abwechselnd Zahlen und Buchstaben, etwa `01a_1`. Medien ohne Itemwertung tragen Kennungen wie `_audio01`.
+
+In der Beispielstudie heißen die entsprechenden Variablen weiterhin `Q1`, `Q2` und `TOTAL`. Entscheidend ist die Verknüpfung in den Item-Metadaten: Bei U3 liefert `TOTAL` den Wert für Item `01`; die beiden Basisvariablen erzeugen keine zusätzlichen Itemspalten.
+
 [`add_item_id()`](https://iqb-research.github.io/eatPrepTBA/reference/add_item_id.html) verbindet Variablen und Auswertungsitems über die IQB-Studio-Metadaten. Variablen ohne Item-Verknüpfung werden zuerst angesehen und anschließend aus dem Datensatz entfernt. In dieser Studie betrifft das U3/Q1 und U3/Q2; sie bleiben in den Long-Daten enthalten.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#items-zuordnen -->
@@ -927,7 +1031,7 @@ unmapped <- item_data |>
 print(unmapped) # sollte U3/Q1 und U3/Q2 zeigen
 
 item_data <- filter(item_data, !is.na(item_id), trimws(item_id) != "")
-item_data <- mutate(item_data, item = paste0(unit_key, "__", item_id))
+item_data <- mutate(item_data, item = paste0(unit_key, item_id))
 ```
 <!-- /r-source -->
 
@@ -951,7 +1055,7 @@ item_data |>
   print()
 ```
 
-Der Spaltenname `unit_key__item_id` unterscheidet gleich benannte Items verschiedener Units. Die Item-ID selbst bleibt Text; führende Nullen dürfen nicht verloren gehen. Die synthetischen Item-IDs enthalten bereits den Unitnamen, deshalb entstehen Namen wie `U3__U3_TOTAL`.
+`paste0(unit_key, item_id)` verbindet den Unit-Kurznamen direkt mit der zweistelligen Itemnummer. Die Itemnummer bleibt Text, damit führende Nullen erhalten bleiben: `U3` + `01` ergibt `U301`. Im ersten Rechenbeispiel ist `RECHNEN_01` eine frei vergebene Item-ID. Diese Studie verwendet dagegen lokale Itemnummern `01`, `02`, … . Die Beispiel-Units `U1` bis `U6` sind vereinfachte Namen; die Bildungstrend-Konvention wird oben erläutert.
 
 ### 2.5 Offene Kodierungen klären
 
@@ -1000,8 +1104,11 @@ missing_summary_used <- summarise_missings(design_items, used_only = TRUE)
 
 select(missing_summary, all_of(person_columns), id_used, n_items,
        n_not_reached, n_by_omission, prop_missing)
-write.csv2(missing_summary, "Daten/Ergebnisse/missing_summary.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
+csv <- file("Daten/Ergebnisse/missing_summary.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(missing_summary, csv, row.names = FALSE)
+close(csv)
 ```
 <!-- /r-source -->
 
@@ -1036,15 +1143,25 @@ psychometrics <- evaluate_psychometrics(analysis_data, units, domains = domains)
 psychometrics <- add_item_id(psychometrics, units)
 
 code_stats <- psychometrics |>
-  select(item_id, unit_key, variable_id, code_id, code_score,
+  filter(!is.na(item_id)) |>
+  mutate(item = paste0(unit_key, item_id)) |>
+  select(item, unit_key, variable_id, code_id, code_score,
          code_n, code_p_valid, code_pbc) |>
   distinct()
-write.csv2(code_stats, "Daten/Ergebnisse/psychometrics.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
 ```
 <!-- /r-source -->
 
-Das Multiple-Choice-Item `U1_Q1` hat drei Antwortkategorien: A, B und C. A erhält Code 1 und einen Punkt. B und C erhalten gemeinsam Code 0 und null Punkte. Damit lassen sich drei Auswertungsebenen unterscheiden:
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-csv -->
+```{r}
+#| eval: false
+csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(code_stats, csv, row.names = FALSE)
+close(csv)
+```
+<!-- /r-source -->
+
+Das Multiple-Choice-Item `U101` hat drei Antwortkategorien: A, B und C. A erhält Code 1 und einen Punkt. B und C erhalten gemeinsam Code 0 und null Punkte. Damit lassen sich drei Auswertungsebenen unterscheiden:
 
 | Ebene | Was wird zusammengefasst? | Beispiel |
 |---|---|---|
@@ -1058,7 +1175,7 @@ Das Multiple-Choice-Item `U1_Q1` hat drei Antwortkategorien: A, B und C. A erhä
 ```{r}
 #| eval: false
 category_stats <- psychometrics |>
-  filter(item_id == "U1_Q1", !is.na(category_id)) |>
+  filter(unit_key == "U1", item_id == "01", !is.na(category_id)) |>
   select(category_id, code_id, category_n, category_p_valid, category_pbc)
 print(category_stats) # sollte A: 21, B: 5 und C: 12 Antworten zeigen
 ```
@@ -1067,7 +1184,7 @@ print(category_stats) # sollte A: 21, B: 5 und C: 12 Antworten zeigen
 ```{r}
 #| echo: false
 category_stats <- psychometrics |>
-  filter(item_id == "U1_Q1", !is.na(category_id)) |>
+  filter(unit_key == "U1", item_id == "01", !is.na(category_id)) |>
   select(category_id, code_id, category_n, category_p_valid, category_pbc)
 print(category_stats)
 ```
@@ -1078,7 +1195,7 @@ print(category_stats)
 ```{r}
 #| eval: false
 code_stats_mc <- psychometrics |>
-  filter(item_id == "U1_Q1") |>
+  filter(unit_key == "U1", item_id == "01") |>
   select(code_id, code_score, code_n, code_p_valid, code_pbc) |>
   distinct()
 print(code_stats_mc) # sollte für Code 0 insgesamt 17 Antworten zeigen
@@ -1088,7 +1205,7 @@ print(code_stats_mc) # sollte für Code 0 insgesamt 17 Antworten zeigen
 ```{r}
 #| echo: false
 code_stats_mc <- psychometrics |>
-  filter(item_id == "U1_Q1") |>
+  filter(unit_key == "U1", item_id == "01") |>
   select(code_id, code_score, code_n, code_p_valid, code_pbc) |>
   distinct()
 print(code_stats_mc)
@@ -1100,7 +1217,7 @@ print(code_stats_mc)
 ```{r}
 #| eval: false
 score_stats <- item_data |>
-  filter(item_id == "U1_Q1") |>
+  filter(unit_key == "U1", item_id == "01") |>
   count(code_score, name = "score_n") |>
   mutate(score_p = score_n / sum(score_n))
 print(score_stats) # sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen
@@ -1110,7 +1227,7 @@ print(score_stats) # sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen
 ```{r}
 #| echo: false
 score_stats <- item_data |>
-  filter(item_id == "U1_Q1") |>
+  filter(unit_key == "U1", item_id == "01") |>
   count(code_score, name = "score_n") |>
   mutate(score_p = score_n / sum(score_n))
 print(score_stats)
@@ -1122,7 +1239,7 @@ Die `*_n`-Spalten zählen Fälle. `*_p_valid` beschreibt Anteile unter Antworten
 
 ### 2.7 Skalierungsdatensatz erstellen und exportieren
 
-[`pivot_wider()`](https://tidyr.tidyverse.org/reference/pivot_wider.html) erzeugt eine Zeile je Person und eine Punktespalte je Item. Vorhandene Kennungen bleiben erhalten; `person_id` nummeriert die sortierte Exporttabelle.
+[`pivot_wider()`](https://tidyr.tidyverse.org/reference/pivot_wider.html) erzeugt eine Zeile je Person und eine Punktespalte je Item. Die drei ursprünglichen Testcenter-Kennungen bleiben erhalten.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#score-datensatz-erstellen -->
 ```{r}
@@ -1130,8 +1247,7 @@ Die `*_n`-Spalten zählen Fälle. `*_p_valid` beschreibt Anteile unter Antworten
 scaling_data <- item_data |>
   select(group_id, login_name, login_code, item, code_score) |>
   pivot_wider(names_from = item, values_from = code_score) |>
-  arrange(group_id, login_name, login_code) |>
-  mutate(person_id = row_number(), .before = 1)
+  arrange(group_id, login_name, login_code)
 ```
 <!-- /r-source -->
 
@@ -1141,7 +1257,7 @@ Eine Zeile ist jetzt eine Person; jede Itemspalte enthält Punkte. Fehlende Wert
 ```{r}
 #| eval: false
 scaling_data |>
-  select(person_id, login_name, U1__U1_Q1, U3__U3_TOTAL, U5__U5_Q1) |>
+  select(login_name, U101, U301, U501) |>
   head(4) |> print()
 ```
 <!-- /r-source -->
@@ -1149,7 +1265,7 @@ scaling_data |>
 ```{r}
 #| echo: false
 scaling_data |>
-  select(person_id, login_name, U1__U1_Q1, U3__U3_TOTAL, U5__U5_Q1) |>
+  select(login_name, U101, U301, U501) |>
   head(4) |> print()
 ```
 
@@ -1158,52 +1274,38 @@ Die anschließende Prüfung vergleicht die Personenzahl mit den Long-Daten und p
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-pruefen -->
 ```{r}
 #| eval: false
-person_key <- select(scaling_data, person_id, group_id, login_name, login_code)
-item_columns <- setdiff(names(scaling_data), names(person_key))
+item_columns <- setdiff(names(scaling_data), person_columns)
 persons <- distinct(item_data, group_id, login_name, login_code)
 stopifnot(nrow(scaling_data) == nrow(persons))
 stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
 ```
 <!-- /r-source -->
 
-person_id ergänzt die ursprünglichen Testcenter-Kennungen. Diese Zuordnung gehört zum Export.
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#schluessel-vorschau -->
-```{r}
-#| eval: false
-person_key |> head(4) |> print()
-```
-<!-- /r-source -->
-
-```{r}
-#| echo: false
-person_key |> head(4) |> print()
-```
-
-
-Die vollständige Tabelle enthält 39 Personen und acht Itemspalten. Zusammen mit `person_id` und den drei Testcenter-Kennungen sind es zwölf Spalten. Die neu erzeugte `person_id` gilt für diesen Export. Für spätere Datenlieferungen wird eine beständige Zuordnung weitergeführt.
+Die vollständige Tabelle enthält 39 Personen und acht Itemspalten. Mit den drei ursprünglichen Testcenter-Kennungen sind es elf Spalten.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#daten-exportieren -->
 ```{r}
 #| eval: false
-write.csv2(scaling_data, "Daten/Ergebnisse/scaling_data.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(person_key, "Daten/Ergebnisse/person_key.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+csv <- file("Daten/Ergebnisse/scaling_data.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(scaling_data, csv, row.names = FALSE)
+close(csv)
 saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
 saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
-saveRDS(scaling_data, "Daten/Zwischenstaende/05_scaling_data.rds")
+saveRDS(scaling_data, "Daten/Ergebnisse/05_scaling_data.rds")
 
 missing_counts <- count(design_coded, id_used, code_type)
-write.csv2(missing_counts, "Daten/Ergebnisse/missing_counts.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+csv <- file("Daten/Ergebnisse/missing_counts.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(missing_counts, csv, row.names = FALSE)
+close(csv)
 ```
 <!-- /r-source -->
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#export-vorschau -->
 ```{r}
 #| eval: false
-export_files <- c("scaling_data.csv", "person_key.csv", "analysis_long.rds",
+export_files <- c("scaling_data.csv", "analysis_long.rds",
                  "design_items.rds", "missing_counts.csv")
 tibble(Datei = export_files,
        Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
@@ -1212,13 +1314,13 @@ tibble(Datei = export_files,
 
 ```{r}
 #| echo: false
-export_files <- c("scaling_data.csv", "person_key.csv", "analysis_long.rds",
+export_files <- c("scaling_data.csv", "analysis_long.rds",
                   "design_items.rds", "missing_counts.csv")
 tibble(Datei = export_files,
        Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
 ```
 
-`scaling_data.csv` enthält die Scores, `person_key.csv` die Zuordnung der Personen. `analysis_long.rds` bewahrt Codes, Status und Missing-Arten. `design_items.rds` enthält auch die nicht in die Analyse übernommenen Designpersonen. Die Tabelle `missing_counts.csv` zählt alle Variablen einschließlich Hilfsvariablen; für Itemanteile wird `missing_summary.csv` verwendet.
+`scaling_data.csv` enthält Scores und die ursprünglichen Personenkennungen. `analysis_long.rds` bewahrt Codes, Status und Missing-Arten. `design_items.rds` enthält auch die nicht in die Analyse übernommenen Designpersonen. Die Tabelle `missing_counts.csv` zählt alle Variablen einschließlich Hilfsvariablen; für Itemanteile wird `missing_summary.csv` verwendet.
 
 Zum Export gehören auch Paketversionen, Fallzahlen und die getroffenen Regeln. Nach einer Änderung der Analyseentscheidung das Protokoll entsprechend anpassen.
 
@@ -1237,7 +1339,7 @@ report <- c(
   "Missing-Regeln: Paketvoreinstellungen; beide NR-Optionen FALSE.",
   "Auswahl: id_used = TRUE; verknüpfte Itemvariablen.",
   "Keine offenen Itemkodierungen im exportierten Datensatz.",
-  "Fehlende Werte bleiben NA; Long-Daten und Personenschlüssel gesichert.")
+  "Fehlende Werte bleiben NA; Testcenter-Kennungen bleiben im Datensatz.")
 
 writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
 capture.output(sessionInfo(), file = "Daten/Ergebnisse/session-info.txt")
@@ -1431,14 +1533,26 @@ session_overview <- qc |>
 <!-- r-source: Syntaxen/04_logs.R#logs-export -->
 ```{r}
 #| eval: false
-write.csv2(inventory, "Daten/Ergebnisse/log_inventory.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(anomalies, "Daten/Ergebnisse/log_anomalies.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(times, "Daten/Ergebnisse/log_unit_times.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(session_overview, "Daten/Ergebnisse/log_sessions.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+csv <- file("Daten/Ergebnisse/log_inventory.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(inventory, csv, row.names = FALSE)
+close(csv)
+
+csv <- file("Daten/Ergebnisse/log_anomalies.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(anomalies, csv, row.names = FALSE)
+close(csv)
+
+csv <- file("Daten/Ergebnisse/log_unit_times.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(times, csv, row.names = FALSE)
+close(csv)
+
+csv <- file("Daten/Ergebnisse/log_sessions.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(session_overview, csv, row.names = FALSE)
+close(csv)
+
 saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
              unit_times = unit_times, focus = focus), "Daten/Ergebnisse/log_qc.rds")
 ```
@@ -1579,8 +1693,12 @@ Die Excel-Datei enthält das gesamte Codebuch und die Auswahl als zwei Tabellenb
 #| eval: false
 writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
                     "Daten/Ergebnisse/codebook.xlsx")
-write.csv2(selected_cb, "Daten/Ergebnisse/codebook.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+
+# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
+csv <- file("Daten/Ergebnisse/codebook.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(selected_cb, csv, row.names = FALSE)
+close(csv)
 ```
 <!-- /r-source -->
 

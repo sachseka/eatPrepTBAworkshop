@@ -17,6 +17,8 @@ Erzeugung: scripts/generate_data.R, Seed 20260923. Ein Testzeitpunkt, ein Kompet
 B1: U1/U2/U3/U4/U5. B2: U1/U2/U3/U4/U6.
 U1 und U5 haben zwei Items; U2, U3, U4 und U6 je ein Item. U3/TOTAL wird aus zwei
 Basisvariablen abgeleitet; diese beiden Basisvariablen sind keine eigenen Items.
+Die lokalen Itemnummern sind als Text `01` und `02` gespeichert. Zusammen mit
+dem vereinfachten Unit-Kurznamen entstehen Kennungen wie `U101` und `U301`.
 
 Prüffälle: P002/U2 ausgelassen; P003/U5 nicht erreicht; P004/U1/Q1 ungültig;
 P005/U4 manuelle Auslassung; P006/U5 als DISPLAYED gespeicherte abschließende

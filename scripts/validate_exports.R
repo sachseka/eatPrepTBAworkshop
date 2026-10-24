@@ -2,8 +2,10 @@
 # Aus dem Projektordner nach 04_logs.R und 05_kodiermanuale.R ausführen.
 library(dplyr)
 
-times <- read.csv2("Daten/Ergebnisse/log_unit_times.csv", fileEncoding = "UTF-16LE")
-sessions <- read.csv2("Daten/Ergebnisse/log_sessions.csv", fileEncoding = "UTF-16LE")
+times <- read.csv2("Daten/Ergebnisse/log_unit_times.csv", skip = 1,
+                    fileEncoding = "UTF-16LE")
+sessions <- read.csv2("Daten/Ergebnisse/log_sessions.csv", skip = 1,
+                       fileEncoding = "UTF-16LE")
 log_results <- readRDS("Daten/Ergebnisse/log_qc.rds")
 
 # P001: 12.100 - 450 = 11.650 ms; Laden: 450 - 100 = 350 ms.
@@ -35,7 +37,8 @@ stopifnot(nrow(cb_full) == 22L, nrow(cb_selection) == 10L,
                     c(1, 0.5, 0)))
 
 # CSV bleibt ohne Zeilennummern; Dezimalkomma und Beschriftungen bleiben erhalten.
-cb_csv <- read.csv2("Daten/Ergebnisse/codebook.csv", fileEncoding = "UTF-16LE",
+cb_csv <- read.csv2("Daten/Ergebnisse/codebook.csv", skip = 1,
+                    fileEncoding = "UTF-16LE",
                     colClasses = c(code_id = "character"))
 stopifnot(identical(names(cb_csv), names(cb_selection)),
           isTRUE(all.equal(cb_csv, as.data.frame(cb_selection),
@@ -43,8 +46,23 @@ stopifnot(identical(names(cb_csv), names(cb_selection)),
 csv_connection <- file("Daten/Ergebnisse/log_unit_times.csv", encoding = "UTF-16LE")
 csv_lines <- readLines(csv_connection)
 close(csv_connection)
-stopifnot(grepl(';', csv_lines[1], fixed = TRUE),
+stopifnot(identical(csv_lines[1], "sep=;"),
+          grepl(';', csv_lines[2], fixed = TRUE),
           any(grepl('11,65', csv_lines, fixed = TRUE)))
+
+# Jede CSV für Excel erhält genau eine Trennzeichenzeile und einen UTF-16-BOM.
+csv_paths <- file.path("Daten/Ergebnisse",
+                       c("log_inventory.csv", "log_anomalies.csv",
+                         "log_unit_times.csv", "log_sessions.csv", "codebook.csv"))
+for (csv_path in csv_paths) {
+  csv_connection <- file(csv_path, encoding = "UTF-16LE")
+  csv_header <- readLines(csv_connection, n = 2)
+  close(csv_connection)
+  csv_bytes <- readBin(csv_path, what = "raw", n = 2)
+  stopifnot(identical(csv_header[1], "sep=;"),
+            length(csv_header) == 2L,
+            identical(csv_bytes, as.raw(c(255, 254))))
+}
 
 # IQB-Studio-Vorlage nur parsen: keine Anmeldung und kein Serverzugriff.
 invisible(parse("Syntaxen/06_kodiermanuale_studio.R", encoding = "UTF-8"))

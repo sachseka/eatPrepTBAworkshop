@@ -78,7 +78,7 @@ Die Skripte bleiben als Vorlage für die Arbeit mit eigenen Daten nutzbar.
 | [05_kodiermanuale.R](Syntaxen/05_kodiermanuale.R){download="05_kodiermanuale.R"} | Lokales Codebuch als Excel und CSV |
 | [06_kodiermanuale_studio.R](Syntaxen/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"} | Codebuch und Kodiermanual aus dem eigenen IQB-Studio |
 
-Die Skripte verwenden die Ordnerstruktur des Materialpakets. `00_installation.R` abschnittsweise ausführen und nur bei Bedarf installieren. Für die lokalen Beispiele genügen die enthaltenen Dateien; die beiden API-Vorlagen benötigen angepasste Angaben und eigene Zugänge. Beim Ausführen entstehen Ergebnisse und Zwischenstände unter `Daten/Ergebnisse/` und `Daten/Zwischenstaende/`. Die CSV-Ergebnisse verwenden Semikolon und Dezimalkomma und lassen sich in deutschem Excel öffnen.
+Die Skripte verwenden die Ordnerstruktur des Materialpakets. `00_installation.R` abschnittsweise ausführen und nur bei Bedarf installieren. Für die lokalen Beispiele genügen die enthaltenen Dateien; die beiden API-Vorlagen benötigen angepasste Angaben und eigene Zugänge. Beim Ausführen entstehen alle Ausgaben im gemeinsamen Ordner `Daten/Ergebnisse/`. Die CSV-Ergebnisse verwenden Semikolon und Dezimalkomma und lassen sich in deutschem Excel öffnen.
 
 ::: {.callout-note}
 ## Stand der Arbeitsfassung

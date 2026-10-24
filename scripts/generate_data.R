@@ -5,7 +5,6 @@ library(tidyr)
 library(purrr)
 library(tibble)
 dir.create('Daten', showWarnings = FALSE)
-dir.create('Daten/Zwischenstaende', showWarnings = FALSE)
 json <- function(x) as.character(jsonlite::toJSON(x, auto_unbox = TRUE, null = 'null'))
 
 code <- function(id, score, type, label, match = NULL, numeric = FALSE) {
@@ -55,7 +54,7 @@ units <- imap_dfr(specs, function(vs, key) {
       variable_page_always_visible=FALSE,variable_content='Synthetische Aufgabe',
       variable_element='response',value_default=NA_character_)),
     items_list=list(tibble(item_no=seq_along(itemvars),variable_id=itemvars,
-                          variable_ref=itemvars,item_id=paste(key,itemvars,sep='_'))))
+                          variable_ref=itemvars,item_id=sprintf('%02d', seq_along(itemvars)))))
 })
 units <- add_coding_scheme(units)
 saveRDS(units,'Daten/units.rds')

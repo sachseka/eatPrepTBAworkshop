@@ -21,7 +21,6 @@ project:
     - Daten/*.json
     - Syntaxen/**
     - '!Syntaxen/**/*_mod.R'
-    - Daten/Zwischenstaende/*.rds
     - Daten/Ergebnisse/codebook.xlsx
     - '!Daten/EigeneDaten/**'
     - '!integration/**'

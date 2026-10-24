@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 210" role="img" aria-labelledby="title desc">
+  <title id="title">Kommunikation zwischen R und den Webanwendungen</title>
+  <desc id="desc">eatPrepTBA nutzt httr2 für HTTP-Anfragen mit URL und Sitzungstoken. Die API von IQB-Studio oder Testcenter liefert eine HTTP-Antwort, häufig als JSON.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#00818d"/></marker></defs>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="12" y="28" width="290" height="145" rx="10" fill="#f1f3f5" stroke="#b40036" stroke-width="3"/>
+    <text x="157" y="85" font-size="30" fill="#b40036">R: eatPrepTBA</text>
+    <text x="157" y="130" font-size="26" fill="#534856">mit httr2</text>
+    <rect x="790" y="28" width="398" height="145" rx="10" fill="#f1f3f5" stroke="#00818d" stroke-width="3"/>
+    <text x="989" y="85" font-size="30" fill="#00818d">API</text>
+    <text x="989" y="130" font-size="26" fill="#534856">IQB-Studio / Testcenter</text>
+    <path d="M320 76H770" stroke="#00818d" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="545" y="54" font-size="23" fill="#534856">Anfrage: URL + Sitzungstoken</text>
+    <path d="M770 135H320" stroke="#00818d" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="545" y="171" font-size="23" fill="#534856">Antwort: häufig JSON</text>
+  </g>
+</svg>

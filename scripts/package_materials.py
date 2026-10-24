@@ -68,9 +68,6 @@ remove_generated(SITE / 'Daten')
 (SITE / 'Daten').mkdir()
 for file in EXAMPLE_FILES:
     shutil.copy2(file, SITE / 'Daten' / file.name)
-for file in sorted((ROOT / 'Daten/Zwischenstaende').glob('*.rds')):
-    (SITE / 'Daten/Zwischenstaende').mkdir(exist_ok=True)
-    shutil.copy2(file, SITE / 'Daten/Zwischenstaende' / file.name)
 codebook = ROOT / 'Daten/Ergebnisse/codebook.xlsx'
 if codebook.exists():
     (SITE / 'Daten/Ergebnisse').mkdir(exist_ok=True)

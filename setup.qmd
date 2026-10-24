@@ -114,7 +114,7 @@ Die Vorlagen `01` und `06` benötigen eigene Zugänge und werden nur angesehen.
 | Kodierung funktioniert noch nicht | Fehlermeldung festhalten; die Ergebnisausgaben im Handout zum Mitlesen nutzen |
 | Kein IQB-Studio-/Testcenter-Zugang | Die Beispiele verwenden mitgelieferte lokale Daten |
 
-Ergebnisse und Zwischenstände entstehen erst beim Ausführen der Skripte unter `Daten/Ergebnisse/` und `Daten/Zwischenstaende/`.
+Alle Ausgaben entstehen erst beim Ausführen der Skripte im gemeinsamen Ordner `Daten/Ergebnisse/`.
 
 ## Nur für Autor:innen: Materialien rendern
 

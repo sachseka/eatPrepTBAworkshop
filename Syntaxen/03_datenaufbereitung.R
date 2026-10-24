@@ -10,7 +10,6 @@ library(tidyr)
 person_columns <- c("group_id", "login_name", "login_code")
 
 dir.create("Daten/Ergebnisse", showWarnings = FALSE)
-dir.create("Daten/Zwischenstaende", showWarnings = FALSE)
 
 # 2. Beispieldaten einlesen
 # Den Abruf eigener Daten zeigt Syntaxen/01_datenabruf.R.
@@ -23,7 +22,7 @@ responses <- read_responses("Daten/Responses.csv")
 # responses <- readRDS("Daten/EigeneDaten/responses.rds")
 
 count(responses, booklet_id)
-saveRDS(responses, "Daten/Zwischenstaende/01_responses.rds")
+saveRDS(responses, "Daten/Ergebnisse/01_responses.rds")
 
 # Units und Booklet-Reihenfolge ansehen.
 print(units |> select(unit_key, unit_label)) # sollte 6 Units zeigen
@@ -60,7 +59,7 @@ tibble(
 
 coded_auto <- code_responses(responses, units, prepare = TRUE)
 count(coded_auto, unit_key, code_status)
-saveRDS(coded_auto, "Daten/Zwischenstaende/02_coded_auto.rds")
+saveRDS(coded_auto, "Daten/Ergebnisse/02_coded_auto.rds")
 
 # U3/TOTAL sollte kodiert sein; U4/TEXT benötigt einen manuellen Code.
 coded_auto |>
@@ -80,7 +79,7 @@ head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
 coded <- code_responses(responses, units, prepare = TRUE,
                        codes_manual = codes_manual)
 count(coded, code_status, code_type)
-saveRDS(coded, "Daten/Zwischenstaende/03_coded.rds")
+saveRDS(coded, "Daten/Ergebnisse/03_coded.rds")
 
 # U4/TEXT sollte jetzt CODING_COMPLETE sein.
 coded |>
@@ -96,7 +95,7 @@ design_coded <- complete_design(coded, units, design,
   recode_omissions_to_not_reached = FALSE, preserve_not_reached = FALSE)
 
 count(design_coded, id_used, code_type)
-saveRDS(design_coded, "Daten/Zwischenstaende/04_design_coded.rds")
+saveRDS(design_coded, "Daten/Ergebnisse/04_design_coded.rds")
 
 # P002/U2: ausgelassen (0 Punkte). P003/U5: nicht erreicht (NA).
 design_coded |>
@@ -105,11 +104,16 @@ design_coded |>
   select(login_name, unit_key, variable_id, code_type, code_score) |>
   print()
 
-# Alternative: abschließende Auslassungen als nicht erreicht behandeln.
-# Vorhandenes Not reached bleibt erhalten. Der Vergleich ist ein eigenes Objekt.
+# Weitere Missing-Fälle derselben Studie ansehen.
+design_coded |>
+  filter(code_id < 0, id_used) |>
+  select(login_name, unit_key, variable_id, code_status, code_id, code_score) |>
+  print()
+
+# Alternative 1: abschließende Auslassungen als nicht erreicht behandeln.
 
 omissions_reclassified <- complete_design(coded, units, design,
-  recode_omissions_to_not_reached = TRUE, preserve_not_reached = TRUE)
+  recode_omissions_to_not_reached = TRUE, preserve_not_reached = FALSE)
 
 count(omissions_reclassified, id_used, code_type)
 
@@ -119,6 +123,19 @@ bind_rows(Standard = design_coded, Alternative = omissions_reclassified,
   filter(login_name == "P006", unit_key == "U5") |>
   select(Regel, login_name, unit_key, code_type, code_score) |>
   print()
+
+# Alternative 2: erkanntes Not reached auch vor späterer Bearbeitung erhalten.
+not_reached_preserved <- complete_design(coded, units, design,
+  recode_omissions_to_not_reached = FALSE, preserve_not_reached = TRUE)
+
+bind_rows(Standard = design_coded, Alternative = not_reached_preserved,
+          .id = "Regel") |>
+  filter(login_name == "P002", unit_key == "U2") |>
+  select(Regel, login_name, unit_key, code_type, code_score) |>
+  print()
+
+# Die gewünschte Kombination oben im design_coded-Aufruf einstellen.
+# Weitere Fälle: https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html
 
 # 6. Personen auswählen
 # id_used: mindestens ein gespeicherter Kodierstatus ist vorhanden.
@@ -134,6 +151,7 @@ distinct(analysis_data, login_name) |>
 
 # 7. Items zuordnen
 # Variablen ohne Item-ID bleiben außerhalb des Skalierungsdatensatzes.
+# Die Itemnummer bleibt Text, damit die führende Null erhalten bleibt.
 
 design_items <- add_item_id(design_coded, units)
 item_data <- add_item_id(analysis_data, units)
@@ -144,7 +162,7 @@ unmapped <- item_data |>
 print(unmapped) # sollte U3/Q1 und U3/Q2 zeigen
 
 item_data <- filter(item_data, !is.na(item_id), trimws(item_id) != "")
-item_data <- mutate(item_data, item = paste0(unit_key, "__", item_id))
+item_data <- mutate(item_data, item = paste0(unit_key, item_id))
 
 # U3/TOTAL und U4/TEXT sind jeweils ein Item.
 item_data |>
@@ -176,8 +194,11 @@ missing_summary_used <- summarise_missings(design_items, used_only = TRUE)
 
 select(missing_summary, all_of(person_columns), id_used, n_items,
        n_not_reached, n_by_omission, prop_missing)
-write.csv2(missing_summary, "Daten/Ergebnisse/missing_summary.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
+csv <- file("Daten/Ergebnisse/missing_summary.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(missing_summary, csv, row.names = FALSE)
+close(csv)
 
 missing_summary |>
   select(login_name, n_items, n_not_reached, n_by_omission, prop_missing) |>
@@ -193,33 +214,37 @@ psychometrics <- evaluate_psychometrics(analysis_data, units, domains = domains)
 psychometrics <- add_item_id(psychometrics, units)
 
 code_stats <- psychometrics |>
-  select(item_id, unit_key, variable_id, code_id, code_score,
+  filter(!is.na(item_id)) |>
+  mutate(item = paste0(unit_key, item_id)) |>
+  select(item, unit_key, variable_id, code_id, code_score,
          code_n, code_p_valid, code_pbc) |>
   distinct()
-write.csv2(code_stats, "Daten/Ergebnisse/psychometrics.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(code_stats, csv, row.names = FALSE)
+close(csv)
 
 code_stats |>
-  filter(item_id == "U1_Q1") |>
-  select(item_id, code_id, code_n, code_p_valid, code_pbc) |>
+  filter(item == "U101") |>
+  select(item, code_id, code_n, code_p_valid, code_pbc) |>
   head(4) |> print()
 
 # Antwortkategorien unterscheiden die gewählten Antworten: A, B und C.
 category_stats <- psychometrics |>
-  filter(item_id == "U1_Q1", !is.na(category_id)) |>
+  filter(unit_key == "U1", item_id == "01", !is.na(category_id)) |>
   select(category_id, code_id, category_n, category_p_valid, category_pbc)
 print(category_stats) # sollte A: 21, B: 5 und C: 12 Antworten zeigen
 
 # B und C erhalten denselben Code; distinct() entfernt wiederholte Codezeilen.
 code_stats_mc <- psychometrics |>
-  filter(item_id == "U1_Q1") |>
+  filter(unit_key == "U1", item_id == "01") |>
   select(code_id, code_score, code_n, code_p_valid, code_pbc) |>
   distinct()
 print(code_stats_mc) # sollte für Code 0 insgesamt 17 Antworten zeigen
 
 # Scorehäufigkeiten direkt zählen; evaluate_psychometrics() liefert sie nicht.
 score_stats <- item_data |>
-  filter(item_id == "U1_Q1") |>
+  filter(unit_key == "U1", item_id == "01") |>
   count(code_score, name = "score_n") |>
   mutate(score_p = score_n / sum(score_n))
 print(score_stats) # sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen
@@ -230,41 +255,38 @@ print(score_stats) # sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen
 scaling_data <- item_data |>
   select(group_id, login_name, login_code, item, code_score) |>
   pivot_wider(names_from = item, values_from = code_score) |>
-  arrange(group_id, login_name, login_code) |>
-  mutate(person_id = row_number(), .before = 1)
+  arrange(group_id, login_name, login_code)
 
 scaling_data |>
-  select(person_id, login_name, U1__U1_Q1, U3__U3_TOTAL, U5__U5_Q1) |>
+  select(login_name, U101, U301, U501) |>
   head(4) |> print()
 
 # View(scaling_data) # optional: die gesamte Tabelle in RStudio öffnen
 
-person_key <- select(scaling_data, person_id, group_id, login_name, login_code)
-item_columns <- setdiff(names(scaling_data), names(person_key))
+item_columns <- setdiff(names(scaling_data), person_columns)
 persons <- distinct(item_data, group_id, login_name, login_code)
 stopifnot(nrow(scaling_data) == nrow(persons))
 stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
 
-# Die Zuordnung der neuen person_id zu den Testcenter-Kennungen ansehen.
-person_key |> head(4) |> print()
-
 # 12. Ergebnisse speichern
-# Long-Daten enthalten auch Codes und Missing-Arten; person_key sichert die IDs.
+# Long-Daten enthalten auch Codes und Missing-Arten.
 
-write.csv2(scaling_data, "Daten/Ergebnisse/scaling_data.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(person_key, "Daten/Ergebnisse/person_key.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+csv <- file("Daten/Ergebnisse/scaling_data.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(scaling_data, csv, row.names = FALSE)
+close(csv)
 saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
 saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
-saveRDS(scaling_data, "Daten/Zwischenstaende/05_scaling_data.rds")
+saveRDS(scaling_data, "Daten/Ergebnisse/05_scaling_data.rds")
 
 missing_counts <- count(design_coded, id_used, code_type)
-write.csv2(missing_counts, "Daten/Ergebnisse/missing_counts.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+csv <- file("Daten/Ergebnisse/missing_counts.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(missing_counts, csv, row.names = FALSE)
+close(csv)
 
-# Sollte fünf vorhandene Dateien mit einer Größe über 0 Bytes zeigen.
-export_files <- c("scaling_data.csv", "person_key.csv", "analysis_long.rds",
+# Sollte vier vorhandene Dateien mit einer Größe über 0 Bytes zeigen.
+export_files <- c("scaling_data.csv", "analysis_long.rds",
                  "design_items.rds", "missing_counts.csv")
 tibble(Datei = export_files,
        Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
@@ -284,7 +306,7 @@ report <- c(
   "Missing-Regeln: Paketvoreinstellungen; beide NR-Optionen FALSE.",
   "Auswahl: id_used = TRUE; verknüpfte Itemvariablen.",
   "Keine offenen Itemkodierungen im exportierten Datensatz.",
-  "Fehlende Werte bleiben NA; Long-Daten und Personenschlüssel gesichert.")
+  "Fehlende Werte bleiben NA; Testcenter-Kennungen bleiben im Datensatz.")
 
 writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
 capture.output(sessionInfo(), file = "Daten/Ergebnisse/session-info.txt")

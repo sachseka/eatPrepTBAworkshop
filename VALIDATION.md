@@ -7,15 +7,15 @@ Browserprüfung sind erfolgreich abgeschlossen.
 
 - Vier R-Prüfskripte erfolgreich: Rechenaufgabe, vollständige Aufbereitung,
   Ausführung der Folienblöcke sowie Log- und Excel-Ergebnisse.
-- 44 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
-  143 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
-- 88 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
+- 49 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
+  151 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
+- 96 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
   die R-Skripte benötigen keine technischen Abschnittsmarker mehr.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
 - 26 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 89 Folien und 89 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 96 Folien und 96 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 88 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 95 PDF-Seiten
   enthalten die Abschnittsnavigation.
 - Einstieg und drei Arbeitsblöcke in der Navigation; drei Ausführungsphasen
   von ca. zehn Minuten, jeweils unmittelbar gefolgt von „Fragen?“.
@@ -48,7 +48,25 @@ Browserprüfung sind erfolgreich abgeschlossen.
   Die echten Aufrufe `get_coding_report()` und `add_metadata()` stehen in der
   API-Vorlage; Profildefinitionen können Internetzugriff erfordern.
 - CSV-Exporte verwenden `write.csv2()` ohne Zeilennamen, mit Semikolon,
-  Dezimalkomma und UTF-16LE. Rückimport, Personenkennungen und Umlaute sind geprüft.
+  Dezimalkomma, UTF-16LE und einer vorangestellten Zeile `sep=;`.
+  Beim Rückimport wird diese Zeile mit `skip = 1` übersprungen.
+- Direkter CSV-Aufruf in Microsoft Excel 16.0 geprüft: Das bisherige Format
+  reproduziert den Fehler mit nur einer Spalte; die neue Variante trennt
+  korrekt und erhält Umlaute sowie numerische Werte. Keine bestehenden
+  Arbeitsmappen oder Excel-Einstellungen wurden verändert.
+- Die echten Exporte wurden zusätzlich vollständig in Excel mit ihren
+  CSV-Quelldaten verglichen: `psychometrics.csv` 25 × 8,
+  `scaling_data.csv` 39 × 11 und `log_unit_times.csv` 1 × 10
+  (jeweils ohne Überschrift). Scores, Wahrscheinlichkeiten und Zeiten sind
+  Zahlen; vollständige Itemkennungen wie `U101` bleiben erhalten.
+- Alle erzeugten Dateien liegen unter `Daten/Ergebnisse/`. Die nummerierten
+  RDS-Dateien 01–05 gehören zu derselben Studie und enden beim breiten
+  Skalierungsdatensatz. Dieser enthält drei ursprüngliche Testcenter-Kennungen
+  und acht Itemspalten. Ein zusätzlicher Personenschlüssel entfällt.
+- Beide Optionen von `complete_design()` getrennt geprüft: P006/U5 zeigt
+  die Umkodierung abschließender Auslassungen, P002/U2 den Erhalt von Not reached
+  vor späterer Bearbeitung. Ungültige Antworten, manuelle Auslassungen,
+  Personen ohne Status und nicht vorgesehene Items sind ebenfalls geprüft.
 - Die Kategorie-, Code- und Scoreauswertungen des Multiple-Choice-Items
   werden anhand der tatsächlichen Antwortverteilungen geprüft.
   Kategoriehäufigkeiten und Codehäufigkeiten haben unterschiedliche

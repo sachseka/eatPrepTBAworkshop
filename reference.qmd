@@ -15,7 +15,7 @@ title: "Nachschlagen und vertiefen"
 | Kodierung | [`code_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/code_responses.html) |
 | Codebuch und Kodiermanual aus IQB-Studio | [`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html), [`download_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html) |
 | Lokaler Excel-Export | [`writexl::write_xlsx()`](https://docs.ropensci.org/writexl/reference/write_xlsx.html) |
-| CSV für deutsches Excel | [`write.csv2()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/write.table.html) mit `row.names = FALSE` |
+| CSV für deutsches Excel | [`write.csv2()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/write.table.html) mit `row.names = FALSE` und vorangestellter Excel-Zeile `sep=;` |
 | Missings | [`complete_design()`](https://iqb-research.github.io/eatPrepTBA/reference/complete_design.html) |
 | Missing-Überblick | [`summarise_missings()`](https://iqb-research.github.io/eatPrepTBA/reference/summarise_missings.html) |
 | Item-Verknüpfung | [`add_item_id()`](https://iqb-research.github.io/eatPrepTBA/reference/add_item_id.html) |
@@ -106,6 +106,12 @@ Diese Ergebnisse sind kein direkter Ersatz für den vollständigen Workflow mit 
 ## Weitere Paketfunktionen zur Studienvorbereitung
 
 [`generate_testtakers()`](https://iqb-research.github.io/eatPrepTBA/reference/generate_testtakers.html), [`generate_booklet()`](https://iqb-research.github.io/eatPrepTBA/reference/generate_booklet.html), [`generate_booklets()`](https://iqb-research.github.io/eatPrepTBA/reference/generate_booklets.html), [`prepare_booklets_from_block_design()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_booklets_from_block_design.html) und [`upload_file()`](https://iqb-research.github.io/eatPrepTBA/reference/upload_file.html) unterstützen die Studienvorbereitung. Sie gehören zum weiteren Funktionsumfang des Pakets. Für ihre praktische Anwendung wird ein eigener Testworkspace benötigt.
+
+## Konventionen und Missing-Szenarien
+
+- [Item-IDs: Anlage von Metadaten (IQB-intern, Stand 14.03.2025)](http://iqbstaff.pbworks.com/w/page/160099128/Meth*%20Anlage%20von%20Metadaten)
+- [Variablenbenennung: Elemente und Variablen](https://iqb-berlin.github.io/tba-info/tasks/coding-scheme/steps.html)
+- [eatPrepTBA: Missing-Szenarien](https://iqb-research.github.io/eatPrepTBA/articles/missing-examples.html)
 
 ## Quellen
 

@@ -81,14 +81,27 @@ session_overview <- qc |>
   select(all_of(session_keys), log_qc_flag) |>
   left_join(focus_summary, by = session_keys)
 
-write.csv2(inventory, "Daten/Ergebnisse/log_inventory.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(anomalies, "Daten/Ergebnisse/log_anomalies.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(times, "Daten/Ergebnisse/log_unit_times.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
-write.csv2(session_overview, "Daten/Ergebnisse/log_sessions.csv",
-           row.names = FALSE, fileEncoding = "UTF-16LE")
+# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
+csv <- file("Daten/Ergebnisse/log_inventory.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(inventory, csv, row.names = FALSE)
+close(csv)
+
+csv <- file("Daten/Ergebnisse/log_anomalies.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(anomalies, csv, row.names = FALSE)
+close(csv)
+
+csv <- file("Daten/Ergebnisse/log_unit_times.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(times, csv, row.names = FALSE)
+close(csv)
+
+csv <- file("Daten/Ergebnisse/log_sessions.csv", "wt", encoding = "UTF-16LE")
+writeLines("sep=;", csv)
+write.csv2(session_overview, csv, row.names = FALSE)
+close(csv)
+
 saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
              unit_times = unit_times, focus = focus), "Daten/Ergebnisse/log_qc.rds")
 

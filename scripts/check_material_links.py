@@ -74,6 +74,8 @@ assert not any((SITE / 'Syntaxen').rglob('*_mod.R'))
 assert not any((payload / 'Syntaxen').rglob('*_mod.R'))
 for published in (SITE, payload):
     assert not (published / 'Daten/EigeneDaten').exists()
+    assert not (published / 'Daten/Zwischenstaende').exists()
+    assert not list((published / 'Daten').rglob('person_key.csv'))
     assert not any((published / name).exists() for name in
                    ('R', 'data', 'checkpoints', 'outputs', 'data_eigen'))
     assert (published / 'downloads/workshop.pdf').read_bytes() == (
