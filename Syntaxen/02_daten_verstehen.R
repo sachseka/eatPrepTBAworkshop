@@ -2,17 +2,15 @@
 # Synthetische Daten; Kodierschema nach dem IQB-Studio-Tutorial zu Partial Credit:
 # https://iqb-research.github.io/IQB-Methods/docs/studio/partial_credit.html#numerische-kurzantwort
 
-# 1. Pakete und Daten
+# 1. Pakete und Aufgabeninformationen
 
 library(eatPrepTBA) # eatAutoCode nicht separat laden.
 library(dplyr)
 library(tidyr)
 
 pc_units <- readRDS("Daten/demo-pc-units.rds")
-pc_responses <- read_responses("Daten/demo-pc-responses.csv")
 
 select(pc_units, unit_key, unit_label)
-select(pc_responses, login_name, unit_key, response_progress)
 
 # View(pc_units) # die vollständige Tabelle in RStudio öffnen
 
@@ -40,19 +38,7 @@ coding_report_demo <- readRDS("Daten/demo-coding-report.rds")
 select(coding_report_demo, unit_key, variable_id, validation, coding_type)
 coding_report_demo$validation_problems[[2]]
 
-# 3. JSON ansehen
-# id = Variable, value = Antwort, status = Bearbeitungsstatus.
-# Auch die eingegebenen Zahlen sind hier als Text gespeichert.
-
-cat(jsonlite::prettify(pc_responses$responses[[1]]))
-
-# 4. Rohantworten entpacken
-# value bleibt zunächst eine Listenspalte; Punkte werden noch nicht vergeben.
-
-raw_values <- prepare_responses(pc_responses)
-select(raw_values, login_name, variable_id, value, variable_status)
-
-# 5. Kodierschema ansehen
+# 3. Kodierschema ansehen
 # Drei Basisvariablen liefern je 0 oder 1 Punkt; 01 vergibt daraus 0–2 Punkte.
 # Zusätzliche Regeln für Tausender-Schreibweisen sind hier ausgelassen.
 
@@ -68,6 +54,21 @@ pc_rules
 pc_rules |>
   filter(variable_id %in% c("01a", "01")) |>
   print()
+
+# 4. Antwortdaten laden und JSON ansehen
+# id = Variable, value = Antwort, status = Bearbeitungsstatus.
+# Auch die eingegebenen Zahlen sind hier als Text gespeichert.
+
+pc_responses <- read_responses("Daten/demo-pc-responses.csv")
+select(pc_responses, login_name, unit_key, response_progress)
+
+cat(jsonlite::prettify(pc_responses$responses[[1]]))
+
+# 5. Rohantworten entpacken
+# value bleibt zunächst eine Listenspalte; Punkte werden noch nicht vergeben.
+
+raw_values <- prepare_responses(pc_responses)
+select(raw_values, login_name, variable_id, value, variable_status)
 
 # 6. Automatisch kodieren
 # Wieder die ursprünglichen Antworten verwenden.
@@ -90,7 +91,7 @@ pc_items <- add_item_id(pc_coded, pc_units)
 pc_items <- filter(pc_items, !is.na(item_id))
 select(pc_items, login_name, item_id, value, code_id, code_score)
 
-# 8. Bereits gespeicherte Codes einlesen, z. B. bei StarS-Daten
+# 8. Optional: bereits gespeicherte Codes einlesen, z. B. bei StarS-Daten
 # Die synthetische Datei enthält fertige Codes für Variable 01.
 # prepare_coded() liest sie aus; es kodiert nicht neu.
 

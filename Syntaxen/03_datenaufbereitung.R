@@ -220,7 +220,7 @@ psychometrics <- psychometrics |>
 # Alle Spalten und Kategoriezeilen exportieren, auch die der Basisvariablen.
 csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(psychometrics, csv, row.names = FALSE)
+write.csv2(psychometrics, csv, row.names = FALSE, na="")
 close(csv)
 saveRDS(psychometrics, "Daten/Ergebnisse/psychometrics.rds")
 
@@ -308,7 +308,7 @@ stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
 
 csv <- file("Daten/Ergebnisse/scaling_data.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(scaling_data, csv, row.names = FALSE)
+write.csv2(scaling_data, csv, row.names = FALSE, na="")
 close(csv)
 saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
 saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
@@ -317,7 +317,7 @@ saveRDS(scaling_data, "Daten/Ergebnisse/05_scaling_data.rds")
 missing_counts <- count(design_coded, id_used, code_type)
 csv <- file("Daten/Ergebnisse/missing_counts.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(missing_counts, csv, row.names = FALSE)
+write.csv2(missing_counts, csv, row.names = FALSE, na="")
 close(csv)
 
 # Sollte vier vorhandene Dateien mit einer Größe über 0 Bytes zeigen.
