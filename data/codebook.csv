@@ -1,0 +1,23 @@
+unit_key,variable_id,variable_source_type,code_id,code_label,code_score
+U1,Q1,BASE,1,Richtige Auswahl A,1
+U1,Q1,BASE,0,Andere Auswahl,0
+U1,Q2,BASE,1,Richtige Auswahl A,1
+U1,Q2,BASE,0,Andere Auswahl,0
+U2,Q1,BASE,1,Richtige Auswahl A,1
+U2,Q1,BASE,0,Andere Auswahl,0
+U3,Q1,BASE,1,Richtige Auswahl A,1
+U3,Q1,BASE,0,Andere Auswahl,0
+U3,Q2,BASE,1,Richtige Auswahl A,1
+U3,Q2,BASE,0,Andere Auswahl,0
+U3,TOTAL,SUM_SCORE,2,Beide Teilantworten richtig,1
+U3,TOTAL,SUM_SCORE,1,Eine Teilantwort richtig,0.5
+U3,TOTAL,SUM_SCORE,0,Keine Teilantwort richtig,0
+U4,TEXT,BASE,2,Begruendung nennt den Textbeleg,1
+U4,TEXT,BASE,1,Passende Aussage ohne Textbeleg,0.5
+U4,TEXT,BASE,0,Unzutreffende Begruendung,0
+U5,Q1,BASE,1,Richtige Auswahl A,1
+U5,Q1,BASE,0,Andere Auswahl,0
+U5,Q2,BASE,1,Richtige Auswahl A,1
+U5,Q2,BASE,0,Andere Auswahl,0
+U6,Q1,BASE,1,Richtige Auswahl A,1
+U6,Q1,BASE,0,Andere Auswahl,0
