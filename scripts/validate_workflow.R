@@ -15,6 +15,23 @@ stopifnot(setequal(item_columns, c("U101", "U102", "U201", "U301",
                                   "U401", "U501", "U502", "U601")))
 stopifnot(!anyDuplicated(item_data[c(person_columns, "item")]))
 
+# Die Freitexte in der manuellen Tabelle stammen aus denselben Rohantworten.
+manual_keys <- c(response_keys, "variable_id")
+response_values <- prepare_responses(responses) |>
+  filter(unit_key == "U4", variable_id == "TEXT") |>
+  transmute(across(all_of(manual_keys)),
+            response_value = vapply(value, function(x) unlist(x), character(1)))
+manual_values <- codes_manual |>
+  transmute(across(all_of(manual_keys)), manual_value = coalesce(value, ""))
+value_check <- full_join(manual_values, response_values, by = manual_keys,
+                         relationship = "one-to-one")
+stopifnot(nrow(value_check) == 39L)
+stopifnot(identical(value_check$manual_value, value_check$response_value))
+stopifnot(n_distinct(value_check$response_value[value_check$response_value != ""]) == 6L)
+stopifnot(case("P001", "U4", "TEXT")$code_score == 0.5)
+stopifnot(case("P002", "U4", "TEXT")$code_score == 1)
+stopifnot(case("P003", "U4", "TEXT")$code_score == 0)
+
 # Innere Auslassung, Not reached, ungültige Antwort und manuelle Auslassung.
 stopifnot(case("P002", "U2", "Q1")$code_type == "MISSING_BY_OMISSION")
 stopifnot(case("P003", "U5", "Q1")$code_type == "MISSING_NOT_REACHED")

@@ -10,7 +10,7 @@ Erzeugung: scripts/generate_data.R, Seed 20260923. Ein Testzeitpunkt, ein Kompet
 | Responses.csv | 193 gespeicherte Person–Unit-Kombinationen im semikolongetrennten Testcenter-Lehrformat |
 | persons.csv | 40 Personen, Booklet-Zuordnung, synthetische Schlüssel |
 | booklets.csv | zwei Booklets mit jeweils fünf geordneten Units in einem Testlet |
-| codes_manual.csv | 39 synthetische Bewertungen von U4/TEXT |
+| codes_manual.csv | 39 Freitextantworten (`value`) aus U4/TEXT mit manuellen Bewertungen |
 | codebook.csv | vereinfachte Übersicht aus den Kodierschemata |
 | Logs.csv | 15 künstliche Logereignisse, zwei Sessions |
 
@@ -19,6 +19,12 @@ U1 und U5 haben zwei Items; U2, U3, U4 und U6 je ein Item. U3/TOTAL wird aus zwe
 Basisvariablen abgeleitet; diese beiden Basisvariablen sind keine eigenen Items.
 Die lokalen Itemnummern sind als Text `01` und `02` gespeichert. Zusammen mit
 dem vereinfachten Unit-Kurznamen entstehen Kennungen wie `U101` und `U301`.
+
+Bei U4/TEXT geht es um die Öffnung der Bibliothek am Samstag. Die sechs kurzen
+Antwortvarianten stehen identisch in `Responses.csv` und `codes_manual.csv`.
+Code 2 bezeichnet eine passende Aussage mit Textbeleg, Code 1 eine passende
+Aussage ohne Beleg und Code 0 eine unzutreffende oder unbegründete Antwort.
+Die leere Antwort von P005 erhält Code -99.
 
 Prüffälle: P002/U2 ausgelassen; P003/U5 nicht erreicht; P004/U1/Q1 ungültig;
 P005/U4 manuelle Auslassung; P006/U5 als DISPLAYED gespeicherte abschließende

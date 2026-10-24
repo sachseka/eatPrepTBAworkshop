@@ -7,15 +7,15 @@ Browserprüfung sind erfolgreich abgeschlossen.
 
 - Vier R-Prüfskripte erfolgreich: Rechenaufgabe, vollständige Aufbereitung,
   Ausführung der Folienblöcke sowie Log- und Excel-Ergebnisse.
-- 52 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
-  161 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
+- 51 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
+  160 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
 - 104 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
   die R-Skripte benötigen keine technischen Abschnittsmarker mehr.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
 - 26 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 102 Folien und 102 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 101 Folien und 101 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 101 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 100 PDF-Seiten
   enthalten die Abschnittsnavigation.
 - Einstieg und drei Arbeitsblöcke in der Navigation; drei Ausführungsphasen
   von ca. zehn Minuten, jeweils unmittelbar gefolgt von „Fragen?“.
@@ -44,6 +44,9 @@ Browserprüfung sind erfolgreich abgeschlossen.
 - `scripts/validate_workflow.R` prüft die erwarteten Ergebnisse der
   synthetischen Lesestudie: automatische und manuelle Kodierung,
   Ableitungen, Missing-Regeln, Personenauswahl und Exporte.
+- Die Freitextantworten in `codes_manual$value` stimmen mit U4/TEXT in
+  den Rohantworten überein. Die zusätzliche Spalte funktioniert bei der
+  manuellen Kodierung; Skalierungsdaten und Kennwerte bleiben unverändert.
 - Alle sieben Arbeitsskripte syntaktisch geprüft; in R00 wurden Versionsabfragen,
   Laden der Pakete und Dateiprüfung ohne erneute Installation ausgeführt.
 - `scripts/validate_demonstration_data.R` prüft JSON-Import,

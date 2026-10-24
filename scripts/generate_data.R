@@ -73,6 +73,16 @@ saveRDS(design,'Daten/design.rds')
 readr::write_csv(persons,'Daten/persons.csv')
 readr::write_csv(booklets,'Daten/booklets.csv')
 
+# Freitextantworten: passende Aussage, Aussage mit Textbeleg, unzutreffende Antwort.
+manual_values <- rep(c(
+  'Die Bibliothek ist am Samstag offen.',
+  'Ja, laut Aushang: Samstag 10 bis 14 Uhr.',
+  'Nein, am Wochenende ist immer geschlossen.',
+  'Samstags kann man in die Bibliothek gehen.',
+  'Im Aushang steht: samstags von 10 bis 14 Uhr.',
+  'Weil ich das vermute.'), length.out = nrow(persons))
+manual_values[5] <- ''
+
 set.seed(20260923)
 unitrows <- left_join(persons,booklets,by='booklet_id',relationship='many-to-many') |>
   filter(person_no!=40, !(person_no==2 & unit_key=='U2'), !(person_no==3 & unit_key=='U5'))
@@ -80,11 +90,9 @@ raw <- pmap_dfr(unitrows,function(group_id,login_name,login_code,booklet_id,pers
                                 booklet_no,testlet_no,unit_booklet_no,unit_key) {
   ids <- map_chr(specs[[unit_key]],'id'); ids <- setdiff(ids,'TOTAL')
   responses <- map(ids,function(id) {
-    value <- if(unit_key=='U4') c('Weil ich das vermute.', 'Die Bibliothek ist am Samstag offen.',
-      'Die Bibliothek ist am Samstag offen, denn im Aushang steht Samstag 10 bis 14 Uhr.')[person_no %% 3L + 1L] else
+    value <- if(unit_key=='U4') manual_values[person_no] else
       sample(c('A','B','C'),1,prob=c(0.2+0.6*person_no/40,0.4-0.3*person_no/40,0.4-0.3*person_no/40))
     status <- 'VALUE_CHANGED'
-    if(person_no==5 && unit_key=='U4') value <- ''
     if(person_no==4 && unit_key=='U1' && id=='Q1') {value<-NULL;status<-'INVALID'}
     if(person_no==6 && unit_key=='U5') {value<-NULL;status<-'DISPLAYED'}
     list(id=id,value=value,status=status)
@@ -99,6 +107,7 @@ raw <- pmap_dfr(unitrows,function(group_id,login_name,login_code,booklet_id,pers
 readr::write_delim(raw,'Daten/Responses.csv',delim=';',quote='needed')
 codes_manual <- persons |> filter(person_no!=40) |>
   transmute(group_id,login_name,login_code,booklet_id,unit_key='U4',variable_id='TEXT',
+            value=manual_values[person_no],
             code_id=as.integer(if_else(person_no==5,-99L,(person_no %% 3L))))
 readr::write_csv(codes_manual,'Daten/codes_manual.csv')
 

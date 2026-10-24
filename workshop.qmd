@@ -843,7 +843,7 @@ coded_auto |>
 
 U3/TOTAL ist bereits abgeleitet; U4/TEXT benötigt eine manuelle Bewertung.
 
-## Manuelle Codes: vollständige Eingabetabelle {.compact-code .object-preview}
+## Manuelle Codes: Freitextantworten bewerten {.compact-code .object-preview}
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-einlesen -->
 ```{r}
@@ -856,7 +856,9 @@ codes_manual <- readr::read_csv("Daten/codes_manual.csv",
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-vorschau -->
 ```{r}
 #| eval: false
-head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
+codes_manual |>
+  select(login_name, value, code_id) |>
+  head(3) |> print(width = 100)
 ```
 <!-- /r-source -->
 
@@ -864,11 +866,13 @@ head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
 ```{r}
 #| eval: true
 #| echo: false
-head(codes_manual, 3) |> print(width = 90)
+codes_manual |>
+  select(login_name, value, code_id) |>
+  head(3) |> print(width = 100)
 ```
 :::
 
-Die sechs Kennungen ordnen den **`code_id`** einer Antwort zu. Die Punktzahl wird aus dem Kodierschema übernommen.
+`value` zeigt den Antworttext, `code_id` die manuelle Bewertung. Die sechs Kennungen ordnen diese der ursprünglichen Antwort zu. Die Punktzahl stammt aus dem Kodierschema.
 
 ## Manuelle Codes einsetzen {.compact-code .object-preview}
 
@@ -1128,7 +1132,9 @@ Im Workshop sind die Unitnamen vereinfacht: **`U1` + `01` → `U101`**. Die Item
 
 Die **Metadaten-Verknüpfung** bestimmt, welche Variable den Itemwert liefert. Die freie Item-ID `RECHNEN_01` aus Beispiel 1 wird hier durch lokale Itemnummern `01`, `02`, … abgelöst.
 
-[Leitfaden: Elemente und Variablen](https://iqb-berlin.github.io/tba-info/tasks/coding-scheme/steps.html) – Benennungskonventionen dort noch als **nicht final abgestimmt** gekennzeichnet.{.small}
+::: {.small}
+[Leitfaden: Elemente und Variablen](https://iqb-berlin.github.io/tba-info/tasks/coding-scheme/steps.html) – Benennungskonventionen dort noch als **nicht final abgestimmt** gekennzeichnet.
+:::
 
 ## Item-Verknüpfungen ergänzen {.compact-code}
 
@@ -1401,32 +1407,6 @@ print(denominator_stats)
 **U501:** `code_n` zählt den jeweiligen Code. `code_n_total` zählt alle **20 vorgesehenen Fälle** unter den ausgewählten Personen; `code_n_valid` die **19 Fälle mit Score ungleich `NA`**.
 
 „Valid“ bedeutet hier **vorhandener Score**. Die Auslassung mit Score 0 zählt mit, Not reached mit `NA` nicht.
-
-## Anteile: Der Nenner macht den Unterschied {.compact-code .object-preview}
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-anteile -->
-```{r}
-#| eval: false
-proportion_stats <- psychometrics |>
-  filter(item == "U501") |>
-  distinct(code_id, code_n, code_p_total, code_p_valid)
-print(proportion_stats) # Code 1: 6/20 = 0.30 und 6/19 = 0.316
-```
-<!-- /r-source -->
-
-::: {.r-console}
-```{r}
-#| eval: true
-#| echo: false
-print(proportion_stats)
-```
-:::
-
-**Code 1:** `code_p_total` = 6/20 = **30 %**; `code_p_valid` = 6/19 ≈ **31,6 %**.
-
-Die Spalten enthalten Anteile zwischen 0 und 1. Für einen Code mit `code_score = NA` bleibt auch `code_p_valid` gleich `NA`.
-
-Die wiederholten Codezeilen werden vor der Darstellung mit `distinct()` zusammengefasst.
 
 ## Antwortkategorien: Bezeichnungen und Anteile {.compact-code .object-preview}
 
@@ -1977,6 +1957,6 @@ Offene Fragen für die anschließende Runde festhalten.
 
 [Lehrdaten synthetisch; Quellen und technische Prüfung im Workshop-Repository.]{.small}
 
-## Vielen Dank für eure Aufmerksamkeit!
+## Vielen Dank für eure Aufmerksamkeit! {.thanks}
 
 Gibt es Fragen?

@@ -740,7 +740,7 @@ coded_auto |>
 
 Die Prüfung richtet sich auf die späteren Itemvariablen und die für ihre Berechnung benötigten Ausgangsvariablen. Die abschließende Missing-Zuweisung folgt erst mit [`complete_design()`](https://iqb-research.github.io/eatPrepTBA/reference/complete_design.html).
 
-In der Mini-Studie benötigt U4 eine manuelle Bewertung. Die Tabelle der manuellen Codes enthält die Personenkennung, `booklet_id`, `unit_key`, `variable_id` und `code_id`: genau einen Code pro zu kodierender Antwort. Kennungen werden als Text eingelesen, `code_id` als Ganzzahl.
+In der Mini-Studie benötigt U4 eine manuelle Bewertung. Die Tabelle der manuellen Codes enthält die Personenkennung, `booklet_id`, `unit_key`, `variable_id` und `code_id`: genau einen Code pro zu kodierender Antwort. Die zusätzliche Spalte `value` zeigt den Freitext, den eine Person bewertet hat. Kennungen und Antworttexte werden als Text eingelesen, `code_id` als Ganzzahl.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-einlesen -->
 ```{r}
@@ -755,13 +755,17 @@ Die Personen- und Variablenschlüssel ordnen die manuelle Kategorie der ursprün
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-vorschau -->
 ```{r}
 #| eval: false
-head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
+codes_manual |>
+  select(login_name, value, code_id) |>
+  head(3) |> print(width = 100)
 ```
 <!-- /r-source -->
 
 ```{r}
 #| echo: false
-head(codes_manual, 3) |> print(width = 90)
+codes_manual |>
+  select(login_name, value, code_id) |>
+  head(3) |> print(width = 100)
 ```
 
 Erneut die ursprünglichen `responses` übergeben. So werden manuelle Codes eingefügt und davon abhängige Variablen neu berechnet. Ohne manuelle Kodierung genügt anstelle dieses Abschnitts `coded <- coded_auto`.

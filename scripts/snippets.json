@@ -322,10 +322,11 @@
     },
     "manuelle-codes-vorschau": {
       "start": [
-        "head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen"
+        "codes_manual |>",
+        "  select(login_name, value, code_id) |>"
       ],
       "end": [
-        "head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen"
+        "  head(3) |> print(width = 100)"
       ]
     },
     "manuell-kodieren": {
