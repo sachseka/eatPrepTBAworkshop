@@ -7,14 +7,20 @@ Browserprüfung sind erfolgreich abgeschlossen.
 
 - Vier R-Prüfskripte erfolgreich: Rechenaufgabe, vollständige Aufbereitung,
   Ausführung der Folienblöcke sowie Log- und Excel-Ergebnisse.
-- 43 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
-  136 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
+- 42 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
+  134 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
+- 83 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
+  die R-Skripte benötigen keine technischen Abschnittsmarker mehr.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
 - 24 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 79 Folien und 79 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 85 Folien und 85 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 78 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 84 PDF-Seiten
   enthalten die Abschnittsnavigation.
+- Einstieg und drei Arbeitsblöcke in der Navigation; zwei Ausführungsphasen
+  von ca. zehn Minuten, jeweils unmittelbar gefolgt von „Fragen?“.
+- Alle 92 Inhaltslinks der Folien öffnen ein neues Tab; Kapitelsprünge
+  bleiben innerhalb der Präsentation.
 
 ## Dokumentierte Umgebung
 

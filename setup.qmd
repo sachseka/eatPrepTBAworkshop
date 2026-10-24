@@ -105,6 +105,11 @@ Die folgenden Skripte lassen sich im geöffneten R-Projekt Zeile für Zeile ausf
 
 Für eigene Realdaten gibt es zusätzlich Vorlagen zum [Datenabruf](R/01_datenabruf.R){download="01_datenabruf.R"} und für [Codebücher aus IQB-Studio](R/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"}. Die eingetragenen Adressen und Workspace-IDs sind Beispiele und werden an die eigene Erhebung angepasst. Diese Vorlagen im lokalen Workshop nicht ausführen; sie stellen Verbindungen zu den Anwendungen her.
 
+Im Workshop sind nach dem Rechenbeispiel (`02_daten_verstehen.R`) und nach
+der Lesestudie (`03_datenaufbereitung.R`) jeweils etwa zehn Minuten zum
+eigenständigen Ausführen vorgesehen. Anschließend folgt jeweils eine kurze
+Fragerunde. Logs und Codebücher bilden den gemeinsamen letzten Abschnitt.
+
 ## Wenn etwas nicht klappt
 
 | Beobachtung | Nächster Schritt |

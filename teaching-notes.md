@@ -15,22 +15,45 @@
 
 ## Ablauf
 
-1. Paket, Dokumentation und Rückmeldemöglichkeiten vorstellen.
-2. Datenquellen zuordnen und den Abruf anhand der R-Objekte erklären.
-3. JSON entpacken, vorhandene Codes lesen und Partial Credit nachvollziehen.
-   Die erste Kodierung am Ergebnis dieses Rechenbeispiels prüfen.
-4. Den vollständigen Aufbereitungsweg an der Lesestudie durchgehen.
-5. Bei jedem Schritt zuerst den Code und danach die entstandene Tabelle
-   erläutern: Was ist eine Zeile, welche Spalten sind neu, was folgt daraus?
-6. Logs auf Ereignisse, Zeiten und Fokusverluste beschränken.
-7. Den Zweck des Codebuchs erläutern: Codes und Bewertungen aus den
-   Kodierschemata für Auswertung und Weitergabe dokumentieren. Zuerst die
-   Erstellung mit `prepare_codebook()` und den DOCX-Download aus IQB-Studio
-   zeigen; anschließend Auswahl und Export an der vorbereiteten
-   synthetischen Tabelle ohne Zugang nachvollziehen.
+**0 · Einstieg:** Materialseite, Folien und Downloadpaket öffnen. Das
+entpackte R-Projekt und die Abschnitte in `00_installation.R` zeigen;
+die Installationszeilen sind nur bei Bedarf erforderlich.
+
+**1 · Paket und erste Kodierung:** Paket, Dokumentation und
+Rückmeldemöglichkeiten vorstellen. Datenquellen zuordnen und den Abruf
+anhand der R-Objekte erklären. Das Rechenbeispiel in
+`02_daten_verstehen.R` vollständig behandeln: JSON entpacken, Partial
+Credit nachvollziehen, selbst kodieren, das Item auswählen und gespeicherte
+Codes einlesen.
+
+**Pause und Ausprobieren, etwa zehn Minuten:** Pakete und Dateien mit
+`00_installation.R` prüfen und Skript `02` einmal ausführen, sofern noch
+nicht parallel geschehen. Skript `01` benötigt eigene Zugänge und gehört
+nicht zu dieser Übung. Anschließend auf der Folie **„Fragen?“** offene
+Punkte sammeln und besprechen.
+
+**2 · Beispiel 2:** Die Lesestudie mit `03_datenaufbereitung.R` von der
+Kodierung über Missing-Regeln und Kennwerte bis zum Skalierungsdatensatz
+und Export durchgehen.
+
+**Pause und Ausprobieren, etwa zehn Minuten:** Skript `03` einmal
+ausführen, sofern noch nicht parallel geschehen. Danach eine kurze
+Fragerunde auf der zweiten Folie **„Fragen?“**.
+
+**3 · Logs und Codebücher:** Logs mit Skript `04` auf Ereignisse, Zeiten
+und Fokusverluste beschränken. Anschließend den Zweck des Codebuchs
+erläutern: Codes und Bewertungen aus den Kodierschemata dokumentieren.
+Zuerst die Erstellung mit `prepare_codebook()` und den DOCX-Download aus
+IQB-Studio anhand von Skript `06` zeigen; dann Auswahl und Export an der
+lokalen Tabelle in Skript `05`. Die API-Vorlage erfordert keine Ausführung
+im Workshop. Dieser gemeinsame Block erhält keine weitere Übungsphase.
+
+Bei jedem zentralen Schritt zuerst den Code und danach die entstandene
+Tabelle erläutern: Was ist eine Zeile, welche Spalten sind neu, was folgt
+daraus?
 
 Die Kapitelanzeige markiert den aktuellen Abschnitt und die Position darin.
-Der Ablauf enthält keine festen Zeitvorgaben oder getrennten Übungsblöcke.
+Für die übrigen Abschnitte gibt es keine festen Minutenbudgets.
 
 ## Begriffe und Verständnisfragen
 
@@ -53,6 +76,10 @@ Log- und Codebuchskripte können unabhängig ausgeführt werden. Für eigene
 Daten zunächst Pfade, Metadatenstand, Kennungen und Bereichszuordnung
 anpassen. Missing-Regeln und Personenauswahl werden anhand des
 Auswertungsplans festgelegt und dokumentiert.
+
+Codeänderungen erfolgen in den R-Skripten. `scripts/snippets.json`
+ordnet die Abschnitte für Folien, Handout und Vorbereitung über Textanker
+zu; `scripts/sync_snippets.py` übernimmt den Abgleich.
 
 ## Prüfung vor Durchführung
 

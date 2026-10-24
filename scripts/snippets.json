@@ -1,0 +1,690 @@
+{
+  "R/00_installation.R": {
+    "pakete-installieren": {
+      "start": [
+        "install.packages(\"pak\")"
+      ],
+      "end": [
+        "))"
+      ]
+    },
+    "paketversionen": {
+      "start": [
+        "packageVersion(\"eatPrepTBA\")  # Workshopstand: 0.9.8.9042"
+      ],
+      "end": [
+        "packageVersion(\"eatAutoCode\") # Workshopstand: 0.5.0.9008"
+      ]
+    },
+    "pakete-laden": {
+      "start": [
+        "library(eatPrepTBA) # eatAutoCode wird intern geladen; nicht separat laden."
+      ],
+      "end": [
+        "library(writexl)"
+      ]
+    },
+    "dateien-pruefen": {
+      "start": [
+        "files <- c(\"data/units.rds\", \"data/design.rds\", \"data/Responses.csv\","
+      ],
+      "end": [
+        "}"
+      ]
+    }
+  },
+  "R/01_datenabruf.R": {
+    "api-einstellungen": {
+      "start": [
+        "library(eatPrepTBA)"
+      ],
+      "end": [
+        "testcenter_workspace_id <- 35 # Beispiel; eigenen Workspace eintragen"
+      ]
+    },
+    "api-vorbereiten": {
+      "start": [
+        "dir.create(\"data_eigen\", showWarnings = FALSE)"
+      ],
+      "end": [
+        "dir.create(\"data_eigen\", showWarnings = FALSE)"
+      ]
+    },
+    "studio-daten-abrufen": {
+      "start": [
+        "studio_login <- login_studio(app_version = studio_version, keyring = TRUE)"
+      ],
+      "end": [
+        "saveRDS(units, \"data_eigen/units.rds\")"
+      ]
+    },
+    "studio-schema-ansehen": {
+      "start": [
+        "units <- add_coding_scheme(units) # coding_scheme wird zu unit_codes aufbereitet."
+      ],
+      "end": [
+        "View(units)"
+      ]
+    },
+    "testcenter-verbinden": {
+      "start": [
+        "testcenter_login <- login_testcenter(base_url = testcenter_url)"
+      ],
+      "end": [
+        "                               ws_id = testcenter_workspace_id)"
+      ]
+    },
+    "antworten-abrufen": {
+      "start": [
+        "responses <- get_responses(testcenter)"
+      ],
+      "end": [
+        "# saveRDS(responses, \"data_eigen/responses.rds\")"
+      ]
+    },
+    "design-abrufen": {
+      "start": [
+        "design <- get_design(testcenter, units = units)"
+      ],
+      "end": [
+        "saveRDS(design, \"data_eigen/design.rds\")"
+      ]
+    },
+    "logs-abrufen": {
+      "start": [
+        "logs <- get_logs(testcenter)"
+      ],
+      "end": [
+        "saveRDS(logs, \"data_eigen/logs.rds\")"
+      ]
+    },
+    "abruf-dokumentieren": {
+      "start": [
+        "retrieval_info <- c("
+      ],
+      "end": [
+        "capture.output(sessionInfo(), file = \"data_eigen/session-info.txt\")"
+      ]
+    }
+  },
+  "R/02_daten_verstehen.R": {
+    "demo-einlesen": {
+      "start": [
+        "library(eatPrepTBA) # eatAutoCode nicht separat laden."
+      ],
+      "end": [
+        "select(pc_responses, login_name, unit_key, response_progress)"
+      ]
+    },
+    "demo-units-vorschau": {
+      "start": [
+        "pc_units |>"
+      ],
+      "end": [
+        "names(pc_units)"
+      ]
+    },
+    "demo-unit-tabellen": {
+      "start": [
+        "print(pc_units$unit_variables[[1]] |> select(variable_id, variable_type))"
+      ],
+      "end": [
+        "print(pc_units$items_list[[1]] |> select(variable_id, item_id))"
+      ]
+    },
+    "json-ansehen": {
+      "start": [
+        "cat(jsonlite::prettify(pc_responses$responses[[1]]))"
+      ],
+      "end": [
+        "cat(jsonlite::prettify(pc_responses$responses[[1]]))"
+      ]
+    },
+    "antworten-entpacken": {
+      "start": [
+        "raw_values <- prepare_responses(pc_responses)"
+      ],
+      "end": [
+        "select(raw_values, login_name, variable_id, value, variable_status)"
+      ]
+    },
+    "pc-schema-ansehen": {
+      "start": [
+        "pc_rules <- pc_units |>"
+      ],
+      "end": [
+        "pc_rules"
+      ]
+    },
+    "pc-regeln-vorschau": {
+      "start": [
+        "pc_rules |>"
+      ],
+      "end": [
+        "  print()"
+      ]
+    },
+    "pc-kodieren": {
+      "start": [
+        "pc_coded <- code_responses(pc_responses, pc_units, prepare = TRUE)"
+      ],
+      "end": [
+        "  select(variable_id, value, code_id, code_score, code_status)"
+      ]
+    },
+    "pc-kodierung-pruefen": {
+      "start": [
+        "nrow(pc_coded) == 16 # sollte TRUE sein: 4 Personen mit je 4 Variablen"
+      ],
+      "end": [
+        "all(pc_coded$code_status == \"CODING_COMPLETE\") # sollte TRUE sein"
+      ]
+    },
+    "pc-items-zuordnen": {
+      "start": [
+        "pc_items <- add_item_id(pc_coded, pc_units)"
+      ],
+      "end": [
+        "select(pc_items, login_name, item_id, value, code_id, code_score)"
+      ]
+    },
+    "vorhandene-codes-entpacken": {
+      "start": [
+        "pc_stored <- read_responses(\"data/demo-stored-codes.csv\")"
+      ],
+      "end": [
+        "select(stored_codes, login_name, variable_id, value, code_id, code_score)"
+      ]
+    }
+  },
+  "R/03_datenaufbereitung.R": {
+    "workflow-start": {
+      "start": [
+        "library(eatPrepTBA) # lädt eatAutoCode mit; nicht separat laden"
+      ],
+      "end": [
+        "dir.create(\"checkpoints\", showWarnings = FALSE)"
+      ]
+    },
+    "daten-einlesen": {
+      "start": [
+        "units <- readRDS(\"data/units.rds\")"
+      ],
+      "end": [
+        "saveRDS(responses, \"checkpoints/01_responses.rds\")"
+      ]
+    },
+    "studie-units-booklets-vorschau": {
+      "start": [
+        "print(units |> select(unit_key, unit_label)) # sollte 6 Units zeigen"
+      ],
+      "end": [
+        "  select(booklet_id, unit_booklet_no, unit_key) |> head(5))"
+      ]
+    },
+    "design-rohdaten-vorschau": {
+      "start": [
+        "print(design |> select(login_name, booklet_id, unit_key, variable_id) |> head(6))"
+      ],
+      "end": [
+        "print(design |> select(login_name, booklet_id, unit_key, variable_id) |> head(6))"
+      ]
+    },
+    "antwortdaten-vorschau": {
+      "start": [
+        "responses |>"
+      ],
+      "end": [
+        "  select(login_name, booklet_id, unit_key, response_progress) |>",
+        "  head(4) |> print()"
+      ]
+    },
+    "daten-abgleichen": {
+      "start": [
+        "response_keys <- c(\"group_id\", \"login_name\", \"login_code\","
+      ],
+      "end": [
+        "missing_rows <- anti_join(design, responses, by = response_keys)"
+      ]
+    },
+    "datenabgleich-vorschau": {
+      "start": [
+        "tibble("
+      ],
+      "end": [
+        ") |> print()"
+      ]
+    },
+    "automatisch-kodieren": {
+      "start": [
+        "coded_auto <- code_responses(responses, units, prepare = TRUE)"
+      ],
+      "end": [
+        "saveRDS(coded_auto, \"checkpoints/02_coded_auto.rds\")"
+      ]
+    },
+    "auto-vorschau": {
+      "start": [
+        "coded_auto |>"
+      ],
+      "end": [
+        "  select(unit_key, variable_id, code_id, code_score, code_status) |>",
+        "  head(4) |> print()"
+      ]
+    },
+    "manuelle-codes-einlesen": {
+      "start": [
+        "codes_manual <- readr::read_csv(\"data/codes_manual.csv\","
+      ],
+      "end": [
+        "  col_types = readr::cols(.default = \"c\", code_id = \"i\"))"
+      ]
+    },
+    "manuelle-codes-vorschau": {
+      "start": [
+        "head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen"
+      ],
+      "end": [
+        "head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen"
+      ]
+    },
+    "manuell-kodieren": {
+      "start": [
+        "coded <- code_responses(responses, units, prepare = TRUE,"
+      ],
+      "end": [
+        "saveRDS(coded, \"checkpoints/03_coded.rds\")"
+      ]
+    },
+    "manuell-vorschau": {
+      "start": [
+        "coded |>"
+      ],
+      "end": [
+        "  select(login_name, variable_id, code_id, code_score, code_status) |>",
+        "  head(4) |> print()"
+      ]
+    },
+    "design-ergaenzen": {
+      "start": [
+        "design_coded <- complete_design(coded, units, design,"
+      ],
+      "end": [
+        "saveRDS(design_coded, \"checkpoints/04_design_coded.rds\")"
+      ]
+    },
+    "design-vorschau": {
+      "start": [
+        "design_coded |>"
+      ],
+      "end": [
+        "  select(login_name, unit_key, variable_id, code_type, code_score) |>",
+        "  print()"
+      ]
+    },
+    "missing-regeln-vergleichen": {
+      "start": [
+        "omissions_reclassified <- complete_design(coded, units, design,"
+      ],
+      "end": [
+        "count(omissions_reclassified, id_used, code_type)"
+      ]
+    },
+    "missing-vergleich-vorschau": {
+      "start": [
+        "bind_rows(Standard = design_coded, Alternative = omissions_reclassified,"
+      ],
+      "end": [
+        "  select(Regel, login_name, unit_key, code_type, code_score) |>",
+        "  print()"
+      ]
+    },
+    "teilnahme-auswaehlen": {
+      "start": [
+        "analysis_data <- filter(design_coded, id_used)"
+      ],
+      "end": [
+        "count(design_coded, id_used)"
+      ]
+    },
+    "teilnahme-vorschau": {
+      "start": [
+        "analysis_data |>"
+      ],
+      "end": [
+        "  summarise(n_personen = n()) |> print() # sollte 39 Personen ergeben"
+      ]
+    },
+    "items-zuordnen": {
+      "start": [
+        "design_items <- add_item_id(design_coded, units)"
+      ],
+      "end": [
+        "item_data <- mutate(item_data, item = paste0(unit_key, \"__\", item_id))"
+      ]
+    },
+    "items-vorschau": {
+      "start": [
+        "item_data |>"
+      ],
+      "end": [
+        "  select(unit_key, variable_id, item_id, item, code_score) |>",
+        "  print()"
+      ]
+    },
+    "offene-codes-pruefen": {
+      "start": [
+        "unresolved <- item_data |>"
+      ],
+      "end": [
+        "stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen"
+      ]
+    },
+    "offene-codes-vorschau": {
+      "start": [
+        "unresolved |>"
+      ],
+      "end": [
+        "  select(login_name, item, code_status, code_type) |>",
+        "  head(4) |> print()"
+      ]
+    },
+    "missings-zusammenfassen": {
+      "start": [
+        "missing_summary <- summarise_missings(design_items)"
+      ],
+      "end": [
+        "readr::write_csv(missing_summary, \"outputs/missing_summary.csv\")"
+      ]
+    },
+    "missing-uebersicht-vorschau": {
+      "start": [
+        "missing_summary |>"
+      ],
+      "end": [
+        "  select(login_name, n_items, n_not_reached, n_by_omission, prop_missing) |>",
+        "  head(4) |> print()"
+      ]
+    },
+    "kennwerte-berechnen": {
+      "start": [
+        "domains <- distinct(units, unit_key)"
+      ],
+      "end": [
+        "readr::write_csv(code_stats, \"outputs/psychometrics.csv\")"
+      ]
+    },
+    "kennwerte-vorschau": {
+      "start": [
+        "code_stats |>"
+      ],
+      "end": [
+        "  select(item_id, code_id, code_n, code_p_valid, code_pbc) |>",
+        "  head(4) |> print()"
+      ]
+    },
+    "kennwerte-kategorien": {
+      "start": [
+        "category_stats <- psychometrics |>"
+      ],
+      "end": [
+        "print(category_stats) # sollte A: 21, B: 5 und C: 12 Antworten zeigen"
+      ]
+    },
+    "kennwerte-codes": {
+      "start": [
+        "code_stats_mc <- psychometrics |>"
+      ],
+      "end": [
+        "print(code_stats_mc) # sollte für Code 0 insgesamt 17 Antworten zeigen"
+      ]
+    },
+    "kennwerte-scores": {
+      "start": [
+        "score_stats <- item_data |>"
+      ],
+      "end": [
+        "print(score_stats) # sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen"
+      ]
+    },
+    "score-datensatz-erstellen": {
+      "start": [
+        "scaling_data <- item_data |>"
+      ],
+      "end": [
+        "  mutate(person_id = row_number(), .before = 1)"
+      ]
+    },
+    "datensatz-vorschau": {
+      "start": [
+        "scaling_data |>"
+      ],
+      "end": [
+        "  select(person_id, login_name, U1__U1_Q1, U3__U3_TOTAL, U5__U5_Q1) |>",
+        "  head(4) |> print()"
+      ]
+    },
+    "datensatz-pruefen": {
+      "start": [
+        "person_key <- select(scaling_data, person_id, group_id, login_name, login_code)"
+      ],
+      "end": [
+        "stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))"
+      ]
+    },
+    "schluessel-vorschau": {
+      "start": [
+        "person_key |> head(4) |> print()"
+      ],
+      "end": [
+        "person_key |> head(4) |> print()"
+      ]
+    },
+    "daten-exportieren": {
+      "start": [
+        "readr::write_csv(scaling_data, \"outputs/scaling_data.csv\")"
+      ],
+      "end": [
+        "readr::write_csv(missing_counts, \"outputs/missing_counts.csv\")"
+      ]
+    },
+    "export-vorschau": {
+      "start": [
+        "export_files <- c(\"scaling_data.csv\", \"person_key.csv\", \"analysis_long.rds\","
+      ],
+      "end": [
+        "       Bytes = file.info(file.path(\"outputs\", export_files))$size) |> print()"
+      ]
+    },
+    "workflow-dokumentieren": {
+      "start": [
+        "report <- c("
+      ],
+      "end": [
+        "cat(paste(report, collapse = \"\\n\"), \"\\n\")"
+      ]
+    }
+  },
+  "R/04_logs.R": {
+    "logs-read": {
+      "start": [
+        "logs <- read_logs(\"data/Logs.csv\")"
+      ],
+      "end": [
+        "count(logs, group_id, login_name, booklet_id) # P001: 9, P002: 6 Ereignisse"
+      ]
+    },
+    "logs-rohdaten-vorschau": {
+      "start": [
+        "logs |>"
+      ],
+      "end": [
+        "  head(4) |> print(width = 90)"
+      ]
+    },
+    "logs-inventory": {
+      "start": [
+        "inventory <- summarise_log_inventory(logs)"
+      ],
+      "end": [
+        "inventory <- summarise_log_inventory(logs)"
+      ]
+    },
+    "logs-inventar-vorschau": {
+      "start": [
+        "inventory |>"
+      ],
+      "end": [
+        "  head(5) |> print()"
+      ]
+    },
+    "logs-qc": {
+      "start": [
+        "anomalies <- detect_log_anomalies(logs)"
+      ],
+      "end": [
+        "  select(login_name, booklet_id, anomaly_code, severity, evidence)"
+      ]
+    },
+    "logs-qc-vorschau": {
+      "start": [
+        "qc |>"
+      ],
+      "end": [
+        "  print() # P001: ok; P002: critical"
+      ]
+    },
+    "logs-times": {
+      "start": [
+        "unit_times <- estimate_unit_times(logs, include_environment = FALSE)"
+      ],
+      "end": [
+        "            n_run_no_load, n_failed_loadings)"
+      ]
+    },
+    "logs-zeiten-vorschau": {
+      "start": [
+        "times |>"
+      ],
+      "end": [
+        "  print() # P001: 11,65 s Bearbeitung, 0,35 s Laden; P002: keine Zeitzeile"
+      ]
+    },
+    "logs-focus": {
+      "start": [
+        "focus <- summarise_log_focus(logs)"
+      ],
+      "end": [
+        "            has_unresolved_focus_loss)"
+      ]
+    },
+    "logs-fokus-vorschau": {
+      "start": [
+        "focus_summary |>"
+      ],
+      "end": [
+        "  print() # P001: 2,5 s; P002: offener Fokusverlust"
+      ]
+    },
+    "logs-export": {
+      "start": [
+        "session_keys <- c(\"group_id\", \"login_name\", \"login_code\", \"booklet_id\")"
+      ],
+      "end": [
+        "             unit_times = unit_times, focus = focus), \"outputs/log_qc.rds\")"
+      ]
+    },
+    "logs-session-vorschau": {
+      "start": [
+        "session_overview |>"
+      ],
+      "end": [
+        "  print()"
+      ]
+    }
+  },
+  "R/05_kodiermanuale.R": {
+    "codebook-read": {
+      "start": [
+        "cb <- readr::read_csv(\"data/codebook.csv\", show_col_types = FALSE,"
+      ],
+      "end": [
+        "count(cb, unit_key, variable_id) # 10 Variablen aus 6 Units"
+      ]
+    },
+    "codebuch-vorschau": {
+      "start": [
+        "cb |>"
+      ],
+      "end": [
+        "  head(4) |> print()"
+      ]
+    },
+    "codebook-select": {
+      "start": [
+        "selected_cb <- cb |>"
+      ],
+      "end": [
+        "  select(unit_key, variable_id, code_id, code_label, code_score)"
+      ]
+    },
+    "codebuch-auswahl-vorschau": {
+      "start": [
+        "selected_cb |>"
+      ],
+      "end": [
+        "  print() # Code 2: Score 1; Code 1: Score 0.5"
+      ]
+    },
+    "codebook-excel": {
+      "start": [
+        "writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),"
+      ],
+      "end": [
+        "readr::write_csv(selected_cb, \"outputs/codebook.csv\")"
+      ]
+    },
+    "codebuch-dateien-vorschau": {
+      "start": [
+        "codebook_files <- c(\"outputs/codebook.xlsx\", \"outputs/codebook.csv\")"
+      ],
+      "end": [
+        "       Bytes = file.info(codebook_files)$size) |> print()"
+      ]
+    }
+  },
+  "R/06_kodiermanuale_studio.R": {
+    "studio-codebook-settings": {
+      "start": [
+        "studio_version <- \"21.0.0\" # Version der eigenen Anmeldeseite übernehmen"
+      ],
+      "end": [
+        "dir.create(export_path, recursive = TRUE, showWarnings = FALSE)"
+      ]
+    },
+    "studio-codebook-login": {
+      "start": [
+        "login <- login_studio(app_version = studio_version, keyring = TRUE)"
+      ],
+      "end": [
+        "workspace <- access_workspace(login, ws_id = studio_workspace_id)"
+      ]
+    },
+    "studio-codebook-prepare": {
+      "start": [
+        "cb_studio <- prepare_codebook(workspace, unit_keys = selected_units,"
+      ],
+      "end": [
+        "writexl::write_xlsx(cb_studio, file.path(export_path, \"codebook.xlsx\"))"
+      ]
+    },
+    "studio-codebook-docx": {
+      "start": [
+        "download_codebook(workspace, path = export_path, unit_keys = selected_units,"
+      ],
+      "end": [
+        "                  missings_profile = missing_profile, show_score = TRUE)"
+      ]
+    }
+  }
+}

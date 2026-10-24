@@ -7,23 +7,40 @@ keinen Zugang zu IQB-Studio oder Testcenter.
 
 **Karoline Sachse · IQB Methoden-Team · 26.10.2026**
 
-[Workshop-Repository](https://github.com/sachseka/eatPrepTBAworkshop) ·
+[Folien im Browser](https://sachseka.github.io/eatPrepTBAworkshop/workshop.html) ·
+[Materialseite](https://sachseka.github.io/eatPrepTBAworkshop/) ·
+[Materialpaket herunterladen](https://github.com/sachseka/eatPrepTBAworkshop/raw/refs/heads/main/downloads/WSeatPrepTBA-material.zip) ·
 [eatPrepTBA-Dokumentation](https://iqb-research.github.io/eatPrepTBA/) ·
 [eatPrepTBA-Repository](https://github.com/iqb-research/eatPrepTBA)
 
 ## Einstieg
 
-1. Repository herunterladen oder klonen und `WSeatPrepTBA.Rproj` öffnen.
+1. [Materialpaket herunterladen](https://github.com/sachseka/eatPrepTBAworkshop/raw/refs/heads/main/downloads/WSeatPrepTBA-material.zip),
+   vollständig entpacken und `WSeatPrepTBA.Rproj` öffnen.
 2. [00_installation.R](R/00_installation.R) öffnen und die Abschnitte gemäß
-   [Vorbereitung](setup.qmd) einzeln ausführen: bei Bedarf installieren,
+   [Vorbereitung](https://sachseka.github.io/eatPrepTBAworkshop/setup.html) einzeln ausführen: bei Bedarf installieren,
    dann Versionen abfragen, Pakete laden und Beispieldateien prüfen.
-3. Die passenden R-Skripte mit den Folien und dem [Handout](handout.qmd)
+3. Die passenden R-Skripte mit den [Folien](https://sachseka.github.io/eatPrepTBAworkshop/workshop.html)
+   und dem [Handout](https://sachseka.github.io/eatPrepTBAworkshop/handout.html)
    Schritt für Schritt nachvollziehen.
 
 Die [PDF-Folien](downloads/workshop.pdf) sind ohne R lesbar. Das
 [Materialpaket](downloads/WSeatPrepTBA-material.zip) enthält Daten,
-R-Skripte, Zwischenstände und Quarto-Quellen. Zum Rendern der HTML-Fassung
-gelten die Hinweise weiter unten.
+R-Skripte, Zwischenstände und Quarto-Quellen. Die Online-Folien lassen sich
+ohne Installation direkt im Browser öffnen.
+
+## Ablauf
+
+| Abschnitt | Inhalt |
+|---|---|
+| 0 · Einstieg | Materialien herunterladen, R-Projekt öffnen, Pakete vorbereiten |
+| 1 · Paket & erste Kodierung | Datenquellen, API-Abruf, R-Objekte und Rechenbeispiel mit Partial Credit |
+| 2 · Studie & Skalierung | Lesestudie aufbereiten, Missing-Regeln, psychometrische Kennwerte und Skalierungsdatensatz |
+| 3 · Logs & Codebücher | Ereignisse, Zeiten und Fokusverluste; Codebücher und Kodiermanuale |
+
+Nach Abschnitt 1 und Abschnitt 2 folgen jeweils etwa zehn Minuten zum
+eigenständigen Ausführen der Skripte und eine kurze Fragerunde. Die erste
+Phase gehört zu `02_daten_verstehen.R`, die zweite zu `03_datenaufbereitung.R`.
 
 ## Themen und Skripte
 
@@ -62,8 +79,9 @@ quarto render
 quarto preview
 ```
 
-Vor dem Rendern übernimmt `scripts/sync_snippets.py` die markierten
-Codeabschnitte aus `R/` in Vorbereitung, Folien und Handout. Änderungen an diesen
+Vor dem Rendern übernimmt `scripts/sync_snippets.py` die in
+`scripts/snippets.json` festgelegten Codeabschnitte aus `R/` in Vorbereitung,
+Folien und Handout. Änderungen an diesen
 Codeblöcken werden deshalb in den R-Dateien vorgenommen. Die lokalen
 Beispiele werden beim Rendern berechnet; die Website entsteht in `_site/`.
 
@@ -72,6 +90,16 @@ Abschnitt. Zum PDF-Export die Druckansicht der Folien (`?print-pdf`) verwenden
 und die Datei als `downloads/workshop.pdf` speichern. Anschließend
 `python scripts/package_materials.py` ausführen; das aktualisiert das
 Materialpaket und die vorbereitete Einbindung für IQB-Methods.
+
+Nach Rendering, PDF-Export und Aktualisierung des Materialpakets wird der
+geprüfte Inhalt von `_site/` mit folgendem Befehl veröffentlicht:
+
+```bash
+quarto publish gh-pages --no-render --no-prompt --no-browser
+```
+
+GitHub Pages verwendet dafür den Branch `gh-pages`. Die Quelltexte bleiben
+auf `main`; auf GitHub ist kein erneuter R-Durchlauf erforderlich.
 
 Die Generatoren `scripts/generate_data.R` und
 `scripts/generate_demonstration_data.R` erzeugen die synthetischen Daten
@@ -98,7 +126,9 @@ am eatPrep-Workshop 2024. Einige Abbildungen zeigen frühere Oberflächen.
 
 ## Rückmeldungen
 
-Korrekturen an den Materialien können als
+Jede Rückmeldung ist willkommen, auch zu unklaren Formulierungen,
+umständlichen Arbeitsschritten oder unerwartetem Verhalten. Hinweise zu
+den Materialien können als
 [Workshop-Issue](https://github.com/sachseka/eatPrepTBAworkshop/issues)
 eingetragen werden. Bei Fehlern oder Funktionswünschen zu eatPrepTBA
 gehört die Rückmeldung in die

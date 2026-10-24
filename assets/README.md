@@ -36,6 +36,17 @@ Alle ausgewählten Screenshots sind unverändert übernommen.
 | Browser_Developer_Tools_scheme.png | gleichnamig | API-Anfrage und JSON |
 | codebook-options.png | 2.png | Codebook-Exportoptionen |
 
+Zusätzlich übernommen am 24.10.2026:
+
+- `Studio_Login.png`: unverändertes Original aus eatPrepTBA, Commit
+  `ea782df422f1aea853704dcfce7533273b429ba2`,
+  `vignettes/images/Studio_Login.png`. Zeigt die Position der Versionsangabe
+  auf der Anmeldeseite; die abgebildete Version 13.11.0 ist historisch.
+- Die Workspace-ID im vorhandenen `Studio_Access_Workspace.png` ist 918.
+  Die aktuelle Anleitung erklärt das Ablesen der ID aus der Browseradresse:
+  https://iqb-research.github.io/eatPrepTBA/articles/eatPrepTBA.html#accessing-a-workspace
+  Die Abbildung stammt aus einer früheren Oberfläche; die Zahlen sind Beispiele.
+
 Die Oberflächen zeigen zum Teil frühere IQB-Studio-Versionen. Aufnahmen sind keine
 Screenshots des synthetischen Datensatzes. Die Zuordnung zu den jeweiligen
 Beispielen wird in den Materialien erläutert.

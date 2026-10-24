@@ -9,10 +9,10 @@
 
     const slides = deck.getSlides();
     const shortLabels = {
-      '1': '1 Paket & Datenabruf',
-      '2': '2 Aufbereitung & Kodierung',
-      '3': '3 Logdaten',
-      '4': '4 Codebücher'
+      '0': '0 Einstieg',
+      '1': '1 Paket & Kodierung',
+      '2': '2 Studie & Skalierung',
+      '3': '3 Logs & Codebücher'
     };
     const chapters = slides.filter(slide => slide.classList.contains('chapter'))
       .map((slide, index) => {

@@ -52,6 +52,7 @@
 .reveal .chapter-tag {color:#00818D;font-size:.65em;letter-spacing:.06em;font-weight:600;}
 .reveal .compact-code pre code {font-size:20px;}
 .reveal .chapter h2 {font-size:2.0em;margin-top:.6em;}
+.reveal .chapter.structure-table h2 {font-size:1.6em;margin-top:0;}
 .reveal .chapter .chapter-number {color:#00818D;font-size:1.4em;}
 .reveal .columns {gap:28px;}
 .reveal .screenshot {max-height:365px;object-fit:contain;display:block;margin:0;}

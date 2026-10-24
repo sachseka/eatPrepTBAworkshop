@@ -46,7 +46,7 @@ with zipfile.ZipFile(ROOT / 'downloads' / 'WSeatPrepTBA-material.zip') as archiv
         data = archive.read('WSeatPrepTBA/' + name)
         if data != (ROOT / name).read_bytes():
             raise SystemExit(f'Archive content differs: {name}')
-    forbidden = ('.library', 'review', 'integration', '_site', 'workshop_mod.qmd',
+    forbidden = ('.git', '.library', 'review', 'integration', '_site', 'workshop_mod.qmd',
                  'workshop_mod2.qmd', 'workshop_mod3.qmd', 'kodiermanual.docx', 'exercises.qmd', 'solutions.qmd', '03_exercises.R')
     assert not any(set(Path(name).parts).intersection(forbidden)
                    for name in archive.namelist())

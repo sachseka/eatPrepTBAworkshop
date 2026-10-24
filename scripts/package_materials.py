@@ -17,7 +17,7 @@ SOURCE_FILES = (
     'WSeatPrepTBA.Rproj', '.Rprofile', 'README.md', 'WORKSHOP-PLAN.md',
     'teaching-notes.md', 'VALIDATION.md', 'renv.lock',
 )
-EXCLUDED = {'integration', 'review', '_site', '.library', '__pycache__'}
+EXCLUDED = {'integration', 'review', '_site', '.library', '.git', '__pycache__'}
 OBSOLETE_OUTPUTS = {'outputs/kodiermanual.docx', 'data/kodiermanual.md'}
 
 

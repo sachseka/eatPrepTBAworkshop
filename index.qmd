@@ -18,6 +18,11 @@ Der Workshop behandelt den Paketaufbau, die Aufbereitung von Antworten und Metad
 [Materialpaket herunterladen](downloads/WSeatPrepTBA-material.zip){.btn .btn-secondary}
 :::
 
+Das ZIP vollständig entpacken, `WSeatPrepTBA.Rproj` öffnen und
+[00_installation.R](R/00_installation.R) abschnittsweise ausführen.
+Installationszeilen werden nur bei Bedarf benötigt. Die Folien sind direkt
+im Browser lesbar.
+
 ::: {.card-grid}
 ::: {.workshop-card}
 ### Vorbereiten
@@ -36,23 +41,28 @@ Kommentierte Arbeitsschritte und wiederverwendbare R-Skripte. [Zum Handout](hand
 :::
 :::
 
-## Themen und Ergebnisse
+## Ablauf
 
-| Thema | Ergebnis |
+| Abschnitt | Inhalt |
 |---|---|
-| Paket, Daten und Schnittstellen | Aufbau von eatPrepTBA erklären; IQB-Studio-Metadaten, Testcenter-Antworten und Testdesign zuordnen |
-| Datensatz für die Skalierung | Antworten kodieren, Missings begründen, Kennwerte prüfen und einen Skalierungsdatensatz exportieren |
-| Ausgewählte Logs | Ereignisse überblicken, Zeiten aufbereiten und Fokusverluste vorsichtig interpretieren |
-| Codebücher | Codebücher als Excel exportieren und den DOCX-Download aus IQB-Studio vorbereiten |
+| **0 · Einstieg** | Materialpaket, R-Projekt und Vorbereitung |
+| **1 · Paket & erste Kodierung** | Datenquellen, API-Abruf, R-Objekte und Rechenbeispiel mit Partial Credit |
+| **2 · Studie & Skalierung** | Lesestudie aufbereiten, Missing-Regeln, psychometrische Kennwerte und Skalierungsdatensatz |
+| **3 · Logs & Codebücher** | Ereignisse, Zeiten und Fokusverluste; Codebücher und Kodiermanuale |
 
-Der Ablauf richtet sich nach den Inhalten und Fragen; es gibt keine festen Zeitvorgaben. Die Skripte bleiben nach dem Workshop als Vorlage für die Arbeit mit eigenen Daten nutzbar.
+Nach Abschnitt 1 und Abschnitt 2 folgen jeweils etwa **zehn Minuten zum
+eigenständigen Ausführen der Skripte**, anschließend eine kurze Fragerunde.
+Zuerst wird `02_daten_verstehen.R`, danach `03_datenaufbereitung.R`
+nachvollzogen. Der übrige Ablauf richtet sich nach den Inhalten und Fragen.
+Die Skripte bleiben als Vorlage für die Arbeit mit eigenen Daten nutzbar.
 
 ## Materialien
 
-- [Quarto-Folien](workshop.qmd) und [PDF der Folien](downloads/workshop.pdf).
+- [Folien im Browser](workshop.qmd) und [PDF der Folien](downloads/workshop.pdf).
 - [Materialpaket mit Daten, R-Skripten, Zwischenständen und Quellen](downloads/WSeatPrepTBA-material.zip).
 - [Handout](handout.qmd) und [Funktionsübersicht](reference.qmd).
 - Beispielausgabe: [Excel-Codebuch](outputs/codebook.xlsx).
+- [Öffentliches Workshop-Repository](https://github.com/sachseka/eatPrepTBAworkshop).
 
 ### R-Skripte einzeln herunterladen
 

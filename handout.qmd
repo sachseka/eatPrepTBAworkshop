@@ -12,7 +12,7 @@ source("R/02_daten_verstehen.R", encoding = "UTF-8")
 
 ![](assets/eatPrepTBA-logo.png){width=130 fig-alt="Paketlogo von eatPrepTBA" fig-align="right"}
 
-Dieses Handout führt durch die vier Themen des Workshops: Paket und Datenquellen, Aufbereitung für die Skalierung, ausgewählte Logauswertungen und Codebücher. Die Codeblöcke entsprechen den verteilten R-Skripten. Die Ergebnistabellen werden mit den synthetischen Beispieldaten berechnet; dafür ist kein IQB-Studio- oder Testcenter-Zugang erforderlich.
+Dieses Handout folgt den drei Arbeitsblöcken des Workshops: Paket und erste Kodierung, vollständige Aufbereitung bis zur Skalierung sowie Logs und Codebücher. Die Codeblöcke entsprechen den verteilten R-Skripten. Die Ergebnistabellen werden mit den synthetischen Beispieldaten berechnet; dafür ist kein IQB-Studio- oder Testcenter-Zugang erforderlich.
 
 **Materialstand 24.10.2026:** eatPrepTBA 0.9.8.9042 (`ea782df`), eatAutoCode 0.5.0.9008. R-Grundkenntnisse werden vorausgesetzt. Die [Vorbereitung](setup.qmd) beschreibt Installation, Laden der Pakete und Dateiprüfung.
 
@@ -28,13 +28,19 @@ Dieses Handout führt durch die vier Themen des Workshops: Paket und Datenquelle
 
 Die lokalen Arbeitsskripte werden im geöffneten Projekt `WSeatPrepTBA.Rproj` von oben nach unten ausgeführt. In `00_installation.R` die Installationszeilen nur bei Bedarf ausführen. Die beiden API-Vorlagen werden hier nur gezeigt; ihre Beispielwerte werden für eine eigene Erhebung angepasst.
 
-## 1. Paketaufbau, Datenquellen und Datenabruf
+## 0. Einstieg und Ablauf
+
+Die [Materialseite](https://sachseka.github.io/eatPrepTBAworkshop/) bündelt Folien, Download und Vorbereitung. Vor Beginn das ZIP entpacken, das R-Projekt öffnen und `00_installation.R` abschnittsweise ausführen.
+
+Nach der ersten Kodierung mit `02_daten_verstehen.R` und nach dem vollständigen Ablauf in `03_datenaufbereitung.R` folgen jeweils ca. zehn Minuten zum Ausprobieren und eine Fragerunde. Die API-Vorlagen `01` und `06` benötigen eigene Zugänge und werden dabei nicht ausgeführt. Logs und Codebücher bilden anschließend einen gemeinsamen Block.
+
+## 1. Paket und erste Kodierung
 
 ### Das Paket und seine Dokumentation
 
 [eatPrepTBA](https://iqb-research.github.io/eatPrepTBA/) unterstützt Datenabruf, Kodierung, Aufbereitung und Exporte rund um IQB-Studio und Testcenter. Die Paketwebsite enthält Vignetten und Funktionshilfe; der [Quellcode liegt auf GitHub](https://github.com/iqb-research/eatPrepTBA).
 
-Für Fehler, unerwartete Ergebnisse und Funktionswünsche steht der [Issue-Bereich](https://github.com/iqb-research/eatPrepTBA/issues) bereit. Eine hilfreiche Meldung nennt Paketversion, betroffenen Funktionsaufruf, erwartetes und beobachtetes Ergebnis sowie ein kleines Beispiel ohne vertrauliche Daten. Hinweise zu diesen Workshopmaterialien gehören in die [Workshop-Issues](https://github.com/sachseka/eatPrepTBAworkshop/issues).
+**Jedes Feedback ist willkommen – auch zu kleinen Unklarheiten, irritierenden Ausgaben oder umständlichen Schritten.** Für Fehler, unerwartete Ergebnisse und Funktionswünsche steht der [Issue-Bereich](https://github.com/iqb-research/eatPrepTBA/issues) bereit. Eine hilfreiche Meldung nennt Paketversion, betroffenen Funktionsaufruf, erwartetes und beobachtetes Ergebnis sowie ein kleines Beispiel ohne vertrauliche Daten. Hinweise zu diesen Workshopmaterialien gehören in die [Workshop-Issues](https://github.com/sachseka/eatPrepTBAworkshop/issues).
 
 ### Wie R mit den Webanwendungen kommuniziert
 
@@ -92,6 +98,16 @@ Ein **RDS** speichert ein R-Objekt einschließlich seiner Struktur. Ein **CSV** 
 
 Für Antworten und Logs gibt es zwei alternative Einstiege: [`get_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/get_responses.html) beziehungsweise [`get_logs()`](https://iqb-research.github.io/eatPrepTBA/reference/get_logs.html) liefert direkt ein R-Objekt aus dem Workspace. Wer bereits eine heruntergeladene Exportdatei besitzt, liest diese mit [`read_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/read_responses.html) beziehungsweise [`read_logs()`](https://iqb-research.github.io/eatPrepTBA/reference/read_logs.html) ein. Ein zusätzlicher Download ist nach einem erfolgreichen direkten Abruf nicht erforderlich. [`saveRDS()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRDS.html) sichert das R-Objekt anschließend für die weitere lokale Arbeit.
 
+### Version und Workspace-IDs ablesen
+
+Die Version steht auf der IQB-Studio-Anmeldeseite. Nach Auswahl eines Workspaces steht seine ID in der Adresse, beispielsweise `…/#/a/918`. Die [eatPrepTBA-Vignette](https://iqb-research.github.io/eatPrepTBA/articles/eatPrepTBA.html#accessing-a-workspace) erläutert diese Zuordnung.
+
+![Position der IQB-Studio-Version auf einer älteren Anmeldeseite. Die eigene Versionsangabe vollständig übernehmen.](assets/screenshots/Studio_Login.png){width=800}
+
+![Workspaceauswahl und ID 918 in der IQB-Studio-Adresse.](assets/screenshots/Studio_Access_Workspace.png){width=800}
+
+Im Testcenter den Workspace in der Administration öffnen. Die Zahl nach `/admin/` ist die Workspace-ID; die Beispieladresse `https://iqb-testcenter2.de/#/admin/35/files` bezeichnet Workspace 35. IQB-Studio und Testcenter haben voneinander unabhängige Workspace-IDs.
+
 ### Vorlage: Daten für eine eigene Erhebung beziehen
 
 Die folgenden Blöcke stammen aus `R/01_datenabruf.R` und benötigen eigene Zugänge. Die lokalen Beispiele verwenden synthetische Daten, deren Struktur diesen Abrufen nachempfunden ist. Zunächst Version und Workspace-IDs prüfen; bei abweichender Installation oder Durchführung die jeweiligen Aufrufe anpassen. Die **exakte IQB-Studio-Version** steht auf der Anmeldeseite; ein Beta-Zusatz gehört dazu.
@@ -103,7 +119,7 @@ library(eatPrepTBA)
 
 studio_version <- "21.0.0" # genaue Version der Anmeldeseite übernehmen
 studio_workspace_id <- 1300 # Beispiel; eigenen Workspace eintragen
-testcenter_url <- "https://iqb-testcenter2.de/"
+testcenter_url <- "https://iqb-testcenter2.de/" # Beispiel
 testcenter_workspace_id <- 35 # Beispiel; eigenen Workspace eintragen
 ```
 <!-- /r-source -->
@@ -322,22 +338,6 @@ select(raw_values, login_name, variable_id, value, variable_status)
 prepare_responses(pc_responses) |>
   select(login_name, variable_id, value, variable_status) |>
   head(3)
-```
-
-Im Beispiel enthält jedes Feld genau einen Wert. [`unnest_longer()`](https://tidyr.tidyverse.org/reference/unnest_longer.html) macht ihn direkt sichtbar. Bei Mehrfachantworten entstünden dagegen mehrere Zeilen pro Antwortvariable.
-
-<!-- r-source: R/02_daten_verstehen.R#antwortwerte-anzeigen -->
-```{r}
-#| eval: false
-raw_values <- unnest_longer(raw_values, value, keep_empty = TRUE)
-select(raw_values, login_name, variable_id, value, variable_status)
-```
-<!-- /r-source -->
-
-```{r}
-#| echo: false
-select(raw_values, login_name, variable_id, value, variable_status) |>
-  print(n = 12)
 ```
 
 ### Partial Credit: Basisvariablen und Summenvariable kodieren
@@ -1165,7 +1165,9 @@ cat(paste(report, collapse = "\n"), "\n")
 
 Die festgelegten synthetischen Lehrfälle werden separat in `scripts/validate_workflow.R` geprüft. Der exportierte Datensatz ist die Grundlage für die anschließende Skalierung.
 
-## 3. Ausgewählte Logdaten aufbereiten und auswerten
+## 3. Logs und Codebücher
+
+### Logdaten aufbereiten und auswerten
 
 Das Skript [04_logs.R](R/04_logs.R) zeigt einen kurzen Ablauf: einlesen, Ereignisse überblicken, Verlässlichkeit prüfen, Zeiten und Fokusverluste zusammenfassen, Ergebnisse speichern. Logs protokollieren beobachtete Ereignisse. Ihre Aussagekraft hängt davon ab, welche Ereignisse in der jeweiligen Durchführung tatsächlich gespeichert wurden.
 
@@ -1367,13 +1369,13 @@ session_overview |>
   print()
 ```
 
-## 4. Codebücher und Kodiermanuale
+### Codebücher und Kodiermanuale
 
 Ein **Codebuch** macht die Kodierschemata einer Studie als Dokumentation der Codes und Bewertungen lesbar. Es hält fest, welche Variablen, Codes, Beschreibungen und Punktwerte für die Auswertung gelten, und lässt sich zur Weitergabe exportieren. Ein **Kodiermanual** enthält zusätzlich Kodieranweisungen und Antwortbeispiele.
 
 Ausgangspunkt für eigene Projekte sind die Kodierschemata in IQB-Studio. Daraus erstellt `prepare_codebook()` das tabellarische Codebuch. Der anschließende lokale Ablauf verwendet eine vorbereitete synthetische Tabelle, damit Auswahl und Export auch ohne Zugang nachvollziehbar sind.
 
-### 4.1 Codebuch aus den Kodierschemata in IQB-Studio erstellen
+### 3.4 Codebuch aus den Kodierschemata in IQB-Studio erstellen
 
 [06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R) zeigt die Erstellung aus den Kodierschemata der eigenen Studie. Ein fertiges Codebuch ist dafür nicht erforderlich. Die Vorlage benötigt einen eigenen IQB-Studio-Zugang und wird hier nicht ausgeführt. Vor der Nutzung Serveradresse, Version, Workspace-ID, Unitnamen und Profilnamen anpassen. `NULL` bei `selected_units` wählt alle Units; `NULL` bei `missing_profile` verwendet kein Missing-Profil.
 
@@ -1423,7 +1425,7 @@ download_codebook(workspace, path = export_path, unit_keys = selected_units,
 ```
 <!-- /r-source -->
 
-### 4.2 Offlinebeispiel: Einträge auswählen und exportieren
+### 3.5 Offlinebeispiel: Einträge auswählen und exportieren
 
 [05_kodiermanuale.R](R/05_kodiermanuale.R) verwendet eine vorbereitete Tabelle aus den synthetischen Kodierschemata. Sie ersetzt den Abruf für die Demonstration ohne IQB-Studio-Zugang. Daran lassen sich Einträge auswählen und als Excel oder CSV exportieren. In eigenen Projekten liefert `prepare_codebook()` die Ausgangstabelle direkt aus den Kodierschemata. Jede Zeile der Lehrtabelle beschreibt einen Code einer Variablen; `code_score` enthält die Punktzahl.
 

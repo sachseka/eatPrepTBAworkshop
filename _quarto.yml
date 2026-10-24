@@ -45,6 +45,8 @@ website:
   page-footer: "IQB · Methoden-Team | eatPrepTBA-Workshop · 26.10.2026"
   search: false
 lang: de
+filters:
+  - scripts/newtab-links.lua
 format:
   html:
     theme: [cosmo, website.scss]
