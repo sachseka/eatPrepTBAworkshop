@@ -1,5 +1,5 @@
 # Prüft die Demo gegen die unabhängig festgelegten Antworten und Tutorialregeln.
-source("R/02_daten_verstehen.R", encoding = "UTF-8")
+source("Syntaxen/02_daten_verstehen.R", encoding = "UTF-8")
 
 stopifnot(nrow(pc_units) == 1L, nrow(pc_responses) == 4L)
 stopifnot(nrow(raw_values) == 12L, nrow(pc_coded) == 16L)
@@ -24,5 +24,13 @@ stopifnot(isTRUE(all.equal(pc_imported, pc_expected,
                            check.attributes = FALSE)))
 stopifnot(!"code_type" %in% names(stored_codes))
 stopifnot(!"code_score" %in% names(raw_values))
+
+# Die vorbereiteten Vorschauen bleiben ausdrücklich unabhängig vom API-Abruf.
+stopifnot(metadata_demo$unit_metadata[[1]]$Fach == "Mathematik")
+stopifnot(metadata_demo$item_metadata[[1]]$item_id == "RECHNEN_01")
+stopifnot(nrow(coding_report_demo) == 2L)
+stopifnot(nrow(coding_report_demo$validation_problems[[1]]) == 0L)
+stopifnot(coding_report_demo$validation_problems[[2]]$type == "SOURCE_MISSING")
+stopifnot(coding_report_demo$validation_problems[[2]]$breaking)
 
 cat("Partial-Credit-Demo und Import vorhandener Codes erfolgreich geprüft.\n")

@@ -24,14 +24,18 @@ Die kommentierten R-Skripte dienen anschließend als Vorlage für eigene Daten.
 - [Folien als PDF](eatPrepTBA2026_files/downloads/workshop.pdf)
 - [Vorbereitung](eatPrepTBA2026_files/setup.html)
 - [Handout](eatPrepTBA2026_files/handout.html) und [Funktionsübersicht](eatPrepTBA2026_files/reference.html)
-- [Daten, R-Skripte und Quarto-Quellen herunterladen](eatPrepTBA2026_files/downloads/WSeatPrepTBA-material.zip)
+- [R-Skripte, Beispieldaten und Projektdatei herunterladen](eatPrepTBA2026_files/downloads/WSeatPrepTBA-material.zip)
+
+Das Materialpaket enthält nur die Ordner `Syntaxen` und `Daten` sowie die
+Projektdatei. Die PDF-Folien werden separat heruntergeladen. Nach jedem der drei
+Arbeitsblöcke ist Zeit zum Ausführen der Skripte und für Fragen vorgesehen.
 
 Einzelne R-Skripte:
 
-- [Installation, Paketversionen und Beispieldateien](eatPrepTBA2026_files/R/00_installation.R)
-- [Datenabruf mit eigenen Zugängen](eatPrepTBA2026_files/R/01_datenabruf.R)
-- [JSON, Partial Credit und gespeicherte Codes](eatPrepTBA2026_files/R/02_daten_verstehen.R)
-- [Datenaufbereitung und Skalierungsdatensatz](eatPrepTBA2026_files/R/03_datenaufbereitung.R)
-- [Logs: Überblick, Zeiten, Fokusverluste](eatPrepTBA2026_files/R/04_logs.R)
-- [Codebuch als Excel und CSV erstellen](eatPrepTBA2026_files/R/05_kodiermanuale.R)
-- [Codebuch und DOCX aus IQB-Studio beziehen](eatPrepTBA2026_files/R/06_kodiermanuale_studio.R)
+- [Installation, Paketversionen und Beispieldateien](eatPrepTBA2026_files/Syntaxen/00_installation.R)
+- [Datenabruf mit eigenen Zugängen](eatPrepTBA2026_files/Syntaxen/01_datenabruf.R)
+- [JSON, Partial Credit und gespeicherte Codes](eatPrepTBA2026_files/Syntaxen/02_daten_verstehen.R)
+- [Datenaufbereitung und Skalierungsdatensatz](eatPrepTBA2026_files/Syntaxen/03_datenaufbereitung.R)
+- [Logs: Überblick, Zeiten, Fokusverluste](eatPrepTBA2026_files/Syntaxen/04_logs.R)
+- [Codebuch als Excel und CSV erstellen](eatPrepTBA2026_files/Syntaxen/05_kodiermanuale.R)
+- [Codebuch und DOCX aus IQB-Studio beziehen](eatPrepTBA2026_files/Syntaxen/06_kodiermanuale_studio.R)

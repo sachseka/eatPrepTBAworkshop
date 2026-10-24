@@ -1,6 +1,6 @@
 # Interne Prüfung der synthetischen Workshop-Lehrfälle.
 # Aus dem Projektordner ausführen. Nicht als Vorlage für eigene Daten gedacht.
-source("R/03_datenaufbereitung.R", encoding = "UTF-8")
+source("Syntaxen/03_datenaufbereitung.R", encoding = "UTF-8")
 
 case <- function(person, unit, variable) {
   dplyr::filter(design_coded, login_name == person,
@@ -51,13 +51,18 @@ stopifnot(!any(grepl("^score_", names(psychometrics))))
 stopifnot(isTRUE(all.equal(sum(category_stats$category_p_valid), 38 / 39)))
 
 # Der CSV-Export erhält die Werte und die Zuordnung zu den Personen.
-exported <- readr::read_csv("outputs/scaling_data.csv", show_col_types = FALSE)
+exported <- read.csv2("Daten/Ergebnisse/scaling_data.csv", fileEncoding = "UTF-16LE")
 stopifnot(identical(names(exported), names(scaling_data)))
 stopifnot(isTRUE(all.equal(as.data.frame(exported), as.data.frame(scaling_data),
                            check.attributes = FALSE)))
-stopifnot(identical(readRDS("checkpoints/05_scaling_data.rds"), scaling_data))
+csv_connection <- file("Daten/Ergebnisse/scaling_data.csv", encoding = "UTF-16LE")
+csv_lines <- readLines(csv_connection)
+close(csv_connection)
+stopifnot(grepl(';', csv_lines[1], fixed = TRUE),
+          any(grepl('0,5', csv_lines, fixed = TRUE)))
+stopifnot(identical(readRDS("Daten/Zwischenstaende/05_scaling_data.rds"), scaling_data))
 stopifnot(nrow(person_key) == 39L, !anyDuplicated(person_key$person_id))
 
 report <- c(report, "Workshop-Lehrfälle und Export erfolgreich geprüft.")
-writeLines(report, "outputs/validation.txt", useBytes = TRUE)
+writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
 cat("Workshop-Lehrfälle und Export erfolgreich geprüft.\n")

@@ -4,8 +4,8 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(tibble)
-dir.create('data', showWarnings = FALSE)
-dir.create('checkpoints', showWarnings = FALSE)
+dir.create('Daten', showWarnings = FALSE)
+dir.create('Daten/Zwischenstaende', showWarnings = FALSE)
 json <- function(x) as.character(jsonlite::toJSON(x, auto_unbox = TRUE, null = 'null'))
 
 code <- function(id, score, type, label, match = NULL, numeric = FALSE) {
@@ -58,7 +58,7 @@ units <- imap_dfr(specs, function(vs, key) {
                           variable_ref=itemvars,item_id=paste(key,itemvars,sep='_'))))
 })
 units <- add_coding_scheme(units)
-saveRDS(units,'data/units.rds')
+saveRDS(units,'Daten/units.rds')
 
 persons <- tibble(group_id='WS',login_name=sprintf('P%03d',1:40),
                   login_code=sprintf('SYN%03d',1:40),
@@ -70,9 +70,9 @@ design <- left_join(persons,booklets,by='booklet_id',relationship='many-to-many'
   mutate(unit_alias=unit_key) |>
   left_join(imap_dfr(specs,~tibble(unit_key=.y,variable_id=map_chr(.x,'id'))),
             by='unit_key',relationship='many-to-many') |> select(-person_no)
-saveRDS(design,'data/design.rds')
-readr::write_csv(persons,'data/persons.csv')
-readr::write_csv(booklets,'data/booklets.csv')
+saveRDS(design,'Daten/design.rds')
+readr::write_csv(persons,'Daten/persons.csv')
+readr::write_csv(booklets,'Daten/booklets.csv')
 
 set.seed(20260923)
 unitrows <- left_join(persons,booklets,by='booklet_id',relationship='many-to-many') |>
@@ -97,17 +97,17 @@ raw <- pmap_dfr(unitrows,function(group_id,login_name,login_code,booklet_id,pers
          laststate=json(list(list(PLAYER='RUNNING',RESPONSE_PROGRESS='some',
                                  PRESENTATION_PROGRESS='complete'))))
 })
-readr::write_delim(raw,'data/Responses.csv',delim=';',quote='needed')
+readr::write_delim(raw,'Daten/Responses.csv',delim=';',quote='needed')
 codes_manual <- persons |> filter(person_no!=40) |>
   transmute(group_id,login_name,login_code,booklet_id,unit_key='U4',variable_id='TEXT',
             code_id=as.integer(if_else(person_no==5,-99L,(person_no %% 3L))))
-readr::write_csv(codes_manual,'data/codes_manual.csv')
+readr::write_csv(codes_manual,'Daten/codes_manual.csv')
 
 codebook <- units |> select(unit_key,coding_scheme) |>
   mutate(table=map(coding_scheme,prepare_coding_scheme)) |>
   select(-coding_scheme) |> unnest(table) |>
   select(unit_key,variable_id,variable_source_type,code_id,code_label,code_score) |> distinct()
-readr::write_csv(codebook,'data/codebook.csv')
+readr::write_csv(codebook,'Daten/codebook.csv')
 
 # Zwei kuenstliche Sessions; Zeitstempel sind Unix-Millisekunden.
 events <- c('LOADCOMPLETE : {"browserName":"Firefox","osName":"Windows","device":"Desktop","screenSizeWidth":1920,"screenSizeHeight":1080,"loadTime":350}',
@@ -121,5 +121,5 @@ logs <- tibble(groupname='WS',loginname=c(rep('P001',9),rep('P002',6)),
                timestamp=1780000000000+c(0,100,450,500,550,4000,6500,12000,12100,
                                          0,100,200,300,400,500),
                logentry=events)
-readr::write_delim(logs,'data/Logs.csv',delim=';')
+readr::write_delim(logs,'Daten/Logs.csv',delim=';')
 cat('Data created:',nrow(units),'units;',nrow(design),'design rows;',nrow(raw),'response rows\n')

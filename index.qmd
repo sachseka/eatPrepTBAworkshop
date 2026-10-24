@@ -16,10 +16,12 @@ Der Workshop behandelt den Paketaufbau, die Aufbereitung von Antworten und Metad
 
 [Folien öffnen](workshop.qmd){.btn .btn-primary}
 [Materialpaket herunterladen](downloads/WSeatPrepTBA-material.zip){.btn .btn-secondary}
+[Folien als PDF herunterladen](downloads/workshop.pdf){.btn .btn-secondary download="workshop.pdf"}
 :::
 
-Das ZIP vollständig entpacken, `WSeatPrepTBA.Rproj` öffnen und
-[00_installation.R](R/00_installation.R) abschnittsweise ausführen.
+Das ZIP enthält nur die Ordner **`Syntaxen`** und **`Daten`** sowie
+**`WSeatPrepTBA.Rproj`**. Vollständig entpacken, die Projektdatei öffnen und
+[00_installation.R](Syntaxen/00_installation.R) abschnittsweise ausführen.
 Installationszeilen werden nur bei Bedarf benötigt. Die Folien sind direkt
 im Browser lesbar.
 
@@ -50,38 +52,38 @@ Kommentierte Arbeitsschritte und wiederverwendbare R-Skripte. [Zum Handout](hand
 | **2 · Studie & Skalierung** | Lesestudie aufbereiten, Missing-Regeln, psychometrische Kennwerte und Skalierungsdatensatz |
 | **3 · Logs & Codebücher** | Ereignisse, Zeiten und Fokusverluste; Codebücher und Kodiermanuale |
 
-Nach Abschnitt 1 und Abschnitt 2 folgen jeweils etwa **zehn Minuten zum
+Nach jedem der drei Arbeitsblöcke folgen etwa **zehn Minuten zum
 eigenständigen Ausführen der Skripte**, anschließend eine kurze Fragerunde.
-Zuerst wird `02_daten_verstehen.R`, danach `03_datenaufbereitung.R`
+Zuerst wird Skript `02`, danach `03` und zuletzt `04` und `05`
 nachvollzogen. Der übrige Ablauf richtet sich nach den Inhalten und Fragen.
 Die Skripte bleiben als Vorlage für die Arbeit mit eigenen Daten nutzbar.
 
 ## Materialien
 
 - [Folien im Browser](workshop.qmd) und [PDF der Folien](downloads/workshop.pdf).
-- [Materialpaket mit Daten, R-Skripten, Zwischenständen und Quellen](downloads/WSeatPrepTBA-material.zip).
+- [Materialpaket mit R-Skripten, Beispieldaten und Projektdatei](downloads/WSeatPrepTBA-material.zip).
 - [Handout](handout.qmd) und [Funktionsübersicht](reference.qmd).
-- Beispielausgabe: [Excel-Codebuch](outputs/codebook.xlsx).
+- Beispielausgabe: [Excel-Codebuch](Daten/Ergebnisse/codebook.xlsx).
 - [Öffentliches Workshop-Repository](https://github.com/sachseka/eatPrepTBAworkshop).
 
 ### R-Skripte einzeln herunterladen
 
 | Skript | Zweck |
 |---|---|
-| [00_installation.R](R/00_installation.R){download="00_installation.R"} | Installation, Paketversionen und Beispieldateien |
-| [01_datenabruf.R](R/01_datenabruf.R){download="01_datenabruf.R"} | Vorlage für eigene IQB-Studio-/Testcenter-Zugänge |
-| [02_daten_verstehen.R](R/02_daten_verstehen.R){download="02_daten_verstehen.R"} | JSON, Partial Credit und gespeicherte Codes am kleinen Beispiel |
-| [03_datenaufbereitung.R](R/03_datenaufbereitung.R){download="03_datenaufbereitung.R"} | Vollständige Datenaufbereitung und Datensatzexport |
-| [04_logs.R](R/04_logs.R){download="04_logs.R"} | Lokaler Überblick, Zeiten und Fokusverluste |
-| [05_kodiermanuale.R](R/05_kodiermanuale.R){download="05_kodiermanuale.R"} | Lokales Codebuch als Excel und CSV |
-| [06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"} | Codebuch und Kodiermanual aus dem eigenen IQB-Studio |
+| [00_installation.R](Syntaxen/00_installation.R){download="00_installation.R"} | Installation, Paketversionen und Beispieldateien |
+| [01_datenabruf.R](Syntaxen/01_datenabruf.R){download="01_datenabruf.R"} | Vorlage für eigene IQB-Studio-/Testcenter-Zugänge |
+| [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R){download="02_daten_verstehen.R"} | JSON, Partial Credit und gespeicherte Codes am kleinen Beispiel |
+| [03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R){download="03_datenaufbereitung.R"} | Vollständige Datenaufbereitung und Datensatzexport |
+| [04_logs.R](Syntaxen/04_logs.R){download="04_logs.R"} | Lokaler Überblick, Zeiten und Fokusverluste |
+| [05_kodiermanuale.R](Syntaxen/05_kodiermanuale.R){download="05_kodiermanuale.R"} | Lokales Codebuch als Excel und CSV |
+| [06_kodiermanuale_studio.R](Syntaxen/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"} | Codebuch und Kodiermanual aus dem eigenen IQB-Studio |
 
-Die Skripte verwenden die Ordnerstruktur des Materialpakets. `00_installation.R` abschnittsweise ausführen und nur bei Bedarf installieren. Die erste Kodierung folgt im Rechenbeispiel von Skript `02`. Für die gemeinsamen Beispiele genügen die enthaltenen lokalen Dateien; die beiden API-Vorlagen benötigen angepasste Angaben und eigene Zugänge. Zum Lesen der HTML-Materialien reicht ein Browser. Quarto wird benötigt, um die Materialien selbst neu zu rendern.
+Die Skripte verwenden die Ordnerstruktur des Materialpakets. `00_installation.R` abschnittsweise ausführen und nur bei Bedarf installieren. Für die lokalen Beispiele genügen die enthaltenen Dateien; die beiden API-Vorlagen benötigen angepasste Angaben und eigene Zugänge. Beim Ausführen entstehen Ergebnisse und Zwischenstände unter `Daten/Ergebnisse/` und `Daten/Zwischenstaende/`. Die CSV-Ergebnisse verwenden Semikolon und Dezimalkomma und lassen sich in deutschem Excel öffnen.
 
 ::: {.callout-note}
 ## Stand der Arbeitsfassung
 
-24.10.2026 · eatPrepTBA 0.9.8.9042 (Commit `ea782df`), eatAutoCode 0.5.0.9008 und IQB-Autocoder 5.5.0. Die genaue Paketumgebung und technische Prüfung sind im Materialpaket dokumentiert. Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.
+24.10.2026 · eatPrepTBA 0.9.8.9042 (Commit `ea782df`), eatAutoCode 0.5.0.9008 und IQB-Autocoder 5.5.0. Paketumgebung, Quarto-Quellen und technische Prüfung stehen im [Repository](https://github.com/sachseka/eatPrepTBAworkshop). Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.
 :::
 
 [Zur IQB-Methods-Website](https://iqb-research.github.io/IQB-Methods/)

@@ -11,7 +11,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 SNIPPET = re.compile(
-    r'<!-- r-source: (R/[^#\s]+\.R)#([\w-]+) -->.*?<!-- /r-source -->',
+    r'<!-- r-source: (Syntaxen/[^#\s]+\.R)#([\w-]+) -->.*?<!-- /r-source -->',
     re.DOTALL,
 )
 MANIFEST = json.loads((ROOT / 'scripts/snippets.json').read_text(encoding='utf-8'))

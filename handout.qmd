@@ -4,10 +4,10 @@ title: "Handout: vom Datenbezug bis zum Codebuch"
 
 ```{r}
 #| include: false
-source("R/03_datenaufbereitung.R", encoding = "UTF-8")
-source("R/04_logs.R", encoding = "UTF-8")
-source("R/05_kodiermanuale.R", encoding = "UTF-8")
-source("R/02_daten_verstehen.R", encoding = "UTF-8")
+source("Syntaxen/03_datenaufbereitung.R", encoding = "UTF-8")
+source("Syntaxen/04_logs.R", encoding = "UTF-8")
+source("Syntaxen/05_kodiermanuale.R", encoding = "UTF-8")
+source("Syntaxen/02_daten_verstehen.R", encoding = "UTF-8")
 ```
 
 ![](assets/eatPrepTBA-logo.png){width=130 fig-alt="Paketlogo von eatPrepTBA" fig-align="right"}
@@ -18,21 +18,21 @@ Dieses Handout folgt den drei Arbeitsblöcken des Workshops: Paket und erste Kod
 
 | Skript | Verwendung |
 |---|---|
-| [00_installation.R](R/00_installation.R) | Pakete installieren, laden und Dateien prüfen |
-| [01_datenabruf.R](R/01_datenabruf.R) | Vorlage für den Abruf eigener IQB-Studio- und Testcenter-Daten |
-| [02_daten_verstehen.R](R/02_daten_verstehen.R) | JSON, gespeicherte Codes und Partial Credit an einer Rechenaufgabe nachvollziehen |
-| [03_datenaufbereitung.R](R/03_datenaufbereitung.R) | Antworten kodieren, Missing-Regeln vergleichen und Skalierungsdaten exportieren |
-| [04_logs.R](R/04_logs.R) | Lokale Logs prüfen, Zeiten und Fokusverluste auswerten |
-| [05_kodiermanuale.R](R/05_kodiermanuale.R) | Lokales Codebuch als Excel und CSV exportieren |
-| [06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R) | Vorlage für Codebuch und Kodiermanual aus dem eigenen IQB-Studio |
+| [00_installation.R](Syntaxen/00_installation.R) | Pakete installieren, laden und Dateien prüfen |
+| [01_datenabruf.R](Syntaxen/01_datenabruf.R) | Vorlage für den Abruf eigener IQB-Studio- und Testcenter-Daten |
+| [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R) | JSON, gespeicherte Codes und Partial Credit an einer Rechenaufgabe nachvollziehen |
+| [03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R) | Antworten kodieren, Missing-Regeln vergleichen und Skalierungsdaten exportieren |
+| [04_logs.R](Syntaxen/04_logs.R) | Lokale Logs prüfen, Zeiten und Fokusverluste auswerten |
+| [05_kodiermanuale.R](Syntaxen/05_kodiermanuale.R) | Lokales Codebuch als Excel und CSV exportieren |
+| [06_kodiermanuale_studio.R](Syntaxen/06_kodiermanuale_studio.R) | Vorlage für Codebuch und Kodiermanual aus dem eigenen IQB-Studio |
 
 Die lokalen Arbeitsskripte werden im geöffneten Projekt `WSeatPrepTBA.Rproj` von oben nach unten ausgeführt. In `00_installation.R` die Installationszeilen nur bei Bedarf ausführen. Die beiden API-Vorlagen werden hier nur gezeigt; ihre Beispielwerte werden für eine eigene Erhebung angepasst.
 
 ## 0. Einstieg und Ablauf
 
-Die [Materialseite](https://sachseka.github.io/eatPrepTBAworkshop/) bündelt Folien, Download und Vorbereitung. Vor Beginn das ZIP entpacken, das R-Projekt öffnen und `00_installation.R` abschnittsweise ausführen.
+Die [Materialseite](https://sachseka.github.io/eatPrepTBAworkshop/) bündelt Folien, PDF-Download und Vorbereitung. Das Materialpaket enthält nur `Syntaxen/`, `Daten/` und `WSeatPrepTBA.Rproj`. Vor Beginn das ZIP entpacken, die Projektdatei öffnen und `Syntaxen/00_installation.R` abschnittsweise ausführen.
 
-Nach der ersten Kodierung mit `02_daten_verstehen.R` und nach dem vollständigen Ablauf in `03_datenaufbereitung.R` folgen jeweils ca. zehn Minuten zum Ausprobieren und eine Fragerunde. Die API-Vorlagen `01` und `06` benötigen eigene Zugänge und werden dabei nicht ausgeführt. Logs und Codebücher bilden anschließend einen gemeinsamen Block.
+Nach jedem der drei Arbeitsblöcke folgen ca. zehn Minuten zum Ausprobieren und eine Fragerunde: zuerst `02_daten_verstehen.R`, danach `03_datenaufbereitung.R`, zum Schluss `04_logs.R` und `05_kodiermanuale.R`. Die API-Vorlagen `01` und `06` benötigen eigene Zugänge und werden dabei nicht ausgeführt. Logs und Codebücher bilden den dritten Block.
 
 ## 1. Paket und erste Kodierung
 
@@ -40,7 +40,7 @@ Nach der ersten Kodierung mit `02_daten_verstehen.R` und nach dem vollständigen
 
 [eatPrepTBA](https://iqb-research.github.io/eatPrepTBA/) unterstützt Datenabruf, Kodierung, Aufbereitung und Exporte rund um IQB-Studio und Testcenter. Die Paketwebsite enthält Vignetten und Funktionshilfe; der [Quellcode liegt auf GitHub](https://github.com/iqb-research/eatPrepTBA).
 
-**Jedes Feedback ist willkommen – auch zu kleinen Unklarheiten, irritierenden Ausgaben oder umständlichen Schritten.** Für Fehler, unerwartete Ergebnisse und Funktionswünsche steht der [Issue-Bereich](https://github.com/iqb-research/eatPrepTBA/issues) bereit. Eine hilfreiche Meldung nennt Paketversion, betroffenen Funktionsaufruf, erwartetes und beobachtetes Ergebnis sowie ein kleines Beispiel ohne vertrauliche Daten. Hinweise zu diesen Workshopmaterialien gehören in die [Workshop-Issues](https://github.com/sachseka/eatPrepTBAworkshop/issues).
+**Jedes Feedback zu eatPrepTBA und eatAutoCode ist willkommen – auch zu kleinen Unklarheiten, irritierenden Ausgaben oder umständlichen Schritten.** Hinweise zur automatischen Kodierung in R können auch in den [eatAutoCode-Issues](https://github.com/iqb-research/eatAutoCode/issues) gemeldet werden. Für Fehler, unerwartete Ergebnisse und Funktionswünsche steht der [Issue-Bereich](https://github.com/iqb-research/eatPrepTBA/issues) bereit. Eine hilfreiche Meldung nennt Paketversion, betroffenen Funktionsaufruf, erwartetes und beobachtetes Ergebnis sowie ein kleines Beispiel ohne vertrauliche Daten. Hinweise zu diesen Workshopmaterialien gehören in die [Workshop-Issues](https://github.com/sachseka/eatPrepTBAworkshop/issues).
 
 ### Wie R mit den Webanwendungen kommuniziert
 
@@ -110,9 +110,9 @@ Im Testcenter den Workspace in der Administration öffnen. Die Zahl nach `/admin
 
 ### Vorlage: Daten für eine eigene Erhebung beziehen
 
-Die folgenden Blöcke stammen aus `R/01_datenabruf.R` und benötigen eigene Zugänge. Die lokalen Beispiele verwenden synthetische Daten, deren Struktur diesen Abrufen nachempfunden ist. Zunächst Version und Workspace-IDs prüfen; bei abweichender Installation oder Durchführung die jeweiligen Aufrufe anpassen. Die **exakte IQB-Studio-Version** steht auf der Anmeldeseite; ein Beta-Zusatz gehört dazu.
+Die folgenden Blöcke stammen aus `Syntaxen/01_datenabruf.R` und benötigen eigene Zugänge. Die lokalen Beispiele verwenden synthetische Daten, deren Struktur diesen Abrufen nachempfunden ist. Zunächst Version und Workspace-IDs prüfen; bei abweichender Installation oder Durchführung die jeweiligen Aufrufe anpassen. Die **exakte IQB-Studio-Version** steht auf der Anmeldeseite; ein Beta-Zusatz gehört dazu.
 
-<!-- r-source: R/01_datenabruf.R#api-einstellungen -->
+<!-- r-source: Syntaxen/01_datenabruf.R#api-einstellungen -->
 ```{r}
 #| eval: false
 library(eatPrepTBA)
@@ -124,27 +124,27 @@ testcenter_workspace_id <- 35 # Beispiel; eigenen Workspace eintragen
 ```
 <!-- /r-source -->
 
-`get_design()` filtert standardmäßig auf Testpersonen-Logins mit dem Durchführungsmodus `run-hot-return`. Deshalb genügt im Beispiel `get_design(testcenter, units = units)`. Bei einem anderen Modus wird `mode` ausdrücklich gesetzt. Der Filter betrifft Angaben aus der Testpersonen-XML, nicht die Anmeldung des Administrationskontos. `run-hot-return` bedeutet: Antworten und Logs speichern, Zeit- und Navigationsbeschränkungen anwenden und bei erneuter Anmeldung die bisherige Testsitzung fortsetzen. Die [Testcenter-Dokumentation](https://iqb.pages.cms.hu-berlin.de/testcenter/pages/test-mode.html) erläutert die verfügbaren Modi.
+Der Modus wird in der Testpersonen-XML am Element `Login` festgelegt; beim Einlesen heißt die Spalte `login_mode`. `get_design()` filtert standardmäßig auf `run-hot-return`. `get_responses()` und `get_logs()` besitzen diesen Modusfilter nicht; über `groups` können Gruppen ausgewählt werden. Deshalb werden die bezogenen Antworten später mit dem Design abgeglichen. Deshalb genügt im Beispiel `get_design(testcenter, units = units)`. Bei einem anderen Modus wird `mode` ausdrücklich gesetzt. Der Filter betrifft Angaben aus der Testpersonen-XML, nicht die Anmeldung des Administrationskontos. `run-hot-return` bedeutet: Antworten und Logs speichern, Zeit- und Navigationsbeschränkungen anwenden und bei erneuter Anmeldung die bisherige Testsitzung fortsetzen. Die [Testcenter-Dokumentation](https://iqb.pages.cms.hu-berlin.de/testcenter/pages/test-mode.html) erläutert die verfügbaren Modi.
 
 Vor dem Abruf einen Ordner für die Daten anlegen:
 
-<!-- r-source: R/01_datenabruf.R#api-vorbereiten -->
+<!-- r-source: Syntaxen/01_datenabruf.R#api-vorbereiten -->
 ```{r}
 #| eval: false
-dir.create("data_eigen", showWarnings = FALSE)
+dir.create("Daten/EigeneDaten", showWarnings = FALSE)
 ```
 <!-- /r-source -->
 
 Die Anmeldung fragt Zugangsdaten ab. Danach wird der IQB-Studio-Workspace ausgewählt. `metadata = TRUE` bereitet die Metadaten einschließlich der Item-Verknüpfungen auf. `unit_definition = TRUE` lädt zusätzlich die technische Aufgabendefinition: Seiten, Abschnitte, Texte und Medien sowie Antwortfelder. Die Definition liegt als JSON in `unit_definition`; daraus werden Positionen für die weitere Aufbereitung abgeleitet.
 
-<!-- r-source: R/01_datenabruf.R#studio-daten-abrufen -->
+<!-- r-source: Syntaxen/01_datenabruf.R#studio-daten-abrufen -->
 ```{r}
 #| eval: false
 studio_login <- login_studio(app_version = studio_version, keyring = TRUE)
 studio <- access_workspace(studio_login, ws_id = studio_workspace_id)
 
 units <- get_units(studio, metadata = TRUE, unit_definition = TRUE)
-saveRDS(units, "data_eigen/units.rds")
+saveRDS(units, "Daten/EigeneDaten/units.rds")
 ```
 <!-- /r-source -->
 
@@ -158,7 +158,78 @@ Ohne `base_url` verwendet `login_studio()` die Installation `https://www.iqb-stu
 | Gespeicherte Angaben sind falsch oder veraltet | Einmal `keyring = TRUE, change_key = TRUE` verwenden. |
 | HTTP 521 | Die genaue Version der IQB-Studio-Anmeldeseite bei `app_version` eintragen, einschließlich Beta-Zusatz. |
 
-Die auskommentierten Aufrufe zur Fehlerbehebung stehen in `R/01_datenabruf.R`. `View(units)` öffnet die vollständige Tabelle in RStudio; verschachtelte Kodierinformationen sind über `units$unit_codes[[1]]` zugänglich.
+Die auskommentierten Aufrufe zur Fehlerbehebung stehen in `Syntaxen/01_datenabruf.R`. `View(units)` öffnet die vollständige Tabelle in RStudio; verschachtelte Kodierinformationen sind über `units$unit_codes[[1]]` zugänglich.
+
+### Kodierschemata im Workspace prüfen
+
+[`get_coding_report()`](https://iqb-research.github.io/eatPrepTBA/reference/get_coding_report.html) ruft den Prüfbericht zu den Kodierschemata aus IQB-Studio ab. Geprüft werden die Regeln und Ableitungen, nicht die Antworten einer Durchführung. Dafür wird der angemeldete Workspace benötigt.
+
+<!-- r-source: Syntaxen/01_datenabruf.R#studio-kodierbericht -->
+```{r}
+#| eval: false
+coding_report <- get_coding_report(studio)
+head(coding_report)
+coding_report$validation_problems[[1]]
+saveRDS(coding_report, "Daten/EigeneDaten/coding_report.rds")
+```
+<!-- /r-source -->
+
+Im Workshop wird stattdessen ein ausdrücklich **synthetischer Prüfbericht** eingelesen. Die Rechenaufgabe ist korrekt; die separate Unit `DEMO_PRUEFFALL` enthält absichtlich eine Ableitung mit fehlender Quellvariable.
+
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-kodierbericht-vorschau -->
+```{r}
+#| eval: false
+coding_report_demo <- readRDS("Daten/demo-coding-report.rds")
+select(coding_report_demo, unit_key, variable_id, validation, coding_type)
+coding_report_demo$validation_problems[[2]]
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+select(coding_report_demo, unit_key, variable_id, validation, coding_type)
+coding_report_demo$validation_problems[[2]]
+```
+
+`SOURCE_MISSING` benennt die fehlende Quellvariable; `breaking = TRUE` kennzeichnet ein blockierendes Problem. Solche Hinweise sollten vor der Kodierung geklärt werden.
+
+### Unit- und Item-Metadaten aufbereiten
+
+[`add_metadata()`](https://iqb-research.github.io/eatPrepTBA/reference/add_metadata.html) bereitet beschreibende Angaben wie Fach, Klassenstufe oder Kompetenz auf. `get_units(metadata = TRUE)` liefert dazu `unit_profiles`, `items_profiles`, `items_list` und die Workspace-Einstellungen. `add_metadata()` verwendet diese Informationen und die zugehörigen Profile; es erzeugt `unit_metadata` und `item_metadata` als verschachtelte Tabellen.
+
+<!-- r-source: Syntaxen/01_datenabruf.R#studio-metadaten -->
+```{r}
+#| eval: false
+units_meta <- add_metadata(units)
+head(units_meta)
+units_meta$unit_metadata[[1]]
+units_meta$item_metadata[[1]]
+saveRDS(units_meta, "Daten/EigeneDaten/units_metadata.rds")
+```
+<!-- /r-source -->
+
+Die konkreten Felder hängen von den Profilen der Studie ab. Profildefinitionen und Vokabulare werden bei Bedarf über ihre URLs nachgeladen; Internetzugang kann daher erforderlich sein. Das ursprüngliche `units` verwenden; vorgelagertes `add_coding_scheme()` ist möglich.
+
+Für den Workshop liegt ein **synthetischer, bereits aufbereiteter Auszug** vor. Die Datei wird eingelesen; `add_metadata()` wird damit nicht ausgeführt.
+
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-metadaten-vorschau -->
+```{r}
+#| eval: false
+metadata_demo <- readRDS("Daten/demo-metadata-prepared.rds")
+select(metadata_demo, unit_key, unit_metadata, item_metadata)
+metadata_demo$unit_metadata[[1]]
+metadata_demo$item_metadata[[1]]
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+select(metadata_demo, unit_key, unit_metadata, item_metadata)
+metadata_demo$unit_metadata[[1]]
+metadata_demo$item_metadata[[1]]
+```
+
+### Die weiteren Spalten der Unit-Tabelle
 
 Die äußere Tabelle `units` bündelt mehrere Arten von Informationen. Der genaue Umfang hängt vom Abruf und vom Workspace ab; `names(units)` zeigt die tatsächlich vorhandenen Spalten.
 
@@ -176,7 +247,7 @@ Die äußere Tabelle `units` bündelt mehrere Arten von Informationen. Der genau
 
 Nun den Testcenter-Workspace der Durchführung auswählen:
 
-<!-- r-source: R/01_datenabruf.R#testcenter-verbinden -->
+<!-- r-source: Syntaxen/01_datenabruf.R#testcenter-verbinden -->
 ```{r}
 #| eval: false
 testcenter_login <- login_testcenter(base_url = testcenter_url)
@@ -187,41 +258,41 @@ testcenter <- access_workspace(testcenter_login,
 
 Für die Antworten gibt es zwei Wege: API-Abruf oder bereits vorhandener CSV-Export. **Eine Variante wählen.** Beide liefern die gespeicherten Antwortinhalte für die anschließende Autokodierung. [`get_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/get_responses.html) und [`read_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/read_responses.html) haben in der verwendeten Paketfassung kein Argument `prepare`.
 
-<!-- r-source: R/01_datenabruf.R#antworten-abrufen -->
+<!-- r-source: Syntaxen/01_datenabruf.R#antworten-abrufen -->
 ```{r}
 #| eval: false
 responses <- get_responses(testcenter)
-saveRDS(responses, "data_eigen/responses.rds")
+saveRDS(responses, "Daten/EigeneDaten/responses.rds")
 
 # Alternative, wenn bereits ein Antwortexport vorliegt:
-# responses <- read_responses("data_eigen/Responses.csv")
-# saveRDS(responses, "data_eigen/responses.rds")
+# responses <- read_responses("Daten/EigeneDaten/Responses.csv")
+# saveRDS(responses, "Daten/EigeneDaten/responses.rds")
 ```
 <!-- /r-source -->
 
 Das vollständige Design beschreibt, welche Variablen für welche Person vorgesehen waren. Dazu müssen im Testcenter-Workspace die **Testpersonen-XML und die zugehörigen Booklet-XMLs der Erhebung** liegen. Das Objekt `units` muss alle relevanten Units enthalten. Ein Antwort-CSV allein liefert diese Informationen nicht.
 
-<!-- r-source: R/01_datenabruf.R#design-abrufen -->
+<!-- r-source: Syntaxen/01_datenabruf.R#design-abrufen -->
 ```{r}
 #| eval: false
 design <- get_design(testcenter, units = units)
-saveRDS(design, "data_eigen/design.rds")
+saveRDS(design, "Daten/EigeneDaten/design.rds")
 ```
 <!-- /r-source -->
 
 Logs lassen sich ebenfalls abrufen und lokal zwischenspeichern:
 
-<!-- r-source: R/01_datenabruf.R#logs-abrufen -->
+<!-- r-source: Syntaxen/01_datenabruf.R#logs-abrufen -->
 ```{r}
 #| eval: false
 logs <- get_logs(testcenter)
-saveRDS(logs, "data_eigen/logs.rds")
+saveRDS(logs, "Daten/EigeneDaten/logs.rds")
 ```
 <!-- /r-source -->
 
 Das Abrufprotokoll hält Herkunft und Version fest. Nach einem IQB-Studio-Update erneut anmelden und das Workspace-Objekt neu erstellen.
 
-<!-- r-source: R/01_datenabruf.R#abruf-dokumentieren -->
+<!-- r-source: Syntaxen/01_datenabruf.R#abruf-dokumentieren -->
 ```{r}
 #| eval: false
 retrieval_info <- c(
@@ -234,12 +305,12 @@ retrieval_info <- c(
   paste("Testcenter-Workspace:", testcenter_workspace_id),
   paste("Testdurchführungsmodus im Design:",
         paste(unique(design$login_mode), collapse = ", ")))
-writeLines(retrieval_info, "data_eigen/abruf.txt", useBytes = TRUE)
-capture.output(sessionInfo(), file = "data_eigen/session-info.txt")
+writeLines(retrieval_info, "Daten/EigeneDaten/abruf.txt", useBytes = TRUE)
+capture.output(sessionInfo(), file = "Daten/EigeneDaten/session-info.txt")
 ```
 <!-- /r-source -->
 
-Die gespeicherten RDS-Dateien lassen sich später ohne erneuten Serverabruf mit [`readRDS()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRDS.html) laden. In `R/03_datenaufbereitung.R` dafür die drei Importzeilen durch die entsprechenden Pfade unter `data_eigen/` ersetzen. Bei Verbindungsproblemen zuerst Serveradresse, Version, Workspace-ID und Zugriffsrechte prüfen.
+Die gespeicherten RDS-Dateien lassen sich später ohne erneuten Serverabruf mit [`readRDS()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRDS.html) laden. In `Syntaxen/03_datenaufbereitung.R` dafür die drei Importzeilen durch die entsprechenden Pfade unter `Daten/EigeneDaten/` ersetzen. Bei Verbindungsproblemen zuerst Serveradresse, Version, Workspace-ID und Zugriffsrechte prüfen.
 
 ### Eine Rechenaufgabe: von der IQB-Studio-Oberfläche zu R
 
@@ -256,15 +327,15 @@ Die folgenden Screenshots stammen aus dem [IQB-Tutorial zu Partial Credit](https
 
 Die richtigen Antworten lauten **21, 112 und 1102**. Die führende Null in den Variablennamen gehört zur Kennung. Die Kennungen bleiben daher Zeichenketten.
 
-<!-- r-source: R/02_daten_verstehen.R#demo-einlesen -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-einlesen -->
 ```{r}
 #| eval: false
 library(eatPrepTBA) # eatAutoCode nicht separat laden.
 library(dplyr)
 library(tidyr)
 
-pc_units <- readRDS("data/demo-pc-units.rds")
-pc_responses <- read_responses("data/demo-pc-responses.csv")
+pc_units <- readRDS("Daten/demo-pc-units.rds")
+pc_responses <- read_responses("Daten/demo-pc-responses.csv")
 
 select(pc_units, unit_key, unit_label)
 select(pc_responses, login_name, unit_key, response_progress)
@@ -273,7 +344,7 @@ select(pc_responses, login_name, unit_key, response_progress)
 
 coding_scheme enthält die JSON-Regeln. unit_variables und items_list sind verschachtelte Tabellen; [`names()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/names.html) zeigt alle verfügbaren Spalten.
 
-<!-- r-source: R/02_daten_verstehen.R#demo-units-vorschau -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-units-vorschau -->
 ```{r}
 #| eval: false
 pc_units |>
@@ -293,7 +364,7 @@ names(pc_units)
 
 `[[1]]` öffnet die Tabelle für die erste Unit innerhalb einer Listenspalte. Die Variablenliste enthält die Antwortfelder, die Item-Verknüpfung bestimmt die Auswertungsvariable.
 
-<!-- r-source: R/02_daten_verstehen.R#demo-unit-tabellen -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#demo-unit-tabellen -->
 ```{r}
 #| eval: false
 print(pc_units$unit_variables[[1]] |> select(variable_id, variable_type))
@@ -307,11 +378,17 @@ print(pc_units$unit_variables[[1]] |> select(variable_id, variable_type))
 print(pc_units$items_list[[1]] |> select(variable_id, item_id))
 ```
 
+### Antworten und Kodierungen auseinanderhalten
+
+`prepare_responses()` entpackt die Spalte `responses`: gespeicherte Eingaben und Bearbeitungsstatus. `prepare_coded()` entpackt dagegen `coded`: bereits gespeicherte Codes, Scores und Kodierstatus. Beide Funktionen lesen vorhandene Inhalte; sie berechnen keine neue Bewertung. Dafür ist `code_responses()` mit Antworten und Kodierschema zuständig.
+
+Ein Export kann beide Spalten enthalten. Der Unterschied hängt vom Inhalt der Datei ab, nicht davon, ob sie aus StarS oder einer anderen Durchführung stammt.
+
 ### JSON in einer Tabellenzelle lesen
 
 In `pc_responses` steht eine Zeile für eine Person und eine Unit. Die Spalte `responses` enthält die Antworten als JSON-Text. In diesem Text benennt `id` die Variable, `value` ihren Wert und `status` ihren Bearbeitungsstatus. An den Anführungszeichen ist zu sehen, dass die eingegebenen Zahlen hier als Text gespeichert sind.
 
-<!-- r-source: R/02_daten_verstehen.R#json-ansehen -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#json-ansehen -->
 ```{r}
 #| eval: false
 cat(jsonlite::prettify(pc_responses$responses[[1]]))
@@ -325,7 +402,7 @@ cat(jsonlite::prettify(pc_responses$responses[[1]]))
 
 [`prepare_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_responses.html) entpackt diesen Text. Es vergibt dabei noch keine Codes oder Punkte. `value` bleibt zunächst eine Listenspalte, weil ein Antwortfeld auch mehrere Werte enthalten kann.
 
-<!-- r-source: R/02_daten_verstehen.R#antworten-entpacken -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#antworten-entpacken -->
 ```{r}
 #| eval: false
 raw_values <- prepare_responses(pc_responses)
@@ -356,7 +433,7 @@ Jede richtige Basisantwort erhält einen Punkt. Die abgeleitete Variable `01` su
 
 **Code und Score sind unterschiedliche Angaben:** Code 1 steht hier für zwei Punkte, Code 2 für einen Punkt. Im R-Objekt sind die Kodierinformationen verschachtelt. Die folgenden Schritte machen daraus eine Tabelle.
 
-<!-- r-source: R/02_daten_verstehen.R#pc-schema-ansehen -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-schema-ansehen -->
 ```{r}
 #| eval: false
 pc_rules <- pc_units |>
@@ -370,7 +447,7 @@ pc_rules
 
 01a wird direkt bewertet. Die abgeleitete Variable 01 bildet daraus 0, 1 oder 2 Punkte; Code und Score unterscheiden sich.
 
-<!-- r-source: R/02_daten_verstehen.R#pc-regeln-vorschau -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-regeln-vorschau -->
 ```{r}
 #| eval: false
 pc_rules |>
@@ -397,7 +474,7 @@ Das Argument `prepare` betrifft **die Form des bereits neu kodierten Ergebnisses
 
 [`prepare_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_responses.html) hat eine andere Aufgabe: Es entpackt gespeichertes Antwort-JSON und vergibt dabei keine neuen Codes oder Scores.
 
-<!-- r-source: R/02_daten_verstehen.R#pc-kodieren -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-kodieren -->
 ```{r}
 #| eval: false
 pc_coded <- code_responses(pc_responses, pc_units, prepare = TRUE)
@@ -416,7 +493,7 @@ pc_coded |>
 
 Die Kodierung lässt sich direkt im Rechenbeispiel prüfen. Beide Ausdrücke sollten `TRUE` ergeben:
 
-<!-- r-source: R/02_daten_verstehen.R#pc-kodierung-pruefen -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-kodierung-pruefen -->
 ```{r}
 #| eval: false
 nrow(pc_coded) == 16 # sollte TRUE sein: 4 Personen mit je 4 Variablen
@@ -432,7 +509,7 @@ all(pc_coded$code_status == "CODING_COMPLETE")
 
 [`add_item_id()`](https://iqb-research.github.io/eatPrepTBA/reference/add_item_id.html) ergänzt die Verknüpfung aus den Unit-Metadaten. Hier ist nur `01` ein Auswertungsitem; die drei Basisvariablen bleiben Hilfsvariablen.
 
-<!-- r-source: R/02_daten_verstehen.R#pc-items-zuordnen -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-items-zuordnen -->
 ```{r}
 #| eval: false
 pc_items <- add_item_id(pc_coded, pc_units)
@@ -452,10 +529,10 @@ Bei einem Export mit bereits gespeicherten Kodierungen, etwa aus StarS, kann [`p
 
 Die folgende Datei bildet diesen Fall mit denselben vier erfundenen Antwortverläufen nach. Sie ist kein Originalexport aus StarS.
 
-<!-- r-source: R/02_daten_verstehen.R#vorhandene-codes-entpacken -->
+<!-- r-source: Syntaxen/02_daten_verstehen.R#vorhandene-codes-entpacken -->
 ```{r}
 #| eval: false
-pc_stored <- read_responses("data/demo-stored-codes.csv")
+pc_stored <- read_responses("Daten/demo-stored-codes.csv")
 stored_codes <- prepare_coded(pc_stored)
 select(stored_codes, login_name, variable_id, value, code_id, code_score)
 ```
@@ -474,9 +551,9 @@ Welche Variablen als Items gelten, welche Missing-Regeln anzuwenden sind und wel
 
 Der vollständige Aufbereitungsweg verwendet eine **separate synthetische Lesestudie**: 40 vorgesehene Personen, sechs Units und acht Auswertungsitems in zwei Booklets. Sie enthält geschlossene, abgeleitete und manuell kodierte Antworten. Die zuvor gezeigten IQB-Studio-Screenshots gehören zur Rechenaufgabe, nicht zu dieser Lesestudie.
 
-Das Skript erzeugt Zwischenstände unter `checkpoints/` und Ergebnisse unter `outputs/`.
+Das Skript legt `Daten/Zwischenstaende/` und `Daten/Ergebnisse/` beim Ausführen an. Diese Ordner sind im Download zunächst nicht enthalten. Ergebnis-CSV werden mit `write.csv2()` gespeichert: Semikolon als Trennzeichen, Dezimalkomma und keine zusätzliche Zeilennummernspalte. Die UTF-16LE-Kodierung erhält Umlaute beim direkten Öffnen in Excel.
 
-<!-- r-source: R/03_datenaufbereitung.R#workflow-start -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#workflow-start -->
 ```{r}
 #| eval: false
 library(eatPrepTBA) # lädt eatAutoCode mit; nicht separat laden
@@ -484,31 +561,31 @@ library(dplyr)
 library(tidyr)
 person_columns <- c("group_id", "login_name", "login_code")
 
-dir.create("outputs", showWarnings = FALSE)
-dir.create("checkpoints", showWarnings = FALSE)
+dir.create("Daten/Ergebnisse", showWarnings = FALSE)
+dir.create("Daten/Zwischenstaende", showWarnings = FALSE)
 ```
 <!-- /r-source -->
 
 `units.rds` und `design.rds` sind synthetische Objekte im erwarteten Paketformat. `Responses.csv` bildet das Testcenter-Exportformat mit verschachtelten Antwort-JSONs nach. Sie gehören zusammen und werden als gemeinsame Datenbasis eingelesen.
 
-<!-- r-source: R/03_datenaufbereitung.R#daten-einlesen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#daten-einlesen -->
 ```{r}
 #| eval: false
-units <- readRDS("data/units.rds")
-design <- readRDS("data/design.rds")
-responses <- read_responses("data/Responses.csv")
+units <- readRDS("Daten/units.rds")
+design <- readRDS("Daten/design.rds")
+responses <- read_responses("Daten/Responses.csv")
 
 # Nach einem API-Abruf alternativ:
-# responses <- readRDS("data_eigen/responses.rds")
+# responses <- readRDS("Daten/EigeneDaten/responses.rds")
 
 count(responses, booklet_id)
-saveRDS(responses, "checkpoints/01_responses.rds")
+saveRDS(responses, "Daten/Zwischenstaende/01_responses.rds")
 ```
 <!-- /r-source -->
 
 Eine Zeile gehört zu einer Person und Unit. Mehrere Variablen stecken noch im Antwort-JSON.
 
-<!-- r-source: R/03_datenaufbereitung.R#antwortdaten-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#antwortdaten-vorschau -->
 ```{r}
 #| eval: false
 responses |>
@@ -526,11 +603,11 @@ responses |>
 
 Die 193 Antwortzeilen stehen für gespeicherte Person–Unit-Kombinationen. Die 340 Designzeilen stehen für vorgesehene Person–Variable-Kombinationen. Die folgenden Ausschnitte zeigen die Units, ihre Reihenfolge in den Booklets und das Design:
 
-<!-- r-source: R/03_datenaufbereitung.R#studie-units-booklets-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#studie-units-booklets-vorschau -->
 ```{r}
 #| eval: false
 print(units |> select(unit_key, unit_label)) # sollte 6 Units zeigen
-print(readr::read_csv("data/booklets.csv", show_col_types = FALSE) |>
+print(readr::read_csv("Daten/booklets.csv", show_col_types = FALSE) |>
   select(booklet_id, unit_booklet_no, unit_key) |> head(5))
 ```
 <!-- /r-source -->
@@ -538,11 +615,11 @@ print(readr::read_csv("data/booklets.csv", show_col_types = FALSE) |>
 ```{r}
 #| echo: false
 print(units |> select(unit_key, unit_label))
-print(readr::read_csv("data/booklets.csv", show_col_types = FALSE) |>
+print(readr::read_csv("Daten/booklets.csv", show_col_types = FALSE) |>
   select(booklet_id, unit_booklet_no, unit_key) |> head(5))
 ```
 
-<!-- r-source: R/03_datenaufbereitung.R#design-rohdaten-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#design-rohdaten-vorschau -->
 ```{r}
 #| eval: false
 print(design |> select(login_name, booklet_id, unit_key, variable_id) |> head(6))
@@ -560,7 +637,7 @@ Fehlende Antworten auf vorgesehene Aufgaben sind normal und können in großen M
 
 Davon zu unterscheiden sind tatsächlich gespeicherte Antworten, denen eine passende Unit (`unknown_units`) oder Designzuordnung (`outside_design`) fehlt. Nur dieser umgekehrte Fall deutet darauf hin, dass Datenbestände oder Auswahl nicht zusammenpassen. [`anti_join()`](https://dplyr.tidyverse.org/reference/filter-joins.html) macht die beiden Richtungen unterscheidbar; die folgende Übersicht zeigt zunächst nur ihre Anzahlen.
 
-<!-- r-source: R/03_datenaufbereitung.R#daten-abgleichen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#daten-abgleichen -->
 ```{r}
 #| eval: false
 response_keys <- c("group_id", "login_name", "login_code",
@@ -572,7 +649,7 @@ missing_rows <- anti_join(design, responses, by = response_keys)
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/03_datenaufbereitung.R#datenabgleich-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#datenabgleich-vorschau -->
 ```{r}
 #| eval: false
 tibble(
@@ -607,18 +684,18 @@ tibble(
 
 Die folgende Aufbereitung verwendet `prepare = TRUE`. Die endgültige Missing-Einordnung folgt erst mit `complete_design()`.
 
-<!-- r-source: R/03_datenaufbereitung.R#automatisch-kodieren -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#automatisch-kodieren -->
 ```{r}
 #| eval: false
 coded_auto <- code_responses(responses, units, prepare = TRUE)
 count(coded_auto, unit_key, code_status)
-saveRDS(coded_auto, "checkpoints/02_coded_auto.rds")
+saveRDS(coded_auto, "Daten/Zwischenstaende/02_coded_auto.rds")
 ```
 <!-- /r-source -->
 
 Bei U3 ist TOTAL bereits abgeleitet; U4/TEXT wartet noch auf die manuelle Kodierung.
 
-<!-- r-source: R/03_datenaufbereitung.R#auto-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#auto-vorschau -->
 ```{r}
 #| eval: false
 coded_auto |>
@@ -647,17 +724,17 @@ Die Prüfung richtet sich auf die späteren Itemvariablen und die für ihre Bere
 
 In der Mini-Studie benötigt U4 eine manuelle Bewertung. Die Tabelle der manuellen Codes enthält die Personenkennung, `booklet_id`, `unit_key`, `variable_id` und `code_id`: genau einen Code pro zu kodierender Antwort. Kennungen werden als Text eingelesen, `code_id` als Ganzzahl.
 
-<!-- r-source: R/03_datenaufbereitung.R#manuelle-codes-einlesen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-einlesen -->
 ```{r}
 #| eval: false
-codes_manual <- readr::read_csv("data/codes_manual.csv",
+codes_manual <- readr::read_csv("Daten/codes_manual.csv",
   col_types = readr::cols(.default = "c", code_id = "i"))
 ```
 <!-- /r-source -->
 
 Die Personen- und Variablenschlüssel ordnen die manuelle Kategorie der ursprünglichen Antwort zu. Die Punktzahl kommt aus dem Kodierschema.
 
-<!-- r-source: R/03_datenaufbereitung.R#manuelle-codes-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-vorschau -->
 ```{r}
 #| eval: false
 head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
@@ -671,19 +748,19 @@ head(codes_manual, 3) |> print(width = 90)
 
 Erneut die ursprünglichen `responses` übergeben. So werden manuelle Codes eingefügt und davon abhängige Variablen neu berechnet. Ohne manuelle Kodierung genügt anstelle dieses Abschnitts `coded <- coded_auto`.
 
-<!-- r-source: R/03_datenaufbereitung.R#manuell-kodieren -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#manuell-kodieren -->
 ```{r}
 #| eval: false
 coded <- code_responses(responses, units, prepare = TRUE,
                        codes_manual = codes_manual)
 count(coded, code_status, code_type)
-saveRDS(coded, "checkpoints/03_coded.rds")
+saveRDS(coded, "Daten/Zwischenstaende/03_coded.rds")
 ```
 <!-- /r-source -->
 
 Die zuvor offene Variable hat nun einen Code und den zugehörigen Score.
 
-<!-- r-source: R/03_datenaufbereitung.R#manuell-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#manuell-vorschau -->
 ```{r}
 #| eval: false
 coded |>
@@ -720,20 +797,20 @@ Die synthetischen Codes sind bereits vorbereitet. Für eigene Erhebungen werden 
 
 Die beiden letzten Optionen sind unabhängig. Im ersten Durchlauf gelten die Paketvoreinstellungen; anschließend folgt ein Vergleich mit beiden Optionen auf `TRUE`.
 
-<!-- r-source: R/03_datenaufbereitung.R#design-ergaenzen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#design-ergaenzen -->
 ```{r}
 #| eval: false
 design_coded <- complete_design(coded, units, design,
   recode_omissions_to_not_reached = FALSE, preserve_not_reached = FALSE)
 
 count(design_coded, id_used, code_type)
-saveRDS(design_coded, "checkpoints/04_design_coded.rds")
+saveRDS(design_coded, "Daten/Zwischenstaende/04_design_coded.rds")
 ```
 <!-- /r-source -->
 
 P002/U2 fehlt vor später bearbeiteten Units; P003/U5 fehlt am Ende des Testlets. Aus der Position entstehen verschiedene Missing-Arten.
 
-<!-- r-source: R/03_datenaufbereitung.R#design-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#design-vorschau -->
 ```{r}
 #| eval: false
 design_coded |>
@@ -769,7 +846,7 @@ Die Tabelle beschreibt die abschließende Zuweisung. [`code_responses()`](https:
 
 Der folgende Vergleich verwendet beide Optionen auf `TRUE` und speichert das Ergebnis in einem eigenen Objekt:
 
-<!-- r-source: R/03_datenaufbereitung.R#missing-regeln-vergleichen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-regeln-vergleichen -->
 ```{r}
 #| eval: false
 omissions_reclassified <- complete_design(coded, units, design,
@@ -779,7 +856,7 @@ count(omissions_reclassified, id_used, code_type)
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/03_datenaufbereitung.R#missing-vergleich-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-vergleich-vorschau -->
 ```{r}
 #| eval: false
 bind_rows(Standard = design_coded, Alternative = omissions_reclassified,
@@ -807,7 +884,7 @@ Bei P006 werden dadurch die abschließenden Auslassungen zu NR und erhalten `NA`
 
 `id_used` kennzeichnet Personen mit mindestens einem gespeicherten Kodierstatus. P040 besitzt im Beispiel keinen solchen Status und wird hier aus der weiteren Analyse entfernt. Zusätzliche Ausschlussregeln benötigen eine eigene Begründung.
 
-<!-- r-source: R/03_datenaufbereitung.R#teilnahme-auswaehlen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#teilnahme-auswaehlen -->
 ```{r}
 #| eval: false
 analysis_data <- filter(design_coded, id_used)
@@ -817,7 +894,7 @@ count(design_coded, id_used)
 
 analysis_data enthält nur Personen mit mindestens einem gespeicherten Kodierstatus. Im Beispiel bleiben 39 Personen.
 
-<!-- r-source: R/03_datenaufbereitung.R#teilnahme-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#teilnahme-vorschau -->
 ```{r}
 #| eval: false
 analysis_data |>
@@ -838,7 +915,7 @@ distinct(analysis_data, login_name) |> summarise(n_personen = n()) |> print()
 
 [`add_item_id()`](https://iqb-research.github.io/eatPrepTBA/reference/add_item_id.html) verbindet Variablen und Auswertungsitems über die IQB-Studio-Metadaten. Variablen ohne Item-Verknüpfung werden zuerst angesehen und anschließend aus dem Datensatz entfernt. In dieser Studie betrifft das U3/Q1 und U3/Q2; sie bleiben in den Long-Daten enthalten.
 
-<!-- r-source: R/03_datenaufbereitung.R#items-zuordnen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#items-zuordnen -->
 ```{r}
 #| eval: false
 design_items <- add_item_id(design_coded, units)
@@ -856,7 +933,7 @@ item_data <- mutate(item_data, item = paste0(unit_key, "__", item_id))
 
 U3/TOTAL wird ein Item; die Basisvariablen Q1 und Q2 erhalten keine zusätzlichen Spalten im Skalierungsdatensatz.
 
-<!-- r-source: R/03_datenaufbereitung.R#items-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#items-vorschau -->
 ```{r}
 #| eval: false
 item_data |>
@@ -880,7 +957,7 @@ Der Spaltenname `unit_key__item_id` unterscheidet gleich benannte Items verschie
 
 Offene Itemkodierungen und Kodierfehler dürfen nicht unbemerkt in den Skalierungsdatensatz gelangen. Die Tabelle `unresolved` zeigt die entsprechenden Fälle. Projektspezifische zusätzliche Status benötigen ebenfalls eine Prüfung.
 
-<!-- r-source: R/03_datenaufbereitung.R#offene-codes-pruefen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#offene-codes-pruefen -->
 ```{r}
 #| eval: false
 unresolved <- item_data |>
@@ -895,7 +972,7 @@ stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen
 
 Hier ist die Tabelle leer. Bei eigenen Daten zeigt sie die Itemzeilen, deren Kodierung noch geklärt werden muss.
 
-<!-- r-source: R/03_datenaufbereitung.R#offene-codes-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#offene-codes-vorschau -->
 ```{r}
 #| eval: false
 unresolved |>
@@ -915,7 +992,7 @@ unresolved |>
 
 [`summarise_missings()`](https://iqb-research.github.io/eatPrepTBA/reference/summarise_missings.html) zählt auf Itemebene. Der Nenner `n_items` enthält die für eine Person vorgesehenen Items. Variablen ohne Item-Verknüpfung werden nicht mitgezählt. Die erste Tabelle behält alle Designpersonen, die zweite nur Personen mit `id_used = TRUE`.
 
-<!-- r-source: R/03_datenaufbereitung.R#missings-zusammenfassen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#missings-zusammenfassen -->
 ```{r}
 #| eval: false
 missing_summary <- summarise_missings(design_items)
@@ -923,13 +1000,14 @@ missing_summary_used <- summarise_missings(design_items, used_only = TRUE)
 
 select(missing_summary, all_of(person_columns), id_used, n_items,
        n_not_reached, n_by_omission, prop_missing)
-readr::write_csv(missing_summary, "outputs/missing_summary.csv")
+write.csv2(missing_summary, "Daten/Ergebnisse/missing_summary.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 ```
 <!-- /r-source -->
 
 Der Nenner n_items zählt die vorgesehenen Items. prop_missing berücksichtigt auch andere Missing-Arten, etwa ungültige Antworten. Nicht vorgesehene Aufgaben werden nicht als fehlende Antworten mitgezählt.
 
-<!-- r-source: R/03_datenaufbereitung.R#missing-uebersicht-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-uebersicht-vorschau -->
 ```{r}
 #| eval: false
 missing_summary |>
@@ -948,7 +1026,7 @@ missing_summary |>
 
 Für psychometrische Kennwerte wird jede Unit einem Bereich zugeordnet. Hier gehören alle Units zum Bereich Lesen. Bei eigenen Daten muss `domains` die tatsächliche Zuordnung enthalten.
 
-<!-- r-source: R/03_datenaufbereitung.R#kennwerte-berechnen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-berechnen -->
 ```{r}
 #| eval: false
 domains <- distinct(units, unit_key)
@@ -961,7 +1039,8 @@ code_stats <- psychometrics |>
   select(item_id, unit_key, variable_id, code_id, code_score,
          code_n, code_p_valid, code_pbc) |>
   distinct()
-readr::write_csv(code_stats, "outputs/psychometrics.csv")
+write.csv2(code_stats, "Daten/Ergebnisse/psychometrics.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 ```
 <!-- /r-source -->
 
@@ -975,7 +1054,7 @@ Das Multiple-Choice-Item `U1_Q1` hat drei Antwortkategorien: A, B und C. A erhä
 
 **Antwortkategorien:** Die `category_*`-Spalten zeigen, wie häufig die einzelnen Antworten vorkommen. `category_p_valid` bezieht sich auf Antworten mit gültigem Score.
 
-<!-- r-source: R/03_datenaufbereitung.R#kennwerte-kategorien -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-kategorien -->
 ```{r}
 #| eval: false
 category_stats <- psychometrics |>
@@ -995,7 +1074,7 @@ print(category_stats)
 
 **Codes:** Ein Code kann mehrere Antwortkategorien bündeln. Seine Kennwerte wiederholen sich deshalb in `psychometrics`; `distinct()` reduziert die Auswahl auf eine Zeile je Code.
 
-<!-- r-source: R/03_datenaufbereitung.R#kennwerte-codes -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-codes -->
 ```{r}
 #| eval: false
 code_stats_mc <- psychometrics |>
@@ -1017,7 +1096,7 @@ print(code_stats_mc)
 
 **Scores:** `evaluate_psychometrics()` liefert keine eigene Tabelle mit `score_*`-Spalten. Die Scoreverteilung wird hier direkt aus den Itemdaten berechnet. `score_p` bezieht sich auf alle 39 ausgewählten Personen.
 
-<!-- r-source: R/03_datenaufbereitung.R#kennwerte-scores -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-scores -->
 ```{r}
 #| eval: false
 score_stats <- item_data |>
@@ -1045,7 +1124,7 @@ Die `*_n`-Spalten zählen Fälle. `*_p_valid` beschreibt Anteile unter Antworten
 
 [`pivot_wider()`](https://tidyr.tidyverse.org/reference/pivot_wider.html) erzeugt eine Zeile je Person und eine Punktespalte je Item. Vorhandene Kennungen bleiben erhalten; `person_id` nummeriert die sortierte Exporttabelle.
 
-<!-- r-source: R/03_datenaufbereitung.R#score-datensatz-erstellen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#score-datensatz-erstellen -->
 ```{r}
 #| eval: false
 scaling_data <- item_data |>
@@ -1058,7 +1137,7 @@ scaling_data <- item_data |>
 
 Eine Zeile ist jetzt eine Person; jede Itemspalte enthält Punkte. Fehlende Werte bleiben NA.
 
-<!-- r-source: R/03_datenaufbereitung.R#datensatz-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-vorschau -->
 ```{r}
 #| eval: false
 scaling_data |>
@@ -1076,7 +1155,7 @@ scaling_data |>
 
 Die anschließende Prüfung vergleicht die Personenzahl mit den Long-Daten und prüft, ob alle Itemspalten numerisch sind. [`vapply()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/lapply.html) wendet dafür dieselbe Prüfung auf jede Itemspalte an. Eine Listenspalte wäre beispielsweise ein Hinweis auf unaufgelöste Mehrfachwerte.
 
-<!-- r-source: R/03_datenaufbereitung.R#datensatz-pruefen -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-pruefen -->
 ```{r}
 #| eval: false
 person_key <- select(scaling_data, person_id, group_id, login_name, login_code)
@@ -1089,7 +1168,7 @@ stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
 
 person_id ergänzt die ursprünglichen Testcenter-Kennungen. Diese Zuordnung gehört zum Export.
 
-<!-- r-source: R/03_datenaufbereitung.R#schluessel-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#schluessel-vorschau -->
 ```{r}
 #| eval: false
 person_key |> head(4) |> print()
@@ -1104,27 +1183,30 @@ person_key |> head(4) |> print()
 
 Die vollständige Tabelle enthält 39 Personen und acht Itemspalten. Zusammen mit `person_id` und den drei Testcenter-Kennungen sind es zwölf Spalten. Die neu erzeugte `person_id` gilt für diesen Export. Für spätere Datenlieferungen wird eine beständige Zuordnung weitergeführt.
 
-<!-- r-source: R/03_datenaufbereitung.R#daten-exportieren -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#daten-exportieren -->
 ```{r}
 #| eval: false
-readr::write_csv(scaling_data, "outputs/scaling_data.csv")
-readr::write_csv(person_key, "outputs/person_key.csv")
-saveRDS(analysis_data, "outputs/analysis_long.rds")
-saveRDS(design_items, "outputs/design_items.rds")
-saveRDS(scaling_data, "checkpoints/05_scaling_data.rds")
+write.csv2(scaling_data, "Daten/Ergebnisse/scaling_data.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(person_key, "Daten/Ergebnisse/person_key.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
+saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
+saveRDS(scaling_data, "Daten/Zwischenstaende/05_scaling_data.rds")
 
 missing_counts <- count(design_coded, id_used, code_type)
-readr::write_csv(missing_counts, "outputs/missing_counts.csv")
+write.csv2(missing_counts, "Daten/Ergebnisse/missing_counts.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/03_datenaufbereitung.R#export-vorschau -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#export-vorschau -->
 ```{r}
 #| eval: false
 export_files <- c("scaling_data.csv", "person_key.csv", "analysis_long.rds",
                  "design_items.rds", "missing_counts.csv")
 tibble(Datei = export_files,
-       Bytes = file.info(file.path("outputs", export_files))$size) |> print()
+       Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
 ```
 <!-- /r-source -->
 
@@ -1133,14 +1215,14 @@ tibble(Datei = export_files,
 export_files <- c("scaling_data.csv", "person_key.csv", "analysis_long.rds",
                   "design_items.rds", "missing_counts.csv")
 tibble(Datei = export_files,
-       Bytes = file.info(file.path("outputs", export_files))$size) |> print()
+       Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
 ```
 
 `scaling_data.csv` enthält die Scores, `person_key.csv` die Zuordnung der Personen. `analysis_long.rds` bewahrt Codes, Status und Missing-Arten. `design_items.rds` enthält auch die nicht in die Analyse übernommenen Designpersonen. Die Tabelle `missing_counts.csv` zählt alle Variablen einschließlich Hilfsvariablen; für Itemanteile wird `missing_summary.csv` verwendet.
 
 Zum Export gehören auch Paketversionen, Fallzahlen und die getroffenen Regeln. Nach einer Änderung der Analyseentscheidung das Protokoll entsprechend anpassen.
 
-<!-- r-source: R/03_datenaufbereitung.R#workflow-dokumentieren -->
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#workflow-dokumentieren -->
 ```{r}
 #| eval: false
 report <- c(
@@ -1157,8 +1239,8 @@ report <- c(
   "Keine offenen Itemkodierungen im exportierten Datensatz.",
   "Fehlende Werte bleiben NA; Long-Daten und Personenschlüssel gesichert.")
 
-writeLines(report, "outputs/validation.txt", useBytes = TRUE)
-capture.output(sessionInfo(), file = "outputs/session-info.txt")
+writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
+capture.output(sessionInfo(), file = "Daten/Ergebnisse/session-info.txt")
 cat(paste(report, collapse = "\n"), "\n")
 ```
 <!-- /r-source -->
@@ -1169,15 +1251,15 @@ Die festgelegten synthetischen Lehrfälle werden separat in `scripts/validate_wo
 
 ### Logdaten aufbereiten und auswerten
 
-Das Skript [04_logs.R](R/04_logs.R) zeigt einen kurzen Ablauf: einlesen, Ereignisse überblicken, Verlässlichkeit prüfen, Zeiten und Fokusverluste zusammenfassen, Ergebnisse speichern. Logs protokollieren beobachtete Ereignisse. Ihre Aussagekraft hängt davon ab, welche Ereignisse in der jeweiligen Durchführung tatsächlich gespeichert wurden.
+Das Skript [04_logs.R](Syntaxen/04_logs.R) zeigt einen kurzen Ablauf: einlesen, Ereignisse überblicken, Verlässlichkeit prüfen, Zeiten und Fokusverluste zusammenfassen, Ergebnisse speichern. Logs protokollieren beobachtete Ereignisse. Ihre Aussagekraft hängt davon ab, welche Ereignisse in der jeweiligen Durchführung tatsächlich gespeichert wurden.
 
 ### 3.1 Einlesen und Verlässlichkeit prüfen
 
-<!-- r-source: R/04_logs.R#logs-read -->
+<!-- r-source: Syntaxen/04_logs.R#logs-read -->
 ```{r}
 #| eval: false
-logs <- read_logs("data/Logs.csv")
-# Alternativ nach API-Abruf: logs <- readRDS("data_eigen/logs.rds")
+logs <- read_logs("Daten/Logs.csv")
+# Alternativ nach API-Abruf: logs <- readRDS("Daten/EigeneDaten/logs.rds")
 
 # Ältere Exporte haben keinen getrennten Unit-Alias.
 if (!"unit_alias" %in% names(logs)) logs$unit_alias <- logs$unit_key
@@ -1188,7 +1270,7 @@ count(logs, group_id, login_name, booklet_id) # P001: 9, P002: 6 Ereignisse
 
 Ein Ausschnitt der PLAYER- und FOCUS-Ereignisse: ts ist der Zeitstempel, log_entry das protokollierte Ereignis. Noch wurde keine Bearbeitungszeit berechnet.
 
-<!-- r-source: R/04_logs.R#logs-rohdaten-vorschau -->
+<!-- r-source: Syntaxen/04_logs.R#logs-rohdaten-vorschau -->
 ```{r}
 #| eval: false
 logs |>
@@ -1208,7 +1290,7 @@ logs |>
 
 Ältere Exporte haben keinen getrennten `unit_alias`. Das Skript verwendet dann `unit_key` als Alias. Bei eigenen Daten mit mehrfach verwendeten Units muss die Referenz zur Durchführung passen. [`summarise_log_inventory()`](https://iqb-research.github.io/eatPrepTBA/reference/summarise_log_inventory.html) zeigt anschließend, welche Ereignistypen vorkommen.
 
-<!-- r-source: R/04_logs.R#logs-inventory -->
+<!-- r-source: Syntaxen/04_logs.R#logs-inventory -->
 ```{r}
 #| eval: false
 inventory <- summarise_log_inventory(logs)
@@ -1217,7 +1299,7 @@ inventory <- summarise_log_inventory(logs)
 
 Das Inventar zeigt Anzahl und Unterstützung der beobachteten Ereignistypen.
 
-<!-- r-source: R/04_logs.R#logs-inventar-vorschau -->
+<!-- r-source: Syntaxen/04_logs.R#logs-inventar-vorschau -->
 ```{r}
 #| eval: false
 inventory |>
@@ -1235,7 +1317,7 @@ inventory |>
 
 Die Anomalietabelle hält einzelne Auffälligkeiten fest; die QC-Tabelle fasst sie je Session zusammen. Eine Session wird hier durch Personenkennung und Booklet beschrieben.
 
-<!-- r-source: R/04_logs.R#logs-qc -->
+<!-- r-source: Syntaxen/04_logs.R#logs-qc -->
 ```{r}
 #| eval: false
 anomalies <- detect_log_anomalies(logs)
@@ -1248,7 +1330,7 @@ anomalies |>
 
 Bei P002 sind Auffälligkeiten gespeichert. Das Flag ist ein Prüfhinweis und keine automatische Ausschlussregel.
 
-<!-- r-source: R/04_logs.R#logs-qc-vorschau -->
+<!-- r-source: Syntaxen/04_logs.R#logs-qc-vorschau -->
 ```{r}
 #| eval: false
 qc |>
@@ -1267,7 +1349,7 @@ qc |>
 
 ### 3.2 Bearbeitungs- und Ladezeiten
 
-<!-- r-source: R/04_logs.R#logs-times -->
+<!-- r-source: Syntaxen/04_logs.R#logs-times -->
 ```{r}
 #| eval: false
 unit_times <- estimate_unit_times(logs, include_environment = FALSE)
@@ -1281,7 +1363,7 @@ times <- unit_times |>
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/04_logs.R#logs-zeiten-vorschau -->
+<!-- r-source: Syntaxen/04_logs.R#logs-zeiten-vorschau -->
 ```{r}
 #| eval: false
 times |>
@@ -1302,7 +1384,7 @@ Die Funktionen liefern Millisekunden; das Skript rechnet sie in Sekunden um. `un
 
 ### 3.3 Fokusverluste und Export
 
-<!-- r-source: R/04_logs.R#logs-focus -->
+<!-- r-source: Syntaxen/04_logs.R#logs-focus -->
 ```{r}
 #| eval: false
 focus <- summarise_log_focus(logs)
@@ -1315,7 +1397,7 @@ focus_summary <- focus |>
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/04_logs.R#logs-fokus-vorschau -->
+<!-- r-source: Syntaxen/04_logs.R#logs-fokus-vorschau -->
 ```{r}
 #| eval: false
 focus_summary |>
@@ -1336,24 +1418,33 @@ Nur ein beobachteter Wechsel von `HAS_NOT` zurück zu `HAS` ergibt hier eine abg
 
 QC und Fokus werden über die Sessionkennung zusammengeführt. Die Unit-Zeiten werden separat gespeichert, weil sie eine andere Auswertungsebene haben. Die Fokusdauer einer Session darf deshalb nicht von jeder Unit-Zeit abgezogen werden.
 
-<!-- r-source: R/04_logs.R#logs-export -->
+<!-- r-source: Syntaxen/04_logs.R#logs-session -->
 ```{r}
 #| eval: false
 session_keys <- c("group_id", "login_name", "login_code", "booklet_id")
 session_overview <- qc |>
   select(all_of(session_keys), log_qc_flag) |>
   left_join(focus_summary, by = session_keys)
-
-readr::write_csv(inventory, "outputs/log_inventory.csv")
-readr::write_csv(anomalies, "outputs/log_anomalies.csv")
-readr::write_csv(times, "outputs/log_unit_times.csv")
-readr::write_csv(session_overview, "outputs/log_sessions.csv")
-saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
-             unit_times = unit_times, focus = focus), "outputs/log_qc.rds")
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/04_logs.R#logs-session-vorschau -->
+<!-- r-source: Syntaxen/04_logs.R#logs-export -->
+```{r}
+#| eval: false
+write.csv2(inventory, "Daten/Ergebnisse/log_inventory.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(anomalies, "Daten/Ergebnisse/log_anomalies.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(times, "Daten/Ergebnisse/log_unit_times.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(session_overview, "Daten/Ergebnisse/log_sessions.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
+             unit_times = unit_times, focus = focus), "Daten/Ergebnisse/log_qc.rds")
+```
+<!-- /r-source -->
+
+<!-- r-source: Syntaxen/04_logs.R#logs-session-vorschau -->
 ```{r}
 #| eval: false
 session_overview |>
@@ -1377,21 +1468,21 @@ Ausgangspunkt für eigene Projekte sind die Kodierschemata in IQB-Studio. Daraus
 
 ### 3.4 Codebuch aus den Kodierschemata in IQB-Studio erstellen
 
-[06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R) zeigt die Erstellung aus den Kodierschemata der eigenen Studie. Ein fertiges Codebuch ist dafür nicht erforderlich. Die Vorlage benötigt einen eigenen IQB-Studio-Zugang und wird hier nicht ausgeführt. Vor der Nutzung Serveradresse, Version, Workspace-ID, Unitnamen und Profilnamen anpassen. `NULL` bei `selected_units` wählt alle Units; `NULL` bei `missing_profile` verwendet kein Missing-Profil.
+[06_kodiermanuale_studio.R](Syntaxen/06_kodiermanuale_studio.R) zeigt die Erstellung aus den Kodierschemata der eigenen Studie. Ein fertiges Codebuch ist dafür nicht erforderlich. Die Vorlage benötigt einen eigenen IQB-Studio-Zugang und wird hier nicht ausgeführt. Vor der Nutzung Serveradresse, Version, Workspace-ID, Unitnamen und Profilnamen anpassen. `NULL` bei `selected_units` wählt alle Units; `NULL` bei `missing_profile` verwendet kein Missing-Profil.
 
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-settings -->
+<!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-settings -->
 ```{r}
 #| eval: false
 studio_version <- "21.0.0" # Version der eigenen Anmeldeseite übernehmen
 studio_workspace_id <- 1300 # Beispiel: eigene Workspace-ID einsetzen
 selected_units <- c("UNIT-1", "UNIT-2") # Eigene Unit-Namen; NULL für alle
 missing_profile <- "IQB-Standard" # Eigenen Profilnamen prüfen; NULL ohne Profil
-export_path <- "outputs/codebooks_studio"
+export_path <- "Daten/Ergebnisse/codebooks_studio"
 dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-login -->
+<!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-login -->
 ```{r}
 #| eval: false
 login <- login_studio(app_version = studio_version, keyring = TRUE)
@@ -1401,7 +1492,7 @@ workspace <- access_workspace(login, ws_id = studio_workspace_id)
 
 [`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html) erstellt aus den Kodierschemata der gewählten Units eine Codebuchtabelle. `head()` zeigt anschließend deren Aufbau. `show_score = TRUE` fordert Scoreangaben an; eine separate numerische Spalte `code_score` ist in dieser Rückgabe nicht garantiert. Das gewählte Missing-Profil ergänzt Codebeschreibungen und ersetzt keine Scorezuweisung im Aufbereitungsworkflow.
 
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-prepare -->
+<!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-prepare -->
 ```{r}
 #| eval: false
 cb_studio <- prepare_codebook(workspace, unit_keys = selected_units,
@@ -1416,7 +1507,7 @@ writexl::write_xlsx(cb_studio, file.path(export_path, "codebook.xlsx"))
 
 [`download_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html) speichert das Kodiermanual direkt als DOCX. `general_instructions = TRUE` übernimmt auch die allgemeinen Kodieranweisungen. Der Dateiname richtet sich nach dem Workspace-Namen.
 
-<!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-docx -->
+<!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-docx -->
 ```{r}
 #| eval: false
 download_codebook(workspace, path = export_path, unit_keys = selected_units,
@@ -1427,18 +1518,18 @@ download_codebook(workspace, path = export_path, unit_keys = selected_units,
 
 ### 3.5 Offlinebeispiel: Einträge auswählen und exportieren
 
-[05_kodiermanuale.R](R/05_kodiermanuale.R) verwendet eine vorbereitete Tabelle aus den synthetischen Kodierschemata. Sie ersetzt den Abruf für die Demonstration ohne IQB-Studio-Zugang. Daran lassen sich Einträge auswählen und als Excel oder CSV exportieren. In eigenen Projekten liefert `prepare_codebook()` die Ausgangstabelle direkt aus den Kodierschemata. Jede Zeile der Lehrtabelle beschreibt einen Code einer Variablen; `code_score` enthält die Punktzahl.
+[05_kodiermanuale.R](Syntaxen/05_kodiermanuale.R) verwendet eine vorbereitete Tabelle aus den synthetischen Kodierschemata. Sie ersetzt den Abruf für die Demonstration ohne IQB-Studio-Zugang. Daran lassen sich Einträge auswählen und als Excel oder CSV exportieren. In eigenen Projekten liefert `prepare_codebook()` die Ausgangstabelle direkt aus den Kodierschemata. Jede Zeile der Lehrtabelle beschreibt einen Code einer Variablen; `code_score` enthält die Punktzahl.
 
-<!-- r-source: R/05_kodiermanuale.R#codebook-read -->
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-read -->
 ```{r}
 #| eval: false
-cb <- readr::read_csv("data/codebook.csv", show_col_types = FALSE,
+cb <- readr::read_csv("Daten/codebook.csv", show_col_types = FALSE,
                       col_types = readr::cols(code_id = readr::col_character()))
 count(cb, unit_key, variable_id) # 10 Variablen aus 6 Units
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/05_kodiermanuale.R#codebuch-vorschau -->
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-vorschau -->
 ```{r}
 #| eval: false
 cb |>
@@ -1456,7 +1547,7 @@ cb |>
 
 Für den Export werden U3 und U4 ausgewählt. Bei U4/TEXT steht Code 2 für einen Punkt und Code 1 für einen halben Punkt: Code-ID und Score haben unterschiedliche Funktionen.
 
-<!-- r-source: R/05_kodiermanuale.R#codebook-select -->
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-select -->
 ```{r}
 #| eval: false
 selected_cb <- cb |>
@@ -1465,7 +1556,7 @@ selected_cb <- cb |>
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/05_kodiermanuale.R#codebuch-auswahl-vorschau -->
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-auswahl-vorschau -->
 ```{r}
 #| eval: false
 selected_cb |>
@@ -1483,19 +1574,20 @@ selected_cb |>
 
 Die Excel-Datei enthält das gesamte Codebuch und die Auswahl als zwei Tabellenblätter. Die CSV-Datei enthält nur die Auswahl.
 
-<!-- r-source: R/05_kodiermanuale.R#codebook-excel -->
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-excel -->
 ```{r}
 #| eval: false
 writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
-                    "outputs/codebook.xlsx")
-readr::write_csv(selected_cb, "outputs/codebook.csv")
+                    "Daten/Ergebnisse/codebook.xlsx")
+write.csv2(selected_cb, "Daten/Ergebnisse/codebook.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 ```
 <!-- /r-source -->
 
-<!-- r-source: R/05_kodiermanuale.R#codebuch-dateien-vorschau -->
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-dateien-vorschau -->
 ```{r}
 #| eval: false
-codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
+codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
 tibble(Datei = basename(codebook_files),
        Bytes = file.info(codebook_files)$size) |> print()
 ```
@@ -1503,7 +1595,7 @@ tibble(Datei = basename(codebook_files),
 
 ```{r}
 #| echo: false
-codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
+codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
 tibble(Datei = basename(codebook_files),
        Bytes = file.info(codebook_files)$size) |> print()
 ```

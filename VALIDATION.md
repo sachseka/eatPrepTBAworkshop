@@ -7,19 +7,19 @@ Browserprüfung sind erfolgreich abgeschlossen.
 
 - Vier R-Prüfskripte erfolgreich: Rechenaufgabe, vollständige Aufbereitung,
   Ausführung der Folienblöcke sowie Log- und Excel-Ergebnisse.
-- 42 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
-  134 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
-- 83 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
+- 44 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
+  143 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
+- 88 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
   die R-Skripte benötigen keine technischen Abschnittsmarker mehr.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
-- 24 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 85 Folien und 85 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 26 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
+- 89 Folien und 89 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 84 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 88 PDF-Seiten
   enthalten die Abschnittsnavigation.
-- Einstieg und drei Arbeitsblöcke in der Navigation; zwei Ausführungsphasen
+- Einstieg und drei Arbeitsblöcke in der Navigation; drei Ausführungsphasen
   von ca. zehn Minuten, jeweils unmittelbar gefolgt von „Fragen?“.
-- Alle 92 Inhaltslinks der Folien öffnen ein neues Tab; Kapitelsprünge
+- Alle Inhaltslinks der Folien öffnen ein neues Tab; Kapitelsprünge
   bleiben innerhalb der Präsentation.
 - Die öffentliche Materialseite liegt unter
   https://sachseka.github.io/eatPrepTBAworkshop/; Folien und Downloads
@@ -33,7 +33,7 @@ Browserprüfung sind erfolgreich abgeschlossen.
   mit IQB-Autocoder `@iqb/responses` 5.5.0.
 - writexl 2.0.1 für den Excel-Export.
 - `renv.lock` hält die Paketversionen fest;
-  `outputs/session-info.txt` dokumentiert die verwendete R-Umgebung.
+  `Daten/Ergebnisse/session-info.txt` dokumentiert die verwendete R-Umgebung.
 
 ## Datenaufbereitung und Beispiele
 
@@ -44,6 +44,11 @@ Browserprüfung sind erfolgreich abgeschlossen.
   Laden der Pakete und Dateiprüfung ohne erneute Installation ausgeführt.
 - `scripts/validate_demonstration_data.R` prüft JSON-Import,
   gespeicherte Codes und Partial Credit der separaten Rechenaufgabe.
+- Kodierschema-Prüfbericht und Metadatenvorschau sind ausdrücklich synthetisch.
+  Die echten Aufrufe `get_coding_report()` und `add_metadata()` stehen in der
+  API-Vorlage; Profildefinitionen können Internetzugriff erfordern.
+- CSV-Exporte verwenden `write.csv2()` ohne Zeilennamen, mit Semikolon,
+  Dezimalkomma und UTF-16LE. Rückimport, Personenkennungen und Umlaute sind geprüft.
 - Die Kategorie-, Code- und Scoreauswertungen des Multiple-Choice-Items
   werden anhand der tatsächlichen Antwortverteilungen geprüft.
   Kategoriehäufigkeiten und Codehäufigkeiten haben unterschiedliche
@@ -74,6 +79,11 @@ Browserprüfung sind erfolgreich abgeschlossen.
 - PDF neu erzeugen und Lesbarkeit von Text, Code und Ergebnissen prüfen.
 - Materialpaket und IQB-Methods-Payload aktualisieren; lokale Links und
   Archivdateien mit `scripts/check_material_links.py` prüfen.
+- ZIP-Wurzel ausschließlich `Syntaxen/`, `Daten/` und `WSeatPrepTBA.Rproj`;
+  PDF, Quarto-Quellen und erzeugte Ergebnisse sind nicht enthalten.
+- Das entpackte Minimalpaket in einem frischen Ordner prüfen: Setup ohne
+  Installation sowie alle lokalen Skripte ausführen. Ergebnisse entstehen
+  ausschließlich innerhalb von `Daten/`.
 - Kommentarfassungen, lokale Paketbibliotheken, Arbeitsarchive und
   überholte DOCX-Ausgaben aus der Veröffentlichung ausschließen.
 

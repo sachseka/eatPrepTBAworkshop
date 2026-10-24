@@ -16,11 +16,14 @@ project:
   resources:
     - assets/**
     - downloads/**
-    - data/**
-    - R/**
-    - '!R/**/*_mod.R'
-    - checkpoints/**
-    - outputs/codebook.xlsx
+    - Daten/*.csv
+    - Daten/*.rds
+    - Daten/*.json
+    - Syntaxen/**
+    - '!Syntaxen/**/*_mod.R'
+    - Daten/Zwischenstaende/*.rds
+    - Daten/Ergebnisse/codebook.xlsx
+    - '!Daten/EigeneDaten/**'
     - '!integration/**'
     - '!review/**'
     - '!_site/**'

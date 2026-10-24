@@ -62,7 +62,7 @@ pc_units <- tibble(
                           variable_ref = "01", item_id = "RECHNEN_01"))
 )
 pc_units <- add_coding_scheme(pc_units)
-saveRDS(pc_units, "data/demo-pc-units.rds")
+saveRDS(pc_units, "Daten/demo-pc-units.rds")
 
 # Antworten sind absichtlich vorgegeben: 3, 2, 1 und 0 richtige Eingaben.
 pc_values <- list(c("21", "112", "1102"), c("21", "112", "1103"),
@@ -85,7 +85,7 @@ pc_export <- tibble(
   laststate = pc_json(list(list(PLAYER = "RUNNING",
     RESPONSE_PROGRESS = "complete", PRESENTATION_PROGRESS = "complete")))
 )
-readr::write_delim(pc_export, "data/demo-pc-responses.csv", delim = ";")
+readr::write_delim(pc_export, "Daten/demo-pc-responses.csv", delim = ";")
 
 # Zweiter Exportfall: Codes und Scores wurden schon vom Player gespeichert.
 # Nachgebildetes Format, kein Export einer echten StarS-Erhebung.
@@ -98,6 +98,34 @@ pc_stored_export$responses <- vapply(seq_along(pc_values), function(i) {
                list(id = "responses", content = existing, ts = 1000),
                list(id = "stateVariableCodes", content = "[]", ts = 1000)))
 }, character(1))
-readr::write_delim(pc_stored_export, "data/demo-stored-codes.csv", delim = ";")
+readr::write_delim(pc_stored_export, "Daten/demo-stored-codes.csv", delim = ";")
+
+# Vorbereitete Auszüge: keine echten API-Abrufe und keine simulierten Funktionen.
+# Struktur von add_metadata(): Unit-Metadaten und Item-Metadaten als Listenspalten.
+metadata_demo <- tibble(
+  ws_id = 1L, unit_id = 1L, unit_key = "PC_RECHNEN",
+  unit_label = "Rechenpaeckchen",
+  unit_metadata = list(tibble(Fach = "Mathematik", Klassenstufe = "4")),
+  item_metadata = list(tibble(item_no = 1L, variable_id = "01",
+    variable_ref = "01", item_id = "RECHNEN_01",
+    Kompetenz = "Zahlen und Operationen"))
+)
+saveRDS(metadata_demo, "Daten/demo-metadata-prepared.rds")
+
+# Struktur von get_coding_report(); der zweite Fall ist unabhängig von pc_units.
+# Studio verwendet OK, Warnung oder Fehler; Details stehen in validationProblems.
+empty_problems <- tibble(type = character(), breaking = logical(),
+                         code = character())
+coding_report_demo <- tibble(
+  ws_id = "1", unit_id = c(1L, 2L),
+  unit_key = c("PC_RECHNEN", "DEMO_PRUEFFALL"),
+  unit_label = c("Rechenpaeckchen", "Absichtlicher Prueffall"),
+  variable_id = c("01", "SUMME"), item = c("RECHNEN_01", "PRUEFFALL_01"),
+  validation = c("OK", "Fehler"),
+  validation_problems = list(empty_problems,
+    tibble(type = "SOURCE_MISSING", breaking = TRUE, code = NA_character_)),
+  coding_type = c("automatisch", "automatisch")
+)
+saveRDS(coding_report_demo, "Daten/demo-coding-report.rds")
 
 cat("Demo erzeugt: 1 Unit, 3 Basisvariablen, 1 Item und 4 Personen.\n")

@@ -10,15 +10,16 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / '_site'
 DOWNLOADS = ROOT / 'downloads'
-MATERIAL_DIRS = ('R', 'data', 'checkpoints', 'assets', 'outputs', 'scripts')
-SOURCE_FILES = (
-    'index.qmd', 'workshop.qmd', 'setup.qmd', 'handout.qmd', 'reference.qmd',
-    '_quarto.yml', 'theme.scss', 'theme.css', 'website.scss', 'website.css',
-    'WSeatPrepTBA.Rproj', '.Rprofile', 'README.md', 'WORKSHOP-PLAN.md',
-    'teaching-notes.md', 'VALIDATION.md', 'renv.lock',
+SCRIPTS = (
+    '00_installation.R', '01_datenabruf.R', '02_daten_verstehen.R',
+    '03_datenaufbereitung.R', '04_logs.R', '05_kodiermanuale.R',
+    '06_kodiermanuale_studio.R',
 )
+EXAMPLE_FILES = sorted(path for path in (ROOT / 'Daten').iterdir()
+                       if path.is_file() and path.suffix in {'.csv', '.rds', '.json'}
+                       and not path.name.startswith('.') and not path.stem.endswith('_mod'))
 EXCLUDED = {'integration', 'review', '_site', '.library', '.git', '__pycache__'}
-OBSOLETE_OUTPUTS = {'outputs/kodiermanual.docx', 'data/kodiermanual.md'}
+OBSOLETE_OUTPUTS = {'Daten/Ergebnisse/kodiermanual.docx', 'Daten/kodiermanual.md'}
 
 
 def remove_generated(path):
@@ -47,24 +48,33 @@ if not (SITE / 'index.html').exists():
     raise SystemExit('Run quarto render first.')
 DOWNLOADS.mkdir(exist_ok=True)
 
-# Iterate only selected source directories, never the whole workspace.
+# The participant ZIP has only the project file, scripts and example data.
 with zipfile.ZipFile(DOWNLOADS / 'WSeatPrepTBA-material.zip', 'w',
                      zipfile.ZIP_DEFLATED) as archive:
-    for name in SOURCE_FILES:
-        archive.write(ROOT / name, Path('WSeatPrepTBA') / name)
-    for name in MATERIAL_DIRS:
-        for file in sorted((ROOT / name).rglob('*')):
-            relative = file.relative_to(ROOT)
-            if (file.is_file() and not EXCLUDED.intersection(relative.parts)
-                    and not file.name.endswith('_mod.R')
-                    and relative.as_posix() not in OBSOLETE_OUTPUTS):
-                archive.write(file, Path('WSeatPrepTBA') / relative)
-    for pdf in sorted(DOWNLOADS.glob('*.pdf')):
-        archive.write(pdf, Path('WSeatPrepTBA') / 'downloads' / pdf.name)
+    archive.write(ROOT / 'WSeatPrepTBA.Rproj', 'WSeatPrepTBA.Rproj')
+    for name in SCRIPTS:
+        archive.write(ROOT / 'Syntaxen' / name, 'Syntaxen/' + name)
+    for file in EXAMPLE_FILES:
+        archive.write(file, file.relative_to(ROOT).as_posix())
 
 # Refresh script downloads so renamed scripts cannot survive an older render.
-remove_generated(SITE / 'R')
-shutil.copytree(ROOT / 'R', SITE / 'R', ignore=ignore_internal)
+remove_generated(SITE / 'Syntaxen')
+(SITE / 'Syntaxen').mkdir()
+for name in SCRIPTS:
+    shutil.copy2(ROOT / 'Syntaxen' / name, SITE / 'Syntaxen' / name)
+
+# Rebuild public data from a whitelist, excluding any own study data.
+remove_generated(SITE / 'Daten')
+(SITE / 'Daten').mkdir()
+for file in EXAMPLE_FILES:
+    shutil.copy2(file, SITE / 'Daten' / file.name)
+for file in sorted((ROOT / 'Daten/Zwischenstaende').glob('*.rds')):
+    (SITE / 'Daten/Zwischenstaende').mkdir(exist_ok=True)
+    shutil.copy2(file, SITE / 'Daten/Zwischenstaende' / file.name)
+codebook = ROOT / 'Daten/Ergebnisse/codebook.xlsx'
+if codebook.exists():
+    (SITE / 'Daten/Ergebnisse').mkdir(exist_ok=True)
+    shutil.copy2(codebook, SITE / 'Daten/Ergebnisse/codebook.xlsx')
 (SITE / 'downloads').mkdir(exist_ok=True)
 for file in DOWNLOADS.iterdir():
     if file.is_file():
@@ -75,7 +85,8 @@ for name in OBSOLETE_OUTPUTS:
     (SITE / name).unlink(missing_ok=True)
 
 # Clean generated remnants of earlier builds; no source files are touched.
-for name in ('integration', 'review', '.library', 'exercises_files',
+for name in ('R', 'data', 'checkpoints', 'outputs', 'data_eigen',
+             'integration', 'review', '.library', 'exercises_files',
              'solutions_files', 'workshop_mod_files', 'workshop_mod2_files'):
     remove_generated(SITE / name)
 for name in ('exercises.html', 'solutions.html', 'workshop_mod.html', 'workshop_mod2.html'):

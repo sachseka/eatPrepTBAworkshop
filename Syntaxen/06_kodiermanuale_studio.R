@@ -7,7 +7,7 @@ studio_version <- "21.0.0" # Version der eigenen Anmeldeseite übernehmen
 studio_workspace_id <- 1300 # Beispiel: eigene Workspace-ID einsetzen
 selected_units <- c("UNIT-1", "UNIT-2") # Eigene Unit-Namen; NULL für alle
 missing_profile <- "IQB-Standard" # Eigenen Profilnamen prüfen; NULL ohne Profil
-export_path <- "outputs/codebooks_studio"
+export_path <- "Daten/Ergebnisse/codebooks_studio"
 dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
 
 # keyring nutzt den Passwortspeicher des Betriebssystems.

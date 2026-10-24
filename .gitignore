@@ -3,6 +3,7 @@
 /.Rproj.user/
 /.Rhistory
 /.RData
+/Daten/Ergebnisse/
 /outputs/
 /renv/library/
 /renv/staging/
@@ -28,6 +29,7 @@ __pycache__/
 /.env
 /.env.*
 !/.env.example
+/Daten/EigeneDaten/
 /data_eigen/
 /site_libs/
 /*.html

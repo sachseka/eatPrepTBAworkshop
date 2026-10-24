@@ -8,9 +8,11 @@ docs/R_tutorials/eatPrepTBA2026_files/   # vollständiger Inhalt von _site/
 ```
 
 Die gerenderte Unterseite enthält relative Links und lokal eingebundene Schriften.
-So bleiben die Materialien innerhalb der IQB-Methods-Domain; Quelltexte, Daten und
-renv.lock stehen im Downloadpaket bereit. Der Hauptwebsite-Build muss die
-Workshop-R-Pakete dadurch nicht erneut installieren oder ausführen.
+So bleiben die Materialien innerhalb der IQB-Methods-Domain. Das Downloadpaket
+enthält nur R-Skripte, Beispieldaten und die Projektdatei; PDF-Folien stehen separat
+bereit. Quarto-Quellen und `renv.lock` bleiben im Workshop-Repository.
+Der Hauptwebsite-Build muss die Workshop-R-Pakete dadurch nicht erneut
+installieren oder ausführen.
 
 Die Materialseite enthält das originale eatPrepTBA-Paketlogo und direkte Links
 auf alle Arbeitsskripte: Datenaufbereitung, Datenabruf, Logs, lokale Codebücher
@@ -39,7 +41,7 @@ project:
     - docs/R_tutorials/eatPrepTBA2026_files/**
 ```
 
-Die Workshop-Quellen außerhalb des ZIP nicht zusätzlich in diesen Ressourcenordner
+Die Workshop-Quellen nicht zusätzlich in diesen Ressourcenordner
 legen: Sonst könnte der Hauptbuild sie erneut als Website-Seiten behandeln.
 
 ## Review und Veröffentlichung

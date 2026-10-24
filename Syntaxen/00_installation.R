@@ -21,10 +21,11 @@ library(writexl)
 
 # 2. Sind die Beispieldateien da?
 
-files <- c("data/units.rds", "data/design.rds", "data/Responses.csv",
-           "data/codes_manual.csv", "data/Logs.csv", "data/codebook.csv",
-           "data/demo-pc-units.rds", "data/demo-pc-responses.csv",
-           "data/demo-stored-codes.csv")
+files <- c("Daten/units.rds", "Daten/design.rds", "Daten/Responses.csv",
+           "Daten/codes_manual.csv", "Daten/Logs.csv", "Daten/codebook.csv",
+           "Daten/demo-pc-units.rds", "Daten/demo-pc-responses.csv",
+           "Daten/demo-stored-codes.csv", "Daten/demo-coding-report.rds",
+           "Daten/demo-metadata-prepared.rds")
 missing_files <- files[!file.exists(files)]
 if (length(missing_files) > 0) {
   stop("Dateien fehlen: ", paste(missing_files, collapse = ", "),

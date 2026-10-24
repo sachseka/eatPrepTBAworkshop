@@ -9,25 +9,25 @@ library(dplyr)
 library(tidyr)
 person_columns <- c("group_id", "login_name", "login_code")
 
-dir.create("outputs", showWarnings = FALSE)
-dir.create("checkpoints", showWarnings = FALSE)
+dir.create("Daten/Ergebnisse", showWarnings = FALSE)
+dir.create("Daten/Zwischenstaende", showWarnings = FALSE)
 
 # 2. Beispieldaten einlesen
-# Den Abruf eigener Daten zeigt R/01_datenabruf.R.
+# Den Abruf eigener Daten zeigt Syntaxen/01_datenabruf.R.
 
-units <- readRDS("data/units.rds")
-design <- readRDS("data/design.rds")
-responses <- read_responses("data/Responses.csv")
+units <- readRDS("Daten/units.rds")
+design <- readRDS("Daten/design.rds")
+responses <- read_responses("Daten/Responses.csv")
 
 # Nach einem API-Abruf alternativ:
-# responses <- readRDS("data_eigen/responses.rds")
+# responses <- readRDS("Daten/EigeneDaten/responses.rds")
 
 count(responses, booklet_id)
-saveRDS(responses, "checkpoints/01_responses.rds")
+saveRDS(responses, "Daten/Zwischenstaende/01_responses.rds")
 
 # Units und Booklet-Reihenfolge ansehen.
 print(units |> select(unit_key, unit_label)) # sollte 6 Units zeigen
-print(readr::read_csv("data/booklets.csv", show_col_types = FALSE) |>
+print(readr::read_csv("Daten/booklets.csv", show_col_types = FALSE) |>
   select(booklet_id, unit_booklet_no, unit_key) |> head(5))
 
 # Im Design steht eine Zeile für eine vorgesehene Person und Variable.
@@ -60,7 +60,7 @@ tibble(
 
 coded_auto <- code_responses(responses, units, prepare = TRUE)
 count(coded_auto, unit_key, code_status)
-saveRDS(coded_auto, "checkpoints/02_coded_auto.rds")
+saveRDS(coded_auto, "Daten/Zwischenstaende/02_coded_auto.rds")
 
 # U3/TOTAL sollte kodiert sein; U4/TEXT benötigt einen manuellen Code.
 coded_auto |>
@@ -71,7 +71,7 @@ coded_auto |>
 # 4. Manuelle Codes ergänzen
 # Ohne manuelle Codes genügt: coded <- coded_auto
 
-codes_manual <- readr::read_csv("data/codes_manual.csv",
+codes_manual <- readr::read_csv("Daten/codes_manual.csv",
   col_types = readr::cols(.default = "c", code_id = "i"))
 
 head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
@@ -80,7 +80,7 @@ head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
 coded <- code_responses(responses, units, prepare = TRUE,
                        codes_manual = codes_manual)
 count(coded, code_status, code_type)
-saveRDS(coded, "checkpoints/03_coded.rds")
+saveRDS(coded, "Daten/Zwischenstaende/03_coded.rds")
 
 # U4/TEXT sollte jetzt CODING_COMPLETE sein.
 coded |>
@@ -96,7 +96,7 @@ design_coded <- complete_design(coded, units, design,
   recode_omissions_to_not_reached = FALSE, preserve_not_reached = FALSE)
 
 count(design_coded, id_used, code_type)
-saveRDS(design_coded, "checkpoints/04_design_coded.rds")
+saveRDS(design_coded, "Daten/Zwischenstaende/04_design_coded.rds")
 
 # P002/U2: ausgelassen (0 Punkte). P003/U5: nicht erreicht (NA).
 design_coded |>
@@ -176,7 +176,8 @@ missing_summary_used <- summarise_missings(design_items, used_only = TRUE)
 
 select(missing_summary, all_of(person_columns), id_used, n_items,
        n_not_reached, n_by_omission, prop_missing)
-readr::write_csv(missing_summary, "outputs/missing_summary.csv")
+write.csv2(missing_summary, "Daten/Ergebnisse/missing_summary.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 
 missing_summary |>
   select(login_name, n_items, n_not_reached, n_by_omission, prop_missing) |>
@@ -195,7 +196,8 @@ code_stats <- psychometrics |>
   select(item_id, unit_key, variable_id, code_id, code_score,
          code_n, code_p_valid, code_pbc) |>
   distinct()
-readr::write_csv(code_stats, "outputs/psychometrics.csv")
+write.csv2(code_stats, "Daten/Ergebnisse/psychometrics.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 
 code_stats |>
   filter(item_id == "U1_Q1") |>
@@ -249,20 +251,23 @@ person_key |> head(4) |> print()
 # 12. Ergebnisse speichern
 # Long-Daten enthalten auch Codes und Missing-Arten; person_key sichert die IDs.
 
-readr::write_csv(scaling_data, "outputs/scaling_data.csv")
-readr::write_csv(person_key, "outputs/person_key.csv")
-saveRDS(analysis_data, "outputs/analysis_long.rds")
-saveRDS(design_items, "outputs/design_items.rds")
-saveRDS(scaling_data, "checkpoints/05_scaling_data.rds")
+write.csv2(scaling_data, "Daten/Ergebnisse/scaling_data.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(person_key, "Daten/Ergebnisse/person_key.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
+saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
+saveRDS(scaling_data, "Daten/Zwischenstaende/05_scaling_data.rds")
 
 missing_counts <- count(design_coded, id_used, code_type)
-readr::write_csv(missing_counts, "outputs/missing_counts.csv")
+write.csv2(missing_counts, "Daten/Ergebnisse/missing_counts.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 
 # Sollte fünf vorhandene Dateien mit einer Größe über 0 Bytes zeigen.
 export_files <- c("scaling_data.csv", "person_key.csv", "analysis_long.rds",
                  "design_items.rds", "missing_counts.csv")
 tibble(Datei = export_files,
-       Bytes = file.info(file.path("outputs", export_files))$size) |> print()
+       Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
 
 # 13. Aufbereitung dokumentieren
 # Nach Änderungen an Auswahl oder Missing-Regeln die Angaben unten anpassen.
@@ -281,8 +286,8 @@ report <- c(
   "Keine offenen Itemkodierungen im exportierten Datensatz.",
   "Fehlende Werte bleiben NA; Long-Daten und Personenschlüssel gesichert.")
 
-writeLines(report, "outputs/validation.txt", useBytes = TRUE)
-capture.output(sessionInfo(), file = "outputs/session-info.txt")
+writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
+capture.output(sessionInfo(), file = "Daten/Ergebnisse/session-info.txt")
 cat(paste(report, collapse = "\n"), "\n")
 
-# Weiterarbeiten: R/04_logs.R und R/05_kodiermanuale.R separat ausführen.
+# Weiterarbeiten: Syntaxen/04_logs.R und Syntaxen/05_kodiermanuale.R separat ausführen.

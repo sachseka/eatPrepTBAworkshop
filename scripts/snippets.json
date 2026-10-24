@@ -1,5 +1,5 @@
 {
-  "R/00_installation.R": {
+  "Syntaxen/00_installation.R": {
     "pakete-installieren": {
       "start": [
         "install.packages(\"pak\")"
@@ -26,14 +26,14 @@
     },
     "dateien-pruefen": {
       "start": [
-        "files <- c(\"data/units.rds\", \"data/design.rds\", \"data/Responses.csv\","
+        "files <- c(\"Daten/units.rds\", \"Daten/design.rds\", \"Daten/Responses.csv\","
       ],
       "end": [
         "}"
       ]
     }
   },
-  "R/01_datenabruf.R": {
+  "Syntaxen/01_datenabruf.R": {
     "api-einstellungen": {
       "start": [
         "library(eatPrepTBA)"
@@ -44,10 +44,10 @@
     },
     "api-vorbereiten": {
       "start": [
-        "dir.create(\"data_eigen\", showWarnings = FALSE)"
+        "dir.create(\"Daten/EigeneDaten\", showWarnings = FALSE)"
       ],
       "end": [
-        "dir.create(\"data_eigen\", showWarnings = FALSE)"
+        "dir.create(\"Daten/EigeneDaten\", showWarnings = FALSE)"
       ]
     },
     "studio-daten-abrufen": {
@@ -55,7 +55,7 @@
         "studio_login <- login_studio(app_version = studio_version, keyring = TRUE)"
       ],
       "end": [
-        "saveRDS(units, \"data_eigen/units.rds\")"
+        "saveRDS(units, \"Daten/EigeneDaten/units.rds\")"
       ]
     },
     "studio-schema-ansehen": {
@@ -79,7 +79,7 @@
         "responses <- get_responses(testcenter)"
       ],
       "end": [
-        "# saveRDS(responses, \"data_eigen/responses.rds\")"
+        "# saveRDS(responses, \"Daten/EigeneDaten/responses.rds\")"
       ]
     },
     "design-abrufen": {
@@ -87,7 +87,7 @@
         "design <- get_design(testcenter, units = units)"
       ],
       "end": [
-        "saveRDS(design, \"data_eigen/design.rds\")"
+        "saveRDS(design, \"Daten/EigeneDaten/design.rds\")"
       ]
     },
     "logs-abrufen": {
@@ -95,7 +95,7 @@
         "logs <- get_logs(testcenter)"
       ],
       "end": [
-        "saveRDS(logs, \"data_eigen/logs.rds\")"
+        "saveRDS(logs, \"Daten/EigeneDaten/logs.rds\")"
       ]
     },
     "abruf-dokumentieren": {
@@ -103,11 +103,27 @@
         "retrieval_info <- c("
       ],
       "end": [
-        "capture.output(sessionInfo(), file = \"data_eigen/session-info.txt\")"
+        "capture.output(sessionInfo(), file = \"Daten/EigeneDaten/session-info.txt\")"
+      ]
+    },
+    "studio-kodierbericht": {
+      "start": [
+        "coding_report <- get_coding_report(studio)"
+      ],
+      "end": [
+        "saveRDS(coding_report, \"Daten/EigeneDaten/coding_report.rds\")"
+      ]
+    },
+    "studio-metadaten": {
+      "start": [
+        "units_meta <- add_metadata(units)"
+      ],
+      "end": [
+        "saveRDS(units_meta, \"Daten/EigeneDaten/units_metadata.rds\")"
       ]
     }
   },
-  "R/02_daten_verstehen.R": {
+  "Syntaxen/02_daten_verstehen.R": {
     "demo-einlesen": {
       "start": [
         "library(eatPrepTBA) # eatAutoCode nicht separat laden."
@@ -190,28 +206,44 @@
     },
     "vorhandene-codes-entpacken": {
       "start": [
-        "pc_stored <- read_responses(\"data/demo-stored-codes.csv\")"
+        "pc_stored <- read_responses(\"Daten/demo-stored-codes.csv\")"
       ],
       "end": [
         "select(stored_codes, login_name, variable_id, value, code_id, code_score)"
       ]
+    },
+    "demo-metadaten-vorschau": {
+      "start": [
+        "metadata_demo <- readRDS(\"Daten/demo-metadata-prepared.rds\")"
+      ],
+      "end": [
+        "metadata_demo$item_metadata[[1]]"
+      ]
+    },
+    "demo-kodierbericht-vorschau": {
+      "start": [
+        "coding_report_demo <- readRDS(\"Daten/demo-coding-report.rds\")"
+      ],
+      "end": [
+        "coding_report_demo$validation_problems[[2]]"
+      ]
     }
   },
-  "R/03_datenaufbereitung.R": {
+  "Syntaxen/03_datenaufbereitung.R": {
     "workflow-start": {
       "start": [
         "library(eatPrepTBA) # lädt eatAutoCode mit; nicht separat laden"
       ],
       "end": [
-        "dir.create(\"checkpoints\", showWarnings = FALSE)"
+        "dir.create(\"Daten/Zwischenstaende\", showWarnings = FALSE)"
       ]
     },
     "daten-einlesen": {
       "start": [
-        "units <- readRDS(\"data/units.rds\")"
+        "units <- readRDS(\"Daten/units.rds\")"
       ],
       "end": [
-        "saveRDS(responses, \"checkpoints/01_responses.rds\")"
+        "saveRDS(responses, \"Daten/Zwischenstaende/01_responses.rds\")"
       ]
     },
     "studie-units-booklets-vorschau": {
@@ -260,7 +292,7 @@
         "coded_auto <- code_responses(responses, units, prepare = TRUE)"
       ],
       "end": [
-        "saveRDS(coded_auto, \"checkpoints/02_coded_auto.rds\")"
+        "saveRDS(coded_auto, \"Daten/Zwischenstaende/02_coded_auto.rds\")"
       ]
     },
     "auto-vorschau": {
@@ -274,7 +306,7 @@
     },
     "manuelle-codes-einlesen": {
       "start": [
-        "codes_manual <- readr::read_csv(\"data/codes_manual.csv\","
+        "codes_manual <- readr::read_csv(\"Daten/codes_manual.csv\","
       ],
       "end": [
         "  col_types = readr::cols(.default = \"c\", code_id = \"i\"))"
@@ -293,7 +325,7 @@
         "coded <- code_responses(responses, units, prepare = TRUE,"
       ],
       "end": [
-        "saveRDS(coded, \"checkpoints/03_coded.rds\")"
+        "saveRDS(coded, \"Daten/Zwischenstaende/03_coded.rds\")"
       ]
     },
     "manuell-vorschau": {
@@ -310,7 +342,7 @@
         "design_coded <- complete_design(coded, units, design,"
       ],
       "end": [
-        "saveRDS(design_coded, \"checkpoints/04_design_coded.rds\")"
+        "saveRDS(design_coded, \"Daten/Zwischenstaende/04_design_coded.rds\")"
       ]
     },
     "design-vorschau": {
@@ -394,7 +426,8 @@
         "missing_summary <- summarise_missings(design_items)"
       ],
       "end": [
-        "readr::write_csv(missing_summary, \"outputs/missing_summary.csv\")"
+        "write.csv2(missing_summary, \"Daten/Ergebnisse/missing_summary.csv\",",
+        "           row.names = FALSE, fileEncoding = \"UTF-16LE\")"
       ]
     },
     "missing-uebersicht-vorschau": {
@@ -411,7 +444,8 @@
         "domains <- distinct(units, unit_key)"
       ],
       "end": [
-        "readr::write_csv(code_stats, \"outputs/psychometrics.csv\")"
+        "write.csv2(code_stats, \"Daten/Ergebnisse/psychometrics.csv\",",
+        "           row.names = FALSE, fileEncoding = \"UTF-16LE\")"
       ]
     },
     "kennwerte-vorschau": {
@@ -482,10 +516,12 @@
     },
     "daten-exportieren": {
       "start": [
-        "readr::write_csv(scaling_data, \"outputs/scaling_data.csv\")"
+        "write.csv2(scaling_data, \"Daten/Ergebnisse/scaling_data.csv\",",
+        "           row.names = FALSE, fileEncoding = \"UTF-16LE\")"
       ],
       "end": [
-        "readr::write_csv(missing_counts, \"outputs/missing_counts.csv\")"
+        "write.csv2(missing_counts, \"Daten/Ergebnisse/missing_counts.csv\",",
+        "           row.names = FALSE, fileEncoding = \"UTF-16LE\")"
       ]
     },
     "export-vorschau": {
@@ -493,7 +529,7 @@
         "export_files <- c(\"scaling_data.csv\", \"person_key.csv\", \"analysis_long.rds\","
       ],
       "end": [
-        "       Bytes = file.info(file.path(\"outputs\", export_files))$size) |> print()"
+        "       Bytes = file.info(file.path(\"Daten/Ergebnisse\", export_files))$size) |> print()"
       ]
     },
     "workflow-dokumentieren": {
@@ -505,10 +541,10 @@
       ]
     }
   },
-  "R/04_logs.R": {
+  "Syntaxen/04_logs.R": {
     "logs-read": {
       "start": [
-        "logs <- read_logs(\"data/Logs.csv\")"
+        "logs <- read_logs(\"Daten/Logs.csv\")"
       ],
       "end": [
         "count(logs, group_id, login_name, booklet_id) # P001: 9, P002: 6 Ereignisse"
@@ -588,10 +624,10 @@
     },
     "logs-export": {
       "start": [
-        "session_keys <- c(\"group_id\", \"login_name\", \"login_code\", \"booklet_id\")"
+        "write.csv2(inventory, \"Daten/Ergebnisse/log_inventory.csv\","
       ],
       "end": [
-        "             unit_times = unit_times, focus = focus), \"outputs/log_qc.rds\")"
+        "             unit_times = unit_times, focus = focus), \"Daten/Ergebnisse/log_qc.rds\")"
       ]
     },
     "logs-session-vorschau": {
@@ -601,12 +637,20 @@
       "end": [
         "  print()"
       ]
+    },
+    "logs-session": {
+      "start": [
+        "session_keys <- c(\"group_id\", \"login_name\", \"login_code\", \"booklet_id\")"
+      ],
+      "end": [
+        "  left_join(focus_summary, by = session_keys)"
+      ]
     }
   },
-  "R/05_kodiermanuale.R": {
+  "Syntaxen/05_kodiermanuale.R": {
     "codebook-read": {
       "start": [
-        "cb <- readr::read_csv(\"data/codebook.csv\", show_col_types = FALSE,"
+        "cb <- readr::read_csv(\"Daten/codebook.csv\", show_col_types = FALSE,"
       ],
       "end": [
         "count(cb, unit_key, variable_id) # 10 Variablen aus 6 Units"
@@ -641,19 +685,20 @@
         "writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),"
       ],
       "end": [
-        "readr::write_csv(selected_cb, \"outputs/codebook.csv\")"
+        "write.csv2(selected_cb, \"Daten/Ergebnisse/codebook.csv\",",
+        "           row.names = FALSE, fileEncoding = \"UTF-16LE\")"
       ]
     },
     "codebuch-dateien-vorschau": {
       "start": [
-        "codebook_files <- c(\"outputs/codebook.xlsx\", \"outputs/codebook.csv\")"
+        "codebook_files <- c(\"Daten/Ergebnisse/codebook.xlsx\", \"Daten/Ergebnisse/codebook.csv\")"
       ],
       "end": [
         "       Bytes = file.info(codebook_files)$size) |> print()"
       ]
     }
   },
-  "R/06_kodiermanuale_studio.R": {
+  "Syntaxen/06_kodiermanuale_studio.R": {
     "studio-codebook-settings": {
       "start": [
         "studio_version <- \"21.0.0\" # Version der eigenen Anmeldeseite übernehmen"

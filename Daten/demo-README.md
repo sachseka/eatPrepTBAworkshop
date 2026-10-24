@@ -26,7 +26,11 @@ ebenfalls behandelt, sind nicht nachgebildet.
 - `demo-pc-responses.csv`: vier Personen mit je drei Rohantworten.
 - `demo-stored-codes.csv`: nachgebildeter Export mit bereits gespeicherten Codes.
   Zeigt den Importweg, der z. B. für StarS-Daten relevant ist.
-- `R/02_daten_verstehen.R`: lineares, lokal ausführbares Lehrskript.
+- `demo-metadata-prepared.rds`: synthetischer, bereits aufbereiteter Auszug
+  mit Unit- und Item-Metadaten; kein tatsächlicher `add_metadata()`-Aufruf.
+- `demo-coding-report.rds`: synthetischer Kodierschema-Prüfbericht mit einem
+  gültigen Fall und einer separaten Unit mit absichtlich fehlender Quellvariable.
+- `Syntaxen/02_daten_verstehen.R`: lineares, lokal ausführbares Lehrskript.
 - `scripts/generate_demonstration_data.R`: erzeugt diese Dateien reproduzierbar.
 - `scripts/validate_demonstration_data.R`: prüft die erwarteten Ergebnisse.
 
