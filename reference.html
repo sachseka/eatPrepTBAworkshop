@@ -126,7 +126,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#api-anfrage" id="toc-api-anfrage" class="nav-link" data-scroll-target="#api-anfrage">API-Anfrage</a></li>
   </ul></li>
   <li><a href="#leitfaden-für-eine-live-demo" id="toc-leitfaden-für-eine-live-demo" class="nav-link" data-scroll-target="#leitfaden-für-eine-live-demo">Leitfaden für eine Live-Demo</a></li>
-  <li><a href="#sonderfall-daten-ohne-kodierschema" id="toc-sonderfall-daten-ohne-kodierschema" class="nav-link" data-scroll-target="#sonderfall-daten-ohne-kodierschema">Sonderfall: Daten ohne Kodierschema</a></li>
+  <li><a href="#rohantworten-oder-vorhandene-codes-entpacken" id="toc-rohantworten-oder-vorhandene-codes-entpacken" class="nav-link" data-scroll-target="#rohantworten-oder-vorhandene-codes-entpacken">Rohantworten oder vorhandene Codes entpacken</a></li>
   <li><a href="#weitere-paketfunktionen-zur-studienvorbereitung" id="toc-weitere-paketfunktionen-zur-studienvorbereitung" class="nav-link" data-scroll-target="#weitere-paketfunktionen-zur-studienvorbereitung">Weitere Paketfunktionen zur Studienvorbereitung</a></li>
   <li><a href="#quellen" id="toc-quellen" class="nav-link" data-scroll-target="#quellen">Quellen</a></li>
   </ul>
@@ -173,6 +173,14 @@ ul.task-list li input[type="checkbox"] {
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/get_units.html" target="_blank" rel="noopener noreferrer"><code>get_units()</code></a>, <a href="https://iqb-research.github.io/eatPrepTBA/reference/add_coding_scheme.html" target="_blank" rel="noopener noreferrer"><code>add_coding_scheme()</code></a></td>
 </tr>
 <tr class="odd">
+<td>Kodierschema-Prüfbericht aus IQB-Studio</td>
+<td><a href="https://iqb-research.github.io/eatPrepTBA/reference/get_coding_report.html" target="_blank" rel="noopener noreferrer"><code>get_coding_report()</code></a></td>
+</tr>
+<tr class="even">
+<td>Geladene Metadaten aufbereiten</td>
+<td><a href="https://iqb-research.github.io/eatPrepTBA/reference/add_metadata.html" target="_blank" rel="noopener noreferrer"><code>add_metadata()</code></a></td>
+</tr>
+<tr class="odd">
 <td>Antworten und Design</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/get_responses.html" target="_blank" rel="noopener noreferrer"><code>get_responses()</code></a>, <a href="https://iqb-research.github.io/eatPrepTBA/reference/read_responses.html" target="_blank" rel="noopener noreferrer"><code>read_responses()</code></a>, <a href="https://iqb-research.github.io/eatPrepTBA/reference/get_design.html" target="_blank" rel="noopener noreferrer"><code>get_design()</code></a></td>
 </tr>
@@ -193,34 +201,38 @@ ul.task-list li input[type="checkbox"] {
 <td><a href="https://docs.ropensci.org/writexl/reference/write_xlsx.html" target="_blank" rel="noopener noreferrer"><code>writexl::write_xlsx()</code></a></td>
 </tr>
 <tr class="even">
+<td>CSV für deutsches Excel</td>
+<td><a href="https://stat.ethz.ch/R-manual/R-devel/library/utils/html/write.table.html" target="_blank" rel="noopener noreferrer"><code>write.csv2()</code></a> mit <code>row.names = FALSE</code></td>
+</tr>
+<tr class="odd">
 <td>Missings</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/complete_design.html" target="_blank" rel="noopener noreferrer"><code>complete_design()</code></a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Missing-Überblick</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/summarise_missings.html" target="_blank" rel="noopener noreferrer"><code>summarise_missings()</code></a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Item-Verknüpfung</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/add_item_id.html" target="_blank" rel="noopener noreferrer"><code>add_item_id()</code></a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Psychometrische Kennwerte</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/evaluate_psychometrics.html" target="_blank" rel="noopener noreferrer"><code>evaluate_psychometrics()</code></a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Log-Import und Überblick</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/get_logs.html" target="_blank" rel="noopener noreferrer"><code>get_logs()</code></a>, <a href="https://iqb-research.github.io/eatPrepTBA/reference/read_logs.html" target="_blank" rel="noopener noreferrer"><code>read_logs()</code></a>, <a href="https://iqb-research.github.io/eatPrepTBA/reference/summarise_log_inventory.html" target="_blank" rel="noopener noreferrer"><code>summarise_log_inventory()</code></a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Log-Verlässlichkeit</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/detect_log_anomalies.html" target="_blank" rel="noopener noreferrer"><code>detect_log_anomalies()</code></a>, <a href="https://iqb-research.github.io/eatPrepTBA/reference/summarise_log_qc.html" target="_blank" rel="noopener noreferrer"><code>summarise_log_qc()</code></a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Bearbeitungs- und Ladezeiten</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/estimate_unit_times.html" target="_blank" rel="noopener noreferrer"><code>estimate_unit_times()</code></a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Fokusverluste</td>
 <td><a href="https://iqb-research.github.io/eatPrepTBA/reference/summarise_log_focus.html" target="_blank" rel="noopener noreferrer"><code>summarise_log_focus()</code></a></td>
 </tr>
@@ -239,37 +251,38 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="R/00_installation.R" download="00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></td>
+<td><a href="Syntaxen/00_installation.R" download="00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></td>
 <td>Installation, Paketversionen und Beispieldateien</td>
 </tr>
 <tr class="even">
-<td><a href="R/01_datenabruf.R" download="01_datenabruf.R" target="_blank" rel="noopener noreferrer">01_datenabruf.R</a></td>
+<td><a href="Syntaxen/01_datenabruf.R" download="01_datenabruf.R" target="_blank" rel="noopener noreferrer">01_datenabruf.R</a></td>
 <td>Daten über eigene IQB-Studio-/Testcenter-Zugänge beziehen</td>
 </tr>
 <tr class="odd">
-<td><a href="R/02_daten_verstehen.R" download="02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02_daten_verstehen.R</a></td>
+<td><a href="Syntaxen/02_daten_verstehen.R" download="02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02_daten_verstehen.R</a></td>
 <td>JSON, Partial Credit und gespeicherte Codes</td>
 </tr>
 <tr class="even">
-<td><a href="R/03_datenaufbereitung.R" download="03_datenaufbereitung.R" target="_blank" rel="noopener noreferrer">03_datenaufbereitung.R</a></td>
+<td><a href="Syntaxen/03_datenaufbereitung.R" download="03_datenaufbereitung.R" target="_blank" rel="noopener noreferrer">03_datenaufbereitung.R</a></td>
 <td>Vollständige Aufbereitung bis zum Datensatzexport</td>
 </tr>
 <tr class="odd">
-<td><a href="R/04_logs.R" download="04_logs.R" target="_blank" rel="noopener noreferrer">04_logs.R</a></td>
+<td><a href="Syntaxen/04_logs.R" download="04_logs.R" target="_blank" rel="noopener noreferrer">04_logs.R</a></td>
 <td>Überblick, Zeiten und Fokusverluste</td>
 </tr>
 <tr class="even">
-<td><a href="R/05_kodiermanuale.R" download="05_kodiermanuale.R" target="_blank" rel="noopener noreferrer">05_kodiermanuale.R</a></td>
+<td><a href="Syntaxen/05_kodiermanuale.R" download="05_kodiermanuale.R" target="_blank" rel="noopener noreferrer">05_kodiermanuale.R</a></td>
 <td>Lokales Codebuch als Excel und CSV</td>
 </tr>
 <tr class="odd">
-<td><a href="R/06_kodiermanuale_studio.R" download="06_kodiermanuale_studio.R" target="_blank" rel="noopener noreferrer">06_kodiermanuale_studio.R</a></td>
+<td><a href="Syntaxen/06_kodiermanuale_studio.R" download="06_kodiermanuale_studio.R" target="_blank" rel="noopener noreferrer">06_kodiermanuale_studio.R</a></td>
 <td>Codebuch und Kodiermanual aus dem eigenen IQB-Studio</td>
 </tr>
 </tbody>
 </table>
 <p>Die lokalen Skripte verwenden die Daten aus dem Materialpaket. <code>00_installation.R</code> wird abschnittsweise ausgeführt; der Installationsblock ist nur bei Bedarf erforderlich. Die erste Kodierung und ihre Prüfung gehören zum Rechenbeispiel in Skript <code>02</code>. eatAutoCode wird über <code>library(eatPrepTBA)</code> intern geladen und nicht separat mit <code>library()</code> eingebunden.</p>
 <p>Die beiden Zugangsvorlagen enthalten Beispielangaben und werden für eigene Realdaten angepasst. Sie werden im lokalen Workshop und beim Rendern nicht ausgeführt.</p>
+<p><code>get_coding_report(workspace)</code> holt einen Prüfbericht zu den Kodierschemata aus IQB-Studio und benötigt einen eigenen Zugang. <code>add_metadata(units)</code> bereitet bereits geladene Metadaten auf. Profildefinitionen und gegebenenfalls Vokabulare werden über URLs nachgeladen; dafür kann Internetzugriff nötig sein, aber keine weitere IQB-Studio-Anmeldung. Block 1 zeigt den Aufruf als Vorlage und eine vorbereitete Ausgabe für das Offlinebeispiel.</p>
 </section>
 <section id="eigene-zugänge-und-fehlermeldungen" class="level2">
 <h2 class="anchored" data-anchor-id="eigene-zugänge-und-fehlermeldungen">Eigene Zugänge und Fehlermeldungen</h2>
@@ -301,11 +314,11 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p><a href="https://iqb-research.github.io/eatPrepTBA/reference/get_design.html" target="_blank" rel="noopener noreferrer"><code>get_design()</code></a> berücksichtigt standardmäßig Testpersonen-Logins mit <code>mode = "run-hot-return"</code>. Bei einem anderen Testdurchführungsmodus wird <code>mode</code> ausdrücklich angegeben. Dieser Filter betrifft das Testdesign und ist kein Anmeldemodus für den Zugang zu Testcenter.</p>
+<p><a href="https://iqb-research.github.io/eatPrepTBA/reference/get_design.html" target="_blank" rel="noopener noreferrer"><code>get_design()</code></a> berücksichtigt standardmäßig Testpersonen-Logins mit <code>mode = "run-hot-return"</code>. Der Modus wird in der Testpersonen-XML festgelegt. Bei einem anderen Testdurchführungsmodus wird <code>mode</code> ausdrücklich angegeben. <code>get_responses()</code> und <code>get_logs()</code> besitzen keinen solchen Modusfilter; ihre Daten müssen zum ausgewählten Design passen.</p>
 </section>
 <section id="tabelle-codebuch-und-kodiermanual" class="level2">
 <h2 class="anchored" data-anchor-id="tabelle-codebuch-und-kodiermanual">Tabelle, Codebuch und Kodiermanual</h2>
-<p>Die lokale Lehrtabelle in <code>data/codebook.csv</code> stammt aus den synthetischen Kodierschemata und enthält eine eigene numerische <code>code_score</code>-Spalte. <code>R/05_kodiermanuale.R</code> wählt die gewünschten Units aus und schreibt die Tabelle als Excel und CSV.</p>
+<p>Die lokale Lehrtabelle in <code>Daten/codebook.csv</code> stammt aus den synthetischen Kodierschemata und enthält eine eigene numerische <code>code_score</code>-Spalte. <code>Syntaxen/05_kodiermanuale.R</code> wählt die gewünschten Units aus und schreibt die Tabelle als Excel und CSV.</p>
 <p>Mit einem eigenen IQB-Studio-Zugang liefert <a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html" target="_blank" rel="noopener noreferrer"><code>prepare_codebook()</code></a> eine aufbereitete Tabelle; <a href="https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html" target="_blank" rel="noopener noreferrer"><code>download_codebook()</code></a> speichert beispielsweise das originale DOCX-Kodiermanual. Die Tabellenstruktur des IQB-Studio-Exports kann von der Lehrtabelle abweichen. Optionen wie <code>show_score = TRUE</code> und <code>missings_profile</code> steuern den Inhalt des Exports. Für eigene Aufgaben die Auswahl und die enthaltenen Kodieranweisungen prüfen.</p>
 </section>
 <section id="screenshots-zum-nachsehen" class="level2">
@@ -363,9 +376,9 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Testcenter:</strong> In einem vorbereiteten Demo-Workspace Testpersonen-Datei und Booklet ansehen; die Reihenfolge zeigen; Ergebnisexport und Responses-/Logs-Dateien wiedererkennen. Ein aktueller Testcenter-Screenshot kann später ergänzt werden.</p>
 <p><strong>API:</strong> Netzwerkansicht öffnen; eine GET-Anfrage auswählen; Ressource und JSON-Antwort zeigen. Anschließend den entsprechenden Funktionsaufruf in der R-Vorlage ansehen.</p>
 </section>
-<section id="sonderfall-daten-ohne-kodierschema" class="level2">
-<h2 class="anchored" data-anchor-id="sonderfall-daten-ohne-kodierschema">Sonderfall: Daten ohne Kodierschema</h2>
-<p><a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_responses.html" target="_blank" rel="noopener noreferrer"><code>prepare_responses(responses)</code></a> entpackt Rohantworten zur eigenen Weiterverarbeitung. <a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_coded.html" target="_blank" rel="noopener noreferrer"><code>prepare_coded(responses)</code></a> entpackt bereits gespeicherte Kodierungen und vergibt keine neuen Codes oder Scores. Beide Wege zeigt <a href="R/02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02_daten_verstehen.R</a> an synthetischen Dateien. Die gespeicherten Codes dienen auch als Beispiel für einen Importweg, der bei StarS-Daten relevant ist; es sind keine echten StarS-Exports.</p>
+<section id="rohantworten-oder-vorhandene-codes-entpacken" class="level2">
+<h2 class="anchored" data-anchor-id="rohantworten-oder-vorhandene-codes-entpacken">Rohantworten oder vorhandene Codes entpacken</h2>
+<p>Die beiden Funktionen lesen unterschiedliche Inhalte: <a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_responses.html" target="_blank" rel="noopener noreferrer"><code>prepare_responses(responses)</code></a> entpackt die Rohantworten aus <code>responses</code>; <a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_coded.html" target="_blank" rel="noopener noreferrer"><code>prepare_coded(responses)</code></a> entpackt bereits gespeicherte Codes und Scores aus <code>coded</code>. Keine der beiden Funktionen kodiert neu. Der passende Weg hängt vom Inhalt der Exportdatei ab, auch bei StarS-Daten. <a href="Syntaxen/02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02_daten_verstehen.R</a> zeigt beide Fälle an synthetischen Dateien.</p>
 <p>Diese Ergebnisse sind kein direkter Ersatz für den vollständigen Workflow mit Units, Kodierschemata und Design. Insbesondere bei StarS- oder projektspezifischen Exporten Herkunft und Bedeutung der Variablen prüfen. Itemzuordnung und Missing-Regeln müssen gesondert ergänzt werden.</p>
 </section>
 <section id="weitere-paketfunktionen-zur-studienvorbereitung" class="level2">
@@ -383,7 +396,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="https://iqb-research.github.io/IQB-Methods/docs/R_tutorials/eatPrep2024_files/eatPrep2024.html" target="_blank" rel="noopener noreferrer">eatPrep-Workshop 2024 von Karoline Sachse</a></li>
 <li><a href="https://quarto.org/docs/presentations/revealjs/" target="_blank" rel="noopener noreferrer">Quarto: Reveal.js</a></li>
 </ul>
-<p>Materialstand <strong>24.10.2026</strong>: eatPrepTBA <strong>0.9.8.9042 / ea782df</strong>, eatAutoCode <strong>0.5.0.9008 / 54f39a8</strong> und IQB-Autocoder <strong>5.5.0</strong>. <code>renv.lock</code> enthält die genaue Paketumgebung; die durchgeführten Prüfungen stehen in <code>VALIDATION.md</code>. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.</p>
+<p>Materialstand <strong>24.10.2026</strong>: eatPrepTBA <strong>0.9.8.9042 / ea782df</strong>, eatAutoCode <strong>0.5.0.9008 / 54f39a8</strong> und IQB-Autocoder <strong>5.5.0</strong>. Im <a href="https://github.com/sachseka/eatPrepTBAworkshop" target="_blank" rel="noopener noreferrer">Repository</a> enthält <code>renv.lock</code> die genaue Paketumgebung; die durchgeführten Prüfungen stehen dort in <code>VALIDATION.md</code>. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.</p>
 
 
 </section>

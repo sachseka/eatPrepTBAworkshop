@@ -2,10 +2,10 @@
 
 library(eatPrepTBA)
 library(dplyr)
-dir.create("outputs", showWarnings = FALSE)
+dir.create("Daten/Ergebnisse", showWarnings = FALSE)
 
-logs <- read_logs("data/Logs.csv")
-# Alternativ nach API-Abruf: logs <- readRDS("data_eigen/logs.rds")
+logs <- read_logs("Daten/Logs.csv")
+# Alternativ nach API-Abruf: logs <- readRDS("Daten/EigeneDaten/logs.rds")
 
 # Ältere Exporte haben keinen getrennten Unit-Alias.
 if (!"unit_alias" %in% names(logs)) logs$unit_alias <- logs$unit_key
@@ -81,12 +81,16 @@ session_overview <- qc |>
   select(all_of(session_keys), log_qc_flag) |>
   left_join(focus_summary, by = session_keys)
 
-readr::write_csv(inventory, "outputs/log_inventory.csv")
-readr::write_csv(anomalies, "outputs/log_anomalies.csv")
-readr::write_csv(times, "outputs/log_unit_times.csv")
-readr::write_csv(session_overview, "outputs/log_sessions.csv")
+write.csv2(inventory, "Daten/Ergebnisse/log_inventory.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(anomalies, "Daten/Ergebnisse/log_anomalies.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(times, "Daten/Ergebnisse/log_unit_times.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
+write.csv2(session_overview, "Daten/Ergebnisse/log_sessions.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
-             unit_times = unit_times, focus = focus), "outputs/log_qc.rds")
+             unit_times = unit_times, focus = focus), "Daten/Ergebnisse/log_qc.rds")
 
 session_overview |>
   select(login_name, log_qc_flag, n_focus_lost, focus_lost_s) |>

@@ -142,9 +142,9 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Karoline Sachse · IQB Methoden-Team · 26.10.2026</strong></p>
 <p><strong>R-Grundkenntnisse · geführte Beispiele · ohne IQB-Studio-/Testcenter-Zugang</strong></p>
 <p>Der Workshop behandelt den Paketaufbau, die Aufbereitung von Antworten und Metadaten für die Skalierung, ausgewählte Logs und Codebücher. Synthetische Beispieldaten machen die Schritte lokal nachvollziehbar.</p>
-<p><a href="./workshop.html" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Folien öffnen</a> <a href="downloads/WSeatPrepTBA-material.zip" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Materialpaket herunterladen</a></p>
+<p><a href="./workshop.html" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Folien öffnen</a> <a href="downloads/WSeatPrepTBA-material.zip" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Materialpaket herunterladen</a> <a href="downloads/workshop.pdf" class="btn btn-secondary" download="workshop.pdf" target="_blank" rel="noopener noreferrer">Folien als PDF herunterladen</a></p>
 </div>
-<p>Das ZIP vollständig entpacken, <code>WSeatPrepTBA.Rproj</code> öffnen und <a href="R/00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a> abschnittsweise ausführen. Installationszeilen werden nur bei Bedarf benötigt. Die Folien sind direkt im Browser lesbar.</p>
+<p>Das ZIP enthält nur die Ordner <strong><code>Syntaxen</code></strong> und <strong><code>Daten</code></strong> sowie <strong><code>WSeatPrepTBA.Rproj</code></strong>. Vollständig entpacken, die Projektdatei öffnen und <a href="Syntaxen/00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a> abschnittsweise ausführen. Installationszeilen werden nur bei Bedarf benötigt. Die Folien sind direkt im Browser lesbar.</p>
 <div class="card-grid">
 <section id="vorbereiten" class="level3 workshop-card">
 <h3 class="anchored" data-anchor-id="vorbereiten">Vorbereiten</h3>
@@ -191,15 +191,15 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p>Nach Abschnitt 1 und Abschnitt 2 folgen jeweils etwa <strong>zehn Minuten zum eigenständigen Ausführen der Skripte</strong>, anschließend eine kurze Fragerunde. Zuerst wird <code>02_daten_verstehen.R</code>, danach <code>03_datenaufbereitung.R</code> nachvollzogen. Der übrige Ablauf richtet sich nach den Inhalten und Fragen. Die Skripte bleiben als Vorlage für die Arbeit mit eigenen Daten nutzbar.</p>
+<p>Nach jedem der drei Arbeitsblöcke folgen etwa <strong>zehn Minuten zum eigenständigen Ausführen der Skripte</strong>, anschließend eine kurze Fragerunde. Zuerst wird Skript <code>02</code>, danach <code>03</code> und zuletzt <code>04</code> und <code>05</code> nachvollzogen. Der übrige Ablauf richtet sich nach den Inhalten und Fragen. Die Skripte bleiben als Vorlage für die Arbeit mit eigenen Daten nutzbar.</p>
 </section>
 <section id="materialien" class="level2">
 <h2 class="anchored" data-anchor-id="materialien">Materialien</h2>
 <ul>
 <li><a href="./workshop.html" target="_blank" rel="noopener noreferrer">Folien im Browser</a> und <a href="downloads/workshop.pdf" target="_blank" rel="noopener noreferrer">PDF der Folien</a>.</li>
-<li><a href="downloads/WSeatPrepTBA-material.zip" target="_blank" rel="noopener noreferrer">Materialpaket mit Daten, R-Skripten, Zwischenständen und Quellen</a>.</li>
+<li><a href="downloads/WSeatPrepTBA-material.zip" target="_blank" rel="noopener noreferrer">Materialpaket mit R-Skripten, Beispieldaten und Projektdatei</a>.</li>
 <li><a href="./handout.html" target="_blank" rel="noopener noreferrer">Handout</a> und <a href="./reference.html" target="_blank" rel="noopener noreferrer">Funktionsübersicht</a>.</li>
-<li>Beispielausgabe: <a href="outputs/codebook.xlsx" target="_blank" rel="noopener noreferrer">Excel-Codebuch</a>.</li>
+<li>Beispielausgabe: <a href="Daten/Ergebnisse/codebook.xlsx" target="_blank" rel="noopener noreferrer">Excel-Codebuch</a>.</li>
 <li><a href="https://github.com/sachseka/eatPrepTBAworkshop" target="_blank" rel="noopener noreferrer">Öffentliches Workshop-Repository</a>.</li>
 </ul>
 <section id="r-skripte-einzeln-herunterladen" class="level3">
@@ -213,36 +213,36 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="R/00_installation.R" download="00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></td>
+<td><a href="Syntaxen/00_installation.R" download="00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></td>
 <td>Installation, Paketversionen und Beispieldateien</td>
 </tr>
 <tr class="even">
-<td><a href="R/01_datenabruf.R" download="01_datenabruf.R" target="_blank" rel="noopener noreferrer">01_datenabruf.R</a></td>
+<td><a href="Syntaxen/01_datenabruf.R" download="01_datenabruf.R" target="_blank" rel="noopener noreferrer">01_datenabruf.R</a></td>
 <td>Vorlage für eigene IQB-Studio-/Testcenter-Zugänge</td>
 </tr>
 <tr class="odd">
-<td><a href="R/02_daten_verstehen.R" download="02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02_daten_verstehen.R</a></td>
+<td><a href="Syntaxen/02_daten_verstehen.R" download="02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02_daten_verstehen.R</a></td>
 <td>JSON, Partial Credit und gespeicherte Codes am kleinen Beispiel</td>
 </tr>
 <tr class="even">
-<td><a href="R/03_datenaufbereitung.R" download="03_datenaufbereitung.R" target="_blank" rel="noopener noreferrer">03_datenaufbereitung.R</a></td>
+<td><a href="Syntaxen/03_datenaufbereitung.R" download="03_datenaufbereitung.R" target="_blank" rel="noopener noreferrer">03_datenaufbereitung.R</a></td>
 <td>Vollständige Datenaufbereitung und Datensatzexport</td>
 </tr>
 <tr class="odd">
-<td><a href="R/04_logs.R" download="04_logs.R" target="_blank" rel="noopener noreferrer">04_logs.R</a></td>
+<td><a href="Syntaxen/04_logs.R" download="04_logs.R" target="_blank" rel="noopener noreferrer">04_logs.R</a></td>
 <td>Lokaler Überblick, Zeiten und Fokusverluste</td>
 </tr>
 <tr class="even">
-<td><a href="R/05_kodiermanuale.R" download="05_kodiermanuale.R" target="_blank" rel="noopener noreferrer">05_kodiermanuale.R</a></td>
+<td><a href="Syntaxen/05_kodiermanuale.R" download="05_kodiermanuale.R" target="_blank" rel="noopener noreferrer">05_kodiermanuale.R</a></td>
 <td>Lokales Codebuch als Excel und CSV</td>
 </tr>
 <tr class="odd">
-<td><a href="R/06_kodiermanuale_studio.R" download="06_kodiermanuale_studio.R" target="_blank" rel="noopener noreferrer">06_kodiermanuale_studio.R</a></td>
+<td><a href="Syntaxen/06_kodiermanuale_studio.R" download="06_kodiermanuale_studio.R" target="_blank" rel="noopener noreferrer">06_kodiermanuale_studio.R</a></td>
 <td>Codebuch und Kodiermanual aus dem eigenen IQB-Studio</td>
 </tr>
 </tbody>
 </table>
-<p>Die Skripte verwenden die Ordnerstruktur des Materialpakets. <code>00_installation.R</code> abschnittsweise ausführen und nur bei Bedarf installieren. Die erste Kodierung folgt im Rechenbeispiel von Skript <code>02</code>. Für die gemeinsamen Beispiele genügen die enthaltenen lokalen Dateien; die beiden API-Vorlagen benötigen angepasste Angaben und eigene Zugänge. Zum Lesen der HTML-Materialien reicht ein Browser. Quarto wird benötigt, um die Materialien selbst neu zu rendern.</p>
+<p>Die Skripte verwenden die Ordnerstruktur des Materialpakets. <code>00_installation.R</code> abschnittsweise ausführen und nur bei Bedarf installieren. Für die lokalen Beispiele genügen die enthaltenen Dateien; die beiden API-Vorlagen benötigen angepasste Angaben und eigene Zugänge. Beim Ausführen entstehen Ergebnisse und Zwischenstände unter <code>Daten/Ergebnisse/</code> und <code>Daten/Zwischenstaende/</code>. Die CSV-Ergebnisse verwenden Semikolon und Dezimalkomma und lassen sich in deutschem Excel öffnen.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -253,7 +253,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>24.10.2026 · eatPrepTBA 0.9.8.9042 (Commit <code>ea782df</code>), eatAutoCode 0.5.0.9008 und IQB-Autocoder 5.5.0. Die genaue Paketumgebung und technische Prüfung sind im Materialpaket dokumentiert. Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.</p>
+<p>24.10.2026 · eatPrepTBA 0.9.8.9042 (Commit <code>ea782df</code>), eatAutoCode 0.5.0.9008 und IQB-Autocoder 5.5.0. Paketumgebung, Quarto-Quellen und technische Prüfung stehen im <a href="https://github.com/sachseka/eatPrepTBAworkshop" target="_blank" rel="noopener noreferrer">Repository</a>. Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.</p>
 </div>
 </div>
 <p><a href="https://iqb-research.github.io/IQB-Methods/" target="_blank" rel="noopener noreferrer">Zur IQB-Methods-Website</a></p>

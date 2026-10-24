@@ -66,7 +66,7 @@ Quelle: https://iqb-research.github.io/IQB-Methods/docs/studio/partial_credit.ht
 | partial-credit-basis.png | image27.png |
 | partial-credit-summe.png | image29.png |
 
-Die kleine Demo in `data/demo-*` bildet die gezeigten Variablen und die zentralen
+Die kleine Demo in `Daten/demo-*` bildet die gezeigten Variablen und die zentralen
 Bewertungsregeln nach. Personen, Antworten und Metadaten sind synthetisch;
 die Dateien sind keine Originalexports. Zusätzliche Regeln für Schreibweisen
 von Tausenderzahlen sind in der Demo ausgelassen. Diese Bilder gehören zu

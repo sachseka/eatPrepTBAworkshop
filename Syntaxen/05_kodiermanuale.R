@@ -1,9 +1,9 @@
 # 1. Vorbereitetes Codebuch einlesen
 
 library(dplyr)
-dir.create("outputs", showWarnings = FALSE)
+dir.create("Daten/Ergebnisse", showWarnings = FALSE)
 
-cb <- readr::read_csv("data/codebook.csv", show_col_types = FALSE,
+cb <- readr::read_csv("Daten/codebook.csv", show_col_types = FALSE,
                       col_types = readr::cols(code_id = readr::col_character()))
 count(cb, unit_key, variable_id) # 10 Variablen aus 6 Units
 
@@ -27,11 +27,12 @@ selected_cb |>
 # 3. Excel und CSV speichern
 
 writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
-                    "outputs/codebook.xlsx")
-readr::write_csv(selected_cb, "outputs/codebook.csv")
+                    "Daten/Ergebnisse/codebook.xlsx")
+write.csv2(selected_cb, "Daten/Ergebnisse/codebook.csv",
+           row.names = FALSE, fileEncoding = "UTF-16LE")
 
 # Excel enthält zwei Blätter: Codebuch und Auswahl.
-codebook_files <- c("outputs/codebook.xlsx", "outputs/codebook.csv")
+codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
 tibble(Datei = basename(codebook_files),
        Bytes = file.info(codebook_files)$size) |> print()
 
