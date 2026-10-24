@@ -4,15 +4,14 @@ packages <- c('eatPrepTBA','eatAutoCode','eatWidget','dplyr','tidyr','readr',
               'writexl')
 renv::snapshot(project='.', packages=packages, lockfile='renv.lock',
                prompt=FALSE, force=TRUE)
-# Lokal aus dem Checkout installiert; die oeffentliche Quelle explizit festhalten.
+# Den tatsächlich installierten GitHub-Stand beider Pakete festhalten.
 lock <- renv::lockfile_read('renv.lock')
-record <- lock$Packages$eatPrepTBA
-record$Source <- 'GitHub'
-record$RemoteType <- 'github'
-record$RemoteHost <- 'api.github.com'
-record$RemoteUsername <- 'iqb-research'
-record$RemoteRepo <- 'eatPrepTBA'
-record$RemoteRef <- '5e1a0ac1fe736bcafd6338231bf57df1172c9d56'
-record$RemoteSha <- record$RemoteRef
-lock$Packages$eatPrepTBA <- record
+for (package in c('eatPrepTBA', 'eatAutoCode')) {
+  installed <- utils::packageDescription(package)
+  stopifnot(!is.null(installed$RemoteSha), nzchar(installed$RemoteSha))
+  record <- lock$Packages[[package]]
+  record$RemoteRef <- installed$RemoteSha
+  record$RemoteSha <- installed$RemoteSha
+  lock$Packages[[package]] <- record
+}
 renv::lockfile_write(lock, 'renv.lock')

@@ -2,11 +2,14 @@
 
 ## Vorbereitung
 
-- R-Projekt öffnen und `R/00_installation.R` ausführen.
+- R-Projekt und `R/00_installation.R` öffnen; Abschnitte einzeln ausführen.
+  Nur bei Bedarf installieren, danach Versionen und Beispieldateien prüfen.
+- eatAutoCode nicht separat laden: Beide Pakete enthalten `code_responses()`;
+  für den Workshop wird die Funktion aus eatPrepTBA benötigt.
 - Die lokalen Skripte `02` bis `05` vollständig ausführen.
 - Folien, Handout, Skripte und Excel-Codebuch bereitlegen.
-- Die beiden API-Vorlagen als Beispiele kennzeichnen; ohne eigenes Konto
-  findet keine Anmeldung statt.
+- Die beiden API-Vorlagen nicht im lokalen Ablauf ausführen. Ihre Adressen
+  und Workspace-IDs sind Beispiele für die spätere Arbeit mit eigenem Konto.
 - Die Rechenaufgabe und die Lesestudie als getrennte synthetische Beispiele
   ankündigen. Die Screenshots gehören zur Rechenaufgabe.
 
@@ -15,6 +18,7 @@
 1. Paket, Dokumentation und Rückmeldemöglichkeiten vorstellen.
 2. Datenquellen zuordnen und den Abruf anhand der R-Objekte erklären.
 3. JSON entpacken, vorhandene Codes lesen und Partial Credit nachvollziehen.
+   Die erste Kodierung am Ergebnis dieses Rechenbeispiels prüfen.
 4. Den vollständigen Aufbereitungsweg an der Lesestudie durchgehen.
 5. Bei jedem Schritt zuerst den Code und danach die entstandene Tabelle
    erläutern: Was ist eine Zeile, welche Spalten sind neu, was folgt daraus?

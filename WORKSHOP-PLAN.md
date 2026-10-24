@@ -6,12 +6,19 @@ Inhalten und Fragen; es gibt keine festen Zeitvorgaben und keine getrennten
 Übungsblöcke. R-Grundkenntnisse reichen aus. Eigene Serverzugänge sind für
 die lokalen Beispiele nicht erforderlich.
 
+Die Vorbereitung erfolgt abschnittsweise in `R/00_installation.R`:
+Pakete bei Bedarf installieren, Versionen abfragen, Pakete laden und Dateien
+prüfen. Die erste Kodierung wird direkt im vorhandenen Rechenbeispiel von
+`R/02_daten_verstehen.R` geprüft.
+
 ## 1. Paketaufbau, Daten und Schnittstellen
 
 - Paketdokumentation, GitHub-Repository und Issues als Anlaufstellen zeigen.
 - eatPrepTBA, eatAutoCode und den IQB-Autocoder einordnen.
 - IQB-Studio-Metadaten, Testcenter-Antworten und Testdesign unterscheiden.
 - Abrufvorlagen zeigen; API, RDS, CSV und JSON am Ergebnis erklären.
+- Beispieladressen und Workspace-IDs als anzupassende Angaben kennzeichnen;
+  Passwortspeicher sowie HTTP 401 und 521 beim IQB-Studio-Zugang erklären.
 - An der Rechenaufgabe Antwortvariablen, Kodierschema und abgeleitetes
   Item verbinden. Die synthetischen Daten entsprechen den gezeigten Regeln.
 - `prepare_responses()` und `prepare_coded()` vom erneuten Kodieren trennen.
@@ -63,7 +70,9 @@ aus den Kodierschemata. Ein lokal erzeugtes Word-Beispiel entfällt.
 
 ## Materialien und Prüfung
 
-Folien, Handout und R-Skripte verwenden dieselben markierten Codeabschnitte.
+Vorbereitung, Folien, Handout und R-Skripte verwenden dieselben markierten
+Codeabschnitte. Die Skripte enthalten kurze nummerierte Abschnitte und
+konkrete Erwartungen an wichtige Ausgaben.
 Das Paketlogo, lesbare Codeblöcke, berechnete Objektauszüge und die
 Kapitelanzeige unterstützen die Orientierung. Die Titelfolie enthält keine
 Kapitelanzeige. Die Quellen der Abbildungen stehen in `assets/README.md`.

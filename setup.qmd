@@ -10,7 +10,9 @@ Benötigt werden R und eine Entwicklungsumgebung wie RStudio. Getestet wurde der
 
 ## 1. Material entpacken
 
-Das [Materialpaket](downloads/WSeatPrepTBA-material.zip) vollständig herunterladen und entpacken. Anschließend `WSeatPrepTBA.Rproj` öffnen. Das Arbeitsverzeichnis ist damit der Projektordner mit `data/`, `R/` und `checkpoints/`.
+Das [Materialpaket](downloads/WSeatPrepTBA-material.zip) vollständig herunterladen und entpacken. Anschließend `WSeatPrepTBA.Rproj` und [00_installation.R](R/00_installation.R) öffnen. Das Arbeitsverzeichnis ist damit der Projektordner mit `data/`, `R/` und `checkpoints/`.
+
+Das Skript abschnittsweise ausführen: Die Installationszeilen werden nur bei Bedarf benötigt. Danach folgen Versionsabfrage, Laden der Pakete und Prüfung der Beispieldateien.
 
 ```{r}
 #| eval: false
@@ -20,18 +22,46 @@ file.exists("data/Responses.csv")  # muss TRUE ergeben
 
 ## 2. Pakete vorbereiten
 
-Die Paketbasis ist für diese Fassung auf eatPrepTBA 0.9.8.9041 (Commit `5e1a0ac`) festgelegt. Die Installation sollte vor dem Workshop abgeschlossen sein, damit Installationsprobleme vorab geklärt werden können.
+Der Installationsblock bezieht eatPrepTBA von GitHub und installiert die benötigten Abhängigkeiten. Die Installation sollte vor dem Workshop abgeschlossen sein.
 
+<!-- r-source: R/00_installation.R#pakete-installieren -->
 ```{r}
 #| eval: false
 install.packages("pak")
 pak::pak(c(
-  "iqb-research/eatPrepTBA@5e1a0ac1fe736bcafd6338231bf57df1172c9d56",
+  "iqb-research/eatPrepTBA",
   "dplyr", "tidyr", "readr", "tibble", "writexl"
 ))
 ```
+<!-- /r-source -->
 
-`eatAutoCode` und `eatWidget` gehören zu den Abhängigkeiten. Die Kodierung läuft lokal; eatAutoCode bringt die JavaScript-Kodierlogik über seine R-Abhängigkeiten mit. `writexl` erstellt den Excel-Export. Dafür werden weder Microsoft Office noch Quarto benötigt. Zum Ansehen eignet sich beispielsweise ein vorhandenes Office-Programm. Bei einer fehlgeschlagenen Installation bitte die konkrete Fehlermeldung aufbewahren.
+Die verwendeten Paketversionen anschließend abfragen:
+
+<!-- r-source: R/00_installation.R#paketversionen -->
+```{r}
+#| eval: false
+packageVersion("eatPrepTBA")  # Workshopstand: 0.9.8.9042
+packageVersion("eatAutoCode") # Workshopstand: 0.5.0.9008
+```
+<!-- /r-source -->
+
+Materialstand 24.10.2026: eatPrepTBA **0.9.8.9042** (Commit `ea782df`) und eatAutoCode **0.5.0.9008** (Commit `54f39a8`) mit IQB-Autocoder **5.5.0**. Eine spätere GitHub-Installation kann neuere Versionen liefern. Die genaue Paketumgebung ist in `renv.lock` festgehalten.
+
+<!-- r-source: R/00_installation.R#pakete-laden -->
+```{r}
+#| eval: false
+library(eatPrepTBA) # eatAutoCode wird intern geladen; nicht separat laden.
+library(dplyr)
+library(tidyr)
+library(readr)
+library(tibble)
+library(writexl)
+```
+<!-- /r-source -->
+
+eatPrepTBA und eatAutoCode haben beide eine Funktion `code_responses()`. Für den Workshop wird die Funktion aus eatPrepTBA verwendet; eatAutoCode deshalb nicht zusätzlich mit `library()` laden.
+
+Die Kodierung läuft lokal. `writexl` erstellt den Excel-Export; Microsoft Office und Quarto sind dafür nicht erforderlich. Bei einer fehlgeschlagenen Installation die konkrete Fehlermeldung aufbewahren.
 
 Für die **exakte dokumentierte Paketumgebung** liegt im ZIP zusätzlich `renv.lock`. Der Wiederaufbau mit `renv` lädt die dort festgehaltenen Versionen:
 
@@ -43,32 +73,45 @@ renv::restore(project = ".", lockfile = "renv.lock", prompt = FALSE)
 renv::load(project = ".")
 ```
 
-## 3. Funktionstest
+## 3. Beispieldateien prüfen
 
+<!-- r-source: R/00_installation.R#dateien-pruefen -->
 ```{r}
 #| eval: false
-source("R/00_installation.R", encoding = "UTF-8")
+files <- c("data/units.rds", "data/design.rds", "data/Responses.csv",
+           "data/codes_manual.csv", "data/Logs.csv", "data/codebook.csv",
+           "data/demo-pc-units.rds", "data/demo-pc-responses.csv",
+           "data/demo-stored-codes.csv")
+missing_files <- files[!file.exists(files)]
+if (length(missing_files) > 0) {
+  stop("Dateien fehlen: ", paste(missing_files, collapse = ", "),
+       ". ZIP vollständig entpacken und WSeatPrepTBA.Rproj öffnen.")
+} else {
+  cat("Ja, alles da.\n")
+}
 ```
+<!-- /r-source -->
 
-Der [Funktionstest](R/00_installation.R){download="00_installation.R"} prüft die Pakete und Dateien und kodiert eine kleine lokale Antwort. Die abschließende Meldung lautet **„Setup OK: lokale Autokodierung funktioniert.“**
+Wenn alle Dateien vorliegen, erscheint **„Ja, alles da.“** Die erste Kodierung und die Prüfung ihres Ergebnisses folgen im Rechenbeispiel von [02_daten_verstehen.R](R/02_daten_verstehen.R).
 
 ## 4. Die Arbeitsskripte bereitlegen
 
 Die folgenden Skripte lassen sich im geöffneten R-Projekt Zeile für Zeile ausführen:
 
-- [Datenaufbereitung und Datensatzexport](R/03_datenaufbereitung.R){download="03_datenaufbereitung.R"}.
 - [JSON, Partial Credit und gespeicherte Codes](R/02_daten_verstehen.R){download="02_daten_verstehen.R"} am kleinen Beispiel.
+- [Datenaufbereitung und Datensatzexport](R/03_datenaufbereitung.R){download="03_datenaufbereitung.R"}.
 - [Logs: Überblick, Zeiten, Fokusverluste](R/04_logs.R){download="04_logs.R"}.
 - [Codebuch als Excel und CSV](R/05_kodiermanuale.R){download="05_kodiermanuale.R"}.
 
-Für die spätere Arbeit mit eigenen Realdaten gibt es zusätzlich Vorlagen zum [Datenabruf](R/01_datenabruf.R){download="01_datenabruf.R"} und für [Codebücher aus IQB-Studio](R/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"}. Dort werden später die Server und Workspaces der eigenen Erhebung eingetragen. Für den Workshop sind diese Zugänge nicht erforderlich.
+Für eigene Realdaten gibt es zusätzlich Vorlagen zum [Datenabruf](R/01_datenabruf.R){download="01_datenabruf.R"} und für [Codebücher aus IQB-Studio](R/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"}. Die eingetragenen Adressen und Workspace-IDs sind Beispiele und werden an die eigene Erhebung angepasst. Diese Vorlagen im lokalen Workshop nicht ausführen; sie stellen Verbindungen zu den Anwendungen her.
 
 ## Wenn etwas nicht klappt
 
 | Beobachtung | Nächster Schritt |
 |---|---|
 | Datei nicht gefunden | ZIP vollständig entpacken; R-Projekt öffnen; [`getwd()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/getwd.html) prüfen |
-| Funktion nicht gefunden | Paket laden und `packageVersion("eatPrepTBA")` prüfen |
+| Funktion nicht gefunden | `library(eatPrepTBA)` ausführen und `packageVersion("eatPrepTBA")` prüfen |
+| Unerwartete Argumente bei `code_responses()` | R neu starten und die Pakete wie oben laden; eatAutoCode nicht separat laden |
 | Installation einer Abhängigkeit scheitert | Fehlermeldung vorab an die Workshop-Leitung geben |
 | Kodierung funktioniert noch nicht | Gemeinsam beheben; gespeicherte Ergebnisse zum Mitlesen nutzen |
 | Kein IQB-Studio-/Testcenter-Zugang | Die Beispiele verwenden mitgelieferte lokale Daten |
@@ -77,11 +120,11 @@ Die Zwischenstände ersetzen bei Bedarf einen bereits behandelten Schritt. Für 
 
 ## Nur für Autor:innen: Materialien rendern
 
-Quarto CLI und Python 3 installieren, zusätzlich `knitr` und `rmarkdown` bereitstellen. Python synchronisiert vor dem Rendern die Codeblöcke mit den R-Skripten. Im Projektordner:
+Quarto CLI und Python 3 installieren, zusätzlich `knitr` und `rmarkdown` bereitstellen. Python synchronisiert vor dem Rendern die Codeblöcke in Vorbereitung, Folien und Handout mit den R-Skripten. Im Projektordner:
 
 ```bash
 quarto render
 quarto preview
 ```
 
-Das Handout führt den vollständigen lokalen Workflow aus. Live-API-Beispiele werden beim Rendern nicht ausgeführt. Die gerenderte Website liegt anschließend in `_site/`.
+Das Handout führt den vollständigen lokalen Workflow aus. Installation und Live-API-Beispiele werden beim Rendern nicht ausgeführt. Die gerenderte Website liegt anschließend in `_site/`.

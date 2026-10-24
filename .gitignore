@@ -12,6 +12,7 @@
 
 # Kommentierte Entwürfe bleiben lokal.
 /workshop_mod*
+**/*_mod.R
 /review/
 /integration/payload/
 /downloads/*

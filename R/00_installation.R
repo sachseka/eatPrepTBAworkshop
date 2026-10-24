@@ -1,40 +1,47 @@
-# Vor dem Workshop WSeatPrepTBA.Rproj öffnen.
-# Die Installation einmalig ausführen, falls die Pakete noch fehlen.
-# Dafür bei Bedarf die führenden # der folgenden Zeilen entfernen.
-# install.packages("pak")
-# pak::pak(c(
-#   "iqb-research/eatPrepTBA@5e1a0ac1fe736bcafd6338231bf57df1172c9d56",
-#   "dplyr", "tidyr", "readr", "tibble", "writexl"
-# ))
+# WSeatPrepTBA.Rproj öffnen; die folgenden Abschnitte einzeln ausführen.
 
-# Ab hier läuft der lokale Funktionstest ohne Serverzugriff.
-needed <- c("eatPrepTBA", "eatAutoCode", "dplyr", "tidyr", "readr",
-            "tibble", "writexl")
-missing_packages <- needed[
-  !vapply(needed, requireNamespace, logical(1), quietly = TRUE)]
-if (length(missing_packages) > 0) {
-  stop("Bitte zuerst installieren: ", paste(missing_packages, collapse = ", "))
-}
+# 1. Pakete
 
-versions <- vapply(needed, function(p) as.character(packageVersion(p)),
-                   character(1))
-print(versions)
-if (packageVersion("eatPrepTBA") < "0.9.8.9041") {
-  stop("Bitte den dokumentierten Paketstand installieren; siehe setup.html.")
-}
+# Bei Bedarf installieren:
+# ---- pakete-installieren ----
+install.packages("pak")
+pak::pak(c(
+  "iqb-research/eatPrepTBA",
+  "dplyr", "tidyr", "readr", "tibble", "writexl"
+))
+# ---- /pakete-installieren ----
 
+# Versionen prüfen:
+# ---- paketversionen ----
+packageVersion("eatPrepTBA")  # Workshopstand: 0.9.8.9042
+packageVersion("eatAutoCode") # Workshopstand: 0.5.0.9008
+# ---- /paketversionen ----
+
+# Laden:
+# ---- pakete-laden ----
+library(eatPrepTBA) # eatAutoCode wird intern geladen; nicht separat laden.
+library(dplyr)
+library(tidyr)
+library(readr)
+library(tibble)
+library(writexl)
+# ---- /pakete-laden ----
+# Beide Pakete haben code_responses(); hier wird die aus eatPrepTBA benötigt.
+
+# 2. Sind die Beispieldateien da?
+
+# ---- dateien-pruefen ----
 files <- c("data/units.rds", "data/design.rds", "data/Responses.csv",
-           "data/codes_manual.csv", "data/Logs.csv", "data/codebook.csv")
+           "data/codes_manual.csv", "data/Logs.csv", "data/codebook.csv",
+           "data/demo-pc-units.rds", "data/demo-pc-responses.csv",
+           "data/demo-stored-codes.csv")
 missing_files <- files[!file.exists(files)]
 if (length(missing_files) > 0) {
   stop("Dateien fehlen: ", paste(missing_files, collapse = ", "),
        ". ZIP vollständig entpacken und WSeatPrepTBA.Rproj öffnen.")
+} else {
+  cat("Ja, alles da.\n")
 }
+# ---- /dateien-pruefen ----
 
-# Eine kleine Antwort lokal kodieren. Es werden keine Server angesprochen.
-units <- readRDS("data/units.rds")
-responses <- eatPrepTBA::read_responses("data/Responses.csv")
-one <- responses[responses$unit_key == "U1" & responses$login_name == "P001", ]
-coded <- eatPrepTBA::code_responses(one, units, prepare = TRUE)
-stopifnot(nrow(coded) == 2L, all(coded$code_status == "CODING_COMPLETE"))
-cat("Setup OK: lokale Autokodierung funktioniert.\n")
+# Die erste Kodierung folgt in R/02_daten_verstehen.R.

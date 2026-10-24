@@ -1,6 +1,6 @@
 # Technische Prüfung der Workshop-Materialien
 
-Stand: 18.10.2026. Die lokalen R-Prüfungen, das Quarto-Rendering und die
+Stand: 24.10.2026. Die lokalen R-Prüfungen, das Quarto-Rendering und die
 Browserprüfung sind erfolgreich abgeschlossen.
 
 ## Ergebnis
@@ -8,20 +8,21 @@ Browserprüfung sind erfolgreich abgeschlossen.
 - Vier R-Prüfskripte erfolgreich: Rechenaufgabe, vollständige Aufbereitung,
   Ausführung der Folienblöcke sowie Log- und Excel-Ergebnisse.
 - 43 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
-  131 eingebettete Abschnitte in Folien und Handout mit den R-Dateien abgeglichen.
+  136 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
 - 24 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 78 Folien und 78 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 79 Folien und 79 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 77 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 78 PDF-Seiten
   enthalten die Abschnittsnavigation.
 
 ## Dokumentierte Umgebung
 
-- R 4.5.1, Windows; eatPrepTBA 0.9.8.9041 aus Commit
-  `5e1a0ac1fe736bcafd6338231bf57df1172c9d56`.
-- eatAutoCode 0.5.0.9006 mit IQB-Autocoder `@iqb/responses` 5.2.2.
-- writexl 1.5.4 für den Excel-Export.
+- R 4.5.1, Windows; eatPrepTBA 0.9.8.9042 aus Commit
+  `ea782df422f1aea853704dcfce7533273b429ba2`.
+- eatAutoCode 0.5.0.9008 (`54f39a8e94f9a4d7e6fc05ccbfc607f183609b5a`)
+  mit IQB-Autocoder `@iqb/responses` 5.5.0.
+- writexl 2.0.1 für den Excel-Export.
 - `renv.lock` hält die Paketversionen fest;
   `outputs/session-info.txt` dokumentiert die verwendete R-Umgebung.
 
@@ -30,6 +31,8 @@ Browserprüfung sind erfolgreich abgeschlossen.
 - `scripts/validate_workflow.R` prüft die erwarteten Ergebnisse der
   synthetischen Lesestudie: automatische und manuelle Kodierung,
   Ableitungen, Missing-Regeln, Personenauswahl und Exporte.
+- Alle sieben Arbeitsskripte syntaktisch geprüft; in R00 wurden Versionsabfragen,
+  Laden der Pakete und Dateiprüfung ohne erneute Installation ausgeführt.
 - `scripts/validate_demonstration_data.R` prüft JSON-Import,
   gespeicherte Codes und Partial Credit der separaten Rechenaufgabe.
 - Die Kategorie-, Code- und Scoreauswertungen des Multiple-Choice-Items

@@ -38,6 +38,7 @@ def remove_generated(path):
 
 def ignore_internal(directory, names):
     return [name for name in names if name in EXCLUDED or name.startswith('workshop_mod')
+            or name.endswith('_mod.R')
             or name in {'workshop_mod.qmd', 'workshop_mod.html',
                         'exercises.html', 'solutions.html'}]
 
@@ -55,6 +56,7 @@ with zipfile.ZipFile(DOWNLOADS / 'WSeatPrepTBA-material.zip', 'w',
         for file in sorted((ROOT / name).rglob('*')):
             relative = file.relative_to(ROOT)
             if (file.is_file() and not EXCLUDED.intersection(relative.parts)
+                    and not file.name.endswith('_mod.R')
                     and relative.as_posix() not in OBSOLETE_OUTPUTS):
                 archive.write(file, Path('WSeatPrepTBA') / relative)
     for pdf in sorted(DOWNLOADS.glob('*.pdf')):
@@ -62,7 +64,7 @@ with zipfile.ZipFile(DOWNLOADS / 'WSeatPrepTBA-material.zip', 'w',
 
 # Refresh script downloads so renamed scripts cannot survive an older render.
 remove_generated(SITE / 'R')
-shutil.copytree(ROOT / 'R', SITE / 'R')
+shutil.copytree(ROOT / 'R', SITE / 'R', ignore=ignore_internal)
 (SITE / 'downloads').mkdir(exist_ok=True)
 for file in DOWNLOADS.iterdir():
     if file.is_file():

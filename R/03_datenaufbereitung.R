@@ -1,10 +1,11 @@
 # Vom Antwortexport zum Skalierungsdatensatz.
-# Das R-Projekt öffnen und die Abschnitte der Reihe nach ausführen.
-# Für eigene Daten Pfade, Bereichszuordnung und Missing-Regeln anpassen.
-# Voraussetzung: ein Testzeitpunkt; mehrere Zeitpunkte getrennt aufbereiten.
+# Für eigene Daten Pfade, Bereiche und Missing-Regeln anpassen.
+# Mehrere Testzeitpunkte getrennt aufbereiten.
+
+# 1. Pakete und Ausgabeordner
 
 # ---- workflow-start ----
-library(eatPrepTBA)
+library(eatPrepTBA) # lädt eatAutoCode mit; nicht separat laden
 library(dplyr)
 library(tidyr)
 person_columns <- c("group_id", "login_name", "login_code")
@@ -13,55 +14,53 @@ dir.create("outputs", showWarnings = FALSE)
 dir.create("checkpoints", showWarnings = FALSE)
 # ---- /workflow-start ----
 
-# 1. Antworten, Units und vollständiges Design einlesen.
-# Units und Design müssen zur tatsächlichen Durchführung passen.
-# R/01_datenabruf.R zeigt den Abruf für eigene Zugänge.
+# 2. Beispieldaten einlesen
+# Den Abruf eigener Daten zeigt R/01_datenabruf.R.
 
 # ---- daten-einlesen ----
 units <- readRDS("data/units.rds")
 design <- readRDS("data/design.rds")
 responses <- read_responses("data/Responses.csv")
 
-# Bei einem gespeicherten API-Abruf diese Zeile statt read_responses() nutzen:
+# Nach einem API-Abruf alternativ:
 # responses <- readRDS("data_eigen/responses.rds")
 
 count(responses, booklet_id)
 saveRDS(responses, "checkpoints/01_responses.rds")
 # ---- /daten-einlesen ----
 
-# Units und die Reihenfolge in den Booklets ansehen.
+# Units und Booklet-Reihenfolge ansehen.
 # ---- studie-units-booklets-vorschau ----
-print(units |> select(unit_key, unit_label))
+print(units |> select(unit_key, unit_label)) # sollte 6 Units zeigen
 print(readr::read_csv("data/booklets.csv", show_col_types = FALSE) |>
   select(booklet_id, unit_booklet_no, unit_key) |> head(5))
 # ---- /studie-units-booklets-vorschau ----
 
-# Eine Designzeile beschreibt eine vorgesehene Person-Variable-Kombination.
+# Im Design steht eine Zeile für eine vorgesehene Person und Variable.
 # ---- design-rohdaten-vorschau ----
 print(design |> select(login_name, booklet_id, unit_key, variable_id) |> head(6))
 # ---- /design-rohdaten-vorschau ----
 
-# Die eingelesenen Antworten.
+# Eine Antwortzeile enthält die Antworten einer Person auf eine Unit.
 # ---- antwortdaten-vorschau ----
 responses |>
   select(login_name, booklet_id, unit_key, response_progress) |>
   head(4) |> print()
 # ---- /antwortdaten-vorschau ----
 
-# Fehlende Antworten auf vorgesehene Aufgaben sind normal.
-# Vorhandene Antworten ohne passende Metadaten sind ein anderer Fall.
-# Eine Antwortzeile enthält mehrere Variablen; eine Designzeile nur eine.
+# Antworten mit Units und Testdesign abgleichen.
+# Fehlende Antworten ergänzt später complete_design().
 
 # ---- daten-abgleichen ----
 response_keys <- c("group_id", "login_name", "login_code",
-                   "booklet_id", "unit_key")
+                  "booklet_id", "unit_key")
 
 unknown_units <- anti_join(responses, units, by = "unit_key")
 outside_design <- anti_join(responses, design, by = response_keys)
 missing_rows <- anti_join(design, responses, by = response_keys)
 # ---- /daten-abgleichen ----
 
-# Fehlende Antworten sind Teil des Designs.
+# Die ersten beiden Anzahlen sollten 0 sein; fehlende Antworten sind möglich.
 # ---- datenabgleich-vorschau ----
 tibble(
   Fall = c("Antwort ohne Unit", "Antwort außerhalb Design",
@@ -70,9 +69,8 @@ tibble(
 ) |> print()
 # ---- /datenabgleich-vorschau ----
 
-# 2. Automatisch kodieren und die Status ansehen.
-# code_id ist ein Code, code_score die zugehörige Punktzahl.
-# Offene manuelle Kodierungen werden im nächsten Abschnitt ergänzt.
+# 3. Automatisch kodieren
+# code_id bezeichnet die Bewertung, code_score die Punktzahl.
 
 # ---- automatisch-kodieren ----
 coded_auto <- code_responses(responses, units, prepare = TRUE)
@@ -80,7 +78,7 @@ count(coded_auto, unit_key, code_status)
 saveRDS(coded_auto, "checkpoints/02_coded_auto.rds")
 # ---- /automatisch-kodieren ----
 
-# Ergebnis der automatischen Kodierung.
+# U3/TOTAL sollte kodiert sein; U4/TEXT benötigt einen manuellen Code.
 # ---- auto-vorschau ----
 coded_auto |>
   filter(login_name == "P001", unit_key %in% c("U3", "U4")) |>
@@ -88,29 +86,27 @@ coded_auto |>
   head(4) |> print()
 # ---- /auto-vorschau ----
 
-# 3. Manuelle Codes ergänzen.
-# Ohne manuelle Kodierung genügt stattdessen: coded <- coded_auto
-# Wieder ursprüngliche Antworten nutzen: Ableitungen werden neu kodiert.
+# 4. Manuelle Codes ergänzen
+# Ohne manuelle Codes genügt: coded <- coded_auto
 
 # ---- manuelle-codes-einlesen ----
 codes_manual <- readr::read_csv("data/codes_manual.csv",
   col_types = readr::cols(.default = "c", code_id = "i"))
-
 # ---- /manuelle-codes-einlesen ----
 
-# Die eingelesenen manuellen Codes.
 # ---- manuelle-codes-vorschau ----
-head(codes_manual, 3) |> print(width = 90)
+head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
 # ---- /manuelle-codes-vorschau ----
 
+# Ursprüngliche Antworten erneut kodieren, einschließlich Ableitungen.
 # ---- manuell-kodieren ----
 coded <- code_responses(responses, units, prepare = TRUE,
-                        codes_manual = codes_manual)
+                       codes_manual = codes_manual)
 count(coded, code_status, code_type)
 saveRDS(coded, "checkpoints/03_coded.rds")
 # ---- /manuell-kodieren ----
 
-# Nach dem Ergänzen manueller Codes.
+# U4/TEXT sollte jetzt CODING_COMPLETE sein.
 # ---- manuell-vorschau ----
 coded |>
   filter(unit_key == "U4", variable_id == "TEXT") |>
@@ -118,9 +114,9 @@ coded |>
   head(4) |> print()
 # ---- /manuell-vorschau ----
 
-# 4. Fehlende Designzeilen ergänzen und Missing-Arten zuweisen.
-# Hier gelten die Paketvoreinstellungen: beide Optionen sind FALSE.
-# Auslassung und ungültige Antwort erhalten 0 Punkte, Not reached erhält NA.
+# 5. Testdesign ergänzen und Missings zuweisen
+# Standard: Auslassung und ungültige Antwort erhalten 0, Not reached erhält NA.
+# code_type enthält danach die Missing-Art; code_status bleibt erhalten.
 
 # ---- design-ergaenzen ----
 design_coded <- complete_design(coded, units, design,
@@ -130,7 +126,7 @@ count(design_coded, id_used, code_type)
 saveRDS(design_coded, "checkpoints/04_design_coded.rds")
 # ---- /design-ergaenzen ----
 
-# Ergänzte Antworten mit Missing-Art.
+# P002/U2: ausgelassen (0 Punkte). P003/U5: nicht erreicht (NA).
 # ---- design-vorschau ----
 design_coded |>
   filter((login_name == "P002" & unit_key == "U2") |
@@ -139,9 +135,8 @@ design_coded |>
   print()
 # ---- /design-vorschau ----
 
-# Vergleich mit der Einstellung der aktuellen Referenzstudien-Vignette:
-# Abschließende Auslassungen werden NR; vorhandenes NR bleibt geschützt.
-# Für diese Regel im eigenen Projekt den obigen Aufruf entsprechend ändern.
+# Alternative: abschließende Auslassungen als nicht erreicht behandeln.
+# Vorhandenes Not reached bleibt erhalten. Der Vergleich ist ein eigenes Objekt.
 
 # ---- missing-regeln-vergleichen ----
 omissions_reclassified <- complete_design(coded, units, design,
@@ -150,7 +145,7 @@ omissions_reclassified <- complete_design(coded, units, design,
 count(omissions_reclassified, id_used, code_type)
 # ---- /missing-regeln-vergleichen ----
 
-# Dieselbe Antwort, andere Missing-Regel.
+# P006/U5 sollte mit der Alternative NA statt 0 Punkte erhalten.
 # ---- missing-vergleich-vorschau ----
 bind_rows(Standard = design_coded, Alternative = omissions_reclassified,
           .id = "Regel") |>
@@ -159,26 +154,24 @@ bind_rows(Standard = design_coded, Alternative = omissions_reclassified,
   print()
 # ---- /missing-vergleich-vorschau ----
 
-# Die endgültige Missing-Art steht in code_type; code_status bleibt erhalten.
-# id_used bedeutet: mindestens ein gespeicherter Kodierstatus ist vorhanden.
-# Zusätzliche Ausschlussregeln im Auswertungskonzept festhalten.
+# 6. Personen auswählen
+# id_used: mindestens ein gespeicherter Kodierstatus ist vorhanden.
 
 # ---- teilnahme-auswaehlen ----
 analysis_data <- filter(design_coded, id_used)
 count(design_coded, id_used)
 # ---- /teilnahme-auswaehlen ----
 
-# Die ausgewählten Analysedaten.
 # ---- teilnahme-vorschau ----
 analysis_data |>
   select(login_name, unit_key, variable_id, id_used, code_score) |>
   head(4) |> print()
-distinct(analysis_data, login_name) |> summarise(n_personen = n()) |> print()
+distinct(analysis_data, login_name) |>
+  summarise(n_personen = n()) |> print() # sollte 39 Personen ergeben
 # ---- /teilnahme-vorschau ----
 
-# 5. Variablen mit den Auswertungsitems verbinden.
-# Variablen ohne Item-ID ansehen, bevor sie aus dem Datensatz entfernt werden.
-# Item-IDs bleiben Text, damit zum Beispiel führende Nullen erhalten bleiben.
+# 7. Items zuordnen
+# Variablen ohne Item-ID bleiben außerhalb des Skalierungsdatensatzes.
 
 # ---- items-zuordnen ----
 design_items <- add_item_id(design_coded, units)
@@ -187,13 +180,13 @@ item_data <- add_item_id(analysis_data, units)
 unmapped <- item_data |>
   filter(is.na(item_id) | trimws(item_id) == "") |>
   distinct(unit_key, variable_id)
-print(unmapped)
+print(unmapped) # sollte U3/Q1 und U3/Q2 zeigen
 
 item_data <- filter(item_data, !is.na(item_id), trimws(item_id) != "")
 item_data <- mutate(item_data, item = paste0(unit_key, "__", item_id))
 # ---- /items-zuordnen ----
 
-# Aus Variablen werden Auswertungsitems.
+# U3/TOTAL und U4/TEXT sind jeweils ein Item.
 # ---- items-vorschau ----
 item_data |>
   filter(login_name == "P001", unit_key %in% c("U3", "U4")) |>
@@ -201,30 +194,28 @@ item_data |>
   print()
 # ---- /items-vorschau ----
 
-# 6. Noch offene Itemkodierungen finden.
-# Bei einem Abbruch die jeweilige Tabelle ansehen und die Ursache klären.
+# 8. Offene Itemkodierungen prüfen
+# Bei einem Abbruch unresolved ansehen und die Kodierung klären.
 
 # ---- offene-codes-pruefen ----
 unresolved <- item_data |>
   filter(code_status %in% c("UNSET", "CODING_INCOMPLETE", "DERIVE_PENDING",
-                            "CODING_ERROR", "DERIVE_ERROR",
-                            "INTENDED_INCOMPLETE") |
+                           "CODING_ERROR", "DERIVE_ERROR",
+                           "INTENDED_INCOMPLETE") |
          code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
-                           "INTENDED_INCOMPLETE"))
-stopifnot(nrow(unresolved) == 0)
+                          "INTENDED_INCOMPLETE"))
+stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen
 # ---- /offene-codes-pruefen ----
 
-# Noch offene Itemkodierungen.
+# Sollte eine leere Tabelle ergeben.
 # ---- offene-codes-vorschau ----
 unresolved |>
   select(login_name, item, code_status, code_type) |>
   head(4) |> print()
 # ---- /offene-codes-vorschau ----
 
-
-# 7. Missing-Anzahlen und Anteile pro Person berechnen.
-# Gezählt werden vorgesehene Items, auch für Personen ohne gespeicherte Antwort.
-# Fehlende Aufgaben außerhalb des Designs gehören nicht in diesen Nenner.
+# 9. Missing-Anteile berechnen
+# n_items zählt vorgesehene Items; Aufgaben außerhalb des Designs zählen nicht.
 
 # ---- missings-zusammenfassen ----
 missing_summary <- summarise_missings(design_items)
@@ -235,16 +226,14 @@ select(missing_summary, all_of(person_columns), id_used, n_items,
 readr::write_csv(missing_summary, "outputs/missing_summary.csv")
 # ---- /missings-zusammenfassen ----
 
-# Missing-Anteile je Person.
 # ---- missing-uebersicht-vorschau ----
 missing_summary |>
   select(login_name, n_items, n_not_reached, n_by_omission, prop_missing) |>
   head(4) |> print()
 # ---- /missing-uebersicht-vorschau ----
 
-# 8. Psychometrische Kennwerte berechnen.
-# Im Beispiel gehören alle Units zu Lesen. Eigene Bereiche pro Unit zuordnen.
-# code_pbc bezieht den eigenen Itemscore in den Bereichsmittelwert mit ein.
+# 10. Kennwerte berechnen
+# Im Beispiel gehören alle Units zu Lesen; die Zuordnung für eigene Daten ändern.
 
 # ---- kennwerte-berechnen ----
 domains <- distinct(units, unit_key)
@@ -260,7 +249,6 @@ code_stats <- psychometrics |>
 readr::write_csv(code_stats, "outputs/psychometrics.csv")
 # ---- /kennwerte-berechnen ----
 
-# Kennwerte je Item und Code.
 # ---- kennwerte-vorschau ----
 code_stats |>
   filter(item_id == "U1_Q1") |>
@@ -268,37 +256,34 @@ code_stats |>
   head(4) |> print()
 # ---- /kennwerte-vorschau ----
 
-# Antwortkategorien: Welche Auswahl wurde getroffen?
+# Antwortkategorien unterscheiden die gewählten Antworten: A, B und C.
 # ---- kennwerte-kategorien ----
 category_stats <- psychometrics |>
   filter(item_id == "U1_Q1", !is.na(category_id)) |>
   select(category_id, code_id, category_n, category_p_valid, category_pbc)
-print(category_stats)
+print(category_stats) # sollte A: 21, B: 5 und C: 12 Antworten zeigen
 # ---- /kennwerte-kategorien ----
 
-# Codes: Mehrere Antwortkategorien können denselben Code erhalten.
-# distinct() entfernt wiederholte Codezeilen aus der gemeinsamen Ausgabe.
+# B und C erhalten denselben Code; distinct() entfernt wiederholte Codezeilen.
 # ---- kennwerte-codes ----
 code_stats_mc <- psychometrics |>
   filter(item_id == "U1_Q1") |>
   select(code_id, code_score, code_n, code_p_valid, code_pbc) |>
   distinct()
-print(code_stats_mc)
+print(code_stats_mc) # sollte für Code 0 insgesamt 17 Antworten zeigen
 # ---- /kennwerte-codes ----
 
-# Scores direkt in den Person-Item-Daten zählen.
-# evaluate_psychometrics() liefert keine eigenen score_*-Kennwerte.
+# Scorehäufigkeiten direkt zählen; evaluate_psychometrics() liefert sie nicht.
 # ---- kennwerte-scores ----
 score_stats <- item_data |>
   filter(item_id == "U1_Q1") |>
   count(code_score, name = "score_n") |>
   mutate(score_p = score_n / sum(score_n))
-print(score_stats)
+print(score_stats) # sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen
 # ---- /kennwerte-scores ----
 
-# 9. Eine Zeile pro Person und eine Punktespalte pro Item erzeugen.
-# unit_key__item_id unterscheidet gleich benannte Items aus zwei Units.
-# NA bleibt NA; ein nicht vorgesehenes Item darf nicht 0 Punkte erhalten.
+# 11. Skalierungsdatensatz erstellen
+# Eine Zeile pro Person, eine Spalte pro Item. NA bleibt erhalten.
 
 # ---- score-datensatz-erstellen ----
 scaling_data <- item_data |>
@@ -308,12 +293,13 @@ scaling_data <- item_data |>
   mutate(person_id = row_number(), .before = 1)
 # ---- /score-datensatz-erstellen ----
 
-# Der fertig gescorte Datensatz.
 # ---- datensatz-vorschau ----
 scaling_data |>
   select(person_id, login_name, U1__U1_Q1, U3__U3_TOTAL, U5__U5_Q1) |>
   head(4) |> print()
 # ---- /datensatz-vorschau ----
+
+# View(scaling_data) # optional: die gesamte Tabelle in RStudio öffnen
 
 # ---- datensatz-pruefen ----
 person_key <- select(scaling_data, person_id, group_id, login_name, login_code)
@@ -323,14 +309,13 @@ stopifnot(nrow(scaling_data) == nrow(persons))
 stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
 # ---- /datensatz-pruefen ----
 
-# Die Zuordnung der Personen.
+# Die Zuordnung der neuen person_id zu den Testcenter-Kennungen ansehen.
 # ---- schluessel-vorschau ----
 person_key |> head(4) |> print()
 # ---- /schluessel-vorschau ----
 
-# 10. Daten und Zuordnung sichern.
-# person_id gilt für diesen Export. Für Folgelieferungen feste IDs weiterführen.
-# Die Long-Daten bewahren die Unterschiede zwischen den Missing-Arten.
+# 12. Ergebnisse speichern
+# Long-Daten enthalten auch Codes und Missing-Arten; person_key sichert die IDs.
 
 # ---- daten-exportieren ----
 readr::write_csv(scaling_data, "outputs/scaling_data.csv")
@@ -343,16 +328,16 @@ missing_counts <- count(design_coded, id_used, code_type)
 readr::write_csv(missing_counts, "outputs/missing_counts.csv")
 # ---- /daten-exportieren ----
 
-# Diese Dateien liegen jetzt vor.
+# Sollte fünf vorhandene Dateien mit einer Größe über 0 Bytes zeigen.
 # ---- export-vorschau ----
 export_files <- c("scaling_data.csv", "person_key.csv", "analysis_long.rds",
-                  "design_items.rds", "missing_counts.csv")
+                 "design_items.rds", "missing_counts.csv")
 tibble(Datei = export_files,
        Bytes = file.info(file.path("outputs", export_files))$size) |> print()
 # ---- /export-vorschau ----
 
-# 11. Umfang, Entscheidungen und Paketversionen dokumentieren.
-# Die technischen Lehrfallprüfungen stehen in scripts/validate_workflow.R.
+# 13. Aufbereitung dokumentieren
+# Nach Änderungen an Auswahl oder Missing-Regeln die Angaben unten anpassen.
 
 # ---- workflow-dokumentieren ----
 report <- c(

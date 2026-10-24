@@ -28,7 +28,7 @@ title: "Nachschlagen und vertiefen"
 
 | Datei | Inhalt |
 |---|---|
-| [00_installation.R](R/00_installation.R){download="00_installation.R"} | Installationsanleitung und lokaler Funktionstest |
+| [00_installation.R](R/00_installation.R){download="00_installation.R"} | Installation, Paketversionen und Beispieldateien |
 | [01_datenabruf.R](R/01_datenabruf.R){download="01_datenabruf.R"} | Daten über eigene IQB-Studio-/Testcenter-Zugänge beziehen |
 | [02_daten_verstehen.R](R/02_daten_verstehen.R){download="02_daten_verstehen.R"} | JSON, Partial Credit und gespeicherte Codes |
 | [03_datenaufbereitung.R](R/03_datenaufbereitung.R){download="03_datenaufbereitung.R"} | Vollständige Aufbereitung bis zum Datensatzexport |
@@ -36,7 +36,23 @@ title: "Nachschlagen und vertiefen"
 | [05_kodiermanuale.R](R/05_kodiermanuale.R){download="05_kodiermanuale.R"} | Lokales Codebuch als Excel und CSV |
 | [06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"} | Codebuch und Kodiermanual aus dem eigenen IQB-Studio |
 
-Die lokalen Skripte verwenden die Daten aus dem Materialpaket. Die beiden Zugangsvorlagen werden für eigene Realdaten angepasst. Sie werden beim gemeinsamen Nachvollziehen und beim Rendern nicht ausgeführt.
+Die lokalen Skripte verwenden die Daten aus dem Materialpaket. `00_installation.R` wird abschnittsweise ausgeführt; der Installationsblock ist nur bei Bedarf erforderlich. Die erste Kodierung und ihre Prüfung gehören zum Rechenbeispiel in Skript `02`. eatAutoCode wird über `library(eatPrepTBA)` intern geladen und nicht separat mit `library()` eingebunden.
+
+Die beiden Zugangsvorlagen enthalten Beispielangaben und werden für eigene Realdaten angepasst. Sie werden im lokalen Workshop und beim Rendern nicht ausgeführt.
+
+## Eigene Zugänge und Fehlermeldungen
+
+[`login_studio()`](https://iqb-research.github.io/eatPrepTBA/reference/login_studio.html) verwendet ohne `base_url` die Adresse `https://www.iqb-studio.de/`. Für eine andere Installation wird `base_url` ergänzt. `app_version` muss zur Anmeldeseite passen, einschließlich eines möglichen Beta-Zusatzes. `21.0.0`, Workspace `1300` sowie Testcenter-Workspace `35` unter `https://iqb-testcenter2.de/` sind Beispielangaben.
+
+`keyring = TRUE` verwendet den Passwortspeicher des Betriebssystems. `keyring = FALSE` ermöglicht eine frische Eingabe; `change_key = TRUE` ersetzt zusammen mit `keyring = TRUE` die gespeicherten Zugangsdaten.
+
+| Meldung oder Situation | Nächster Schritt |
+|---|---|
+| HTTP 401 Unauthorized | Adresse und Zugangsdaten prüfen; mit `keyring = FALSE` neu eingeben. Falsch gespeicherte Daten bei Bedarf mit `change_key = TRUE` ersetzen. |
+| HTTP 521 | `app_version` mit der vollständigen Versionsangabe auf der IQB-Studio-Anmeldeseite abgleichen. |
+| IQB-Studio wurde aktualisiert | Neu anmelden und das Workspace-Objekt erneut erstellen. |
+
+[`get_design()`](https://iqb-research.github.io/eatPrepTBA/reference/get_design.html) berücksichtigt standardmäßig Testpersonen-Logins mit `mode = "run-hot-return"`. Bei einem anderen Testdurchführungsmodus wird `mode` ausdrücklich angegeben. Dieser Filter betrifft das Testdesign und ist kein Anmeldemodus für den Zugang zu Testcenter.
 
 ## Tabelle, Codebuch und Kodiermanual
 
@@ -96,4 +112,4 @@ Diese Ergebnisse sind kein direkter Ersatz für den vollständigen Workflow mit 
 - [eatPrep-Workshop 2024 von Karoline Sachse](https://iqb-research.github.io/IQB-Methods/docs/R_tutorials/eatPrep2024_files/eatPrep2024.html)
 - [Quarto: Reveal.js](https://quarto.org/docs/presentations/revealjs/)
 
-Diese Arbeitsfassung verwendet als Paketbasis **eatPrepTBA 0.9.8.9041 / 5e1a0ac**. Die tatsächlich durchgeführten Prüfungen stehen in `VALIDATION.md` im Materialpaket. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.
+Materialstand **24.10.2026**: eatPrepTBA **0.9.8.9042 / ea782df**, eatAutoCode **0.5.0.9008 / 54f39a8** und IQB-Autocoder **5.5.0**. `renv.lock` enthält die genaue Paketumgebung; die durchgeführten Prüfungen stehen in `VALIDATION.md`. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.

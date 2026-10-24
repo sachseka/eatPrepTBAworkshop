@@ -17,7 +17,7 @@ oder Testcenter-Zugang. API-Vorlagen benötigen eigene Zugänge.
 Vorbereitung und Materialien werden vorab bereitgestellt.
 Die kommentierten R-Skripte dienen anschließend als Vorlage für eigene Daten.
 
-**Workshop am 26.10.2026 · Materialstand 18.10.2026.**
+**Workshop am 26.10.2026 · Materialstand 24.10.2026.**
 
 - [Materialseite](eatPrepTBA2026_files/index.html)
 - [Quarto-Folien](eatPrepTBA2026_files/workshop.html)
@@ -28,7 +28,7 @@ Die kommentierten R-Skripte dienen anschließend als Vorlage für eigene Daten.
 
 Einzelne R-Skripte:
 
-- [Installation und Funktionstest](eatPrepTBA2026_files/R/00_installation.R)
+- [Installation, Paketversionen und Beispieldateien](eatPrepTBA2026_files/R/00_installation.R)
 - [Datenabruf mit eigenen Zugängen](eatPrepTBA2026_files/R/01_datenabruf.R)
 - [JSON, Partial Credit und gespeicherte Codes](eatPrepTBA2026_files/R/02_daten_verstehen.R)
 - [Datenaufbereitung und Skalierungsdatensatz](eatPrepTBA2026_files/R/03_datenaufbereitung.R)

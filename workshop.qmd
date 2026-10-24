@@ -85,7 +85,7 @@ Das [Handout](handout.qmd) enthält Code, Ausgaben und Erläuterungen.
 
 | Datei in `R/` | Verwendung |
 |---|---|
-| `00_installation.R` | Pakete installieren und prüfen |
+| `00_installation.R` | Pakete installieren, laden und Dateien prüfen |
 | `01_datenabruf.R` | Daten aus IQB-Studio und Testcenter beziehen |
 | `02_daten_verstehen.R` | JSON, vorhandene Codes und Rechenaufgabe |
 | `03_datenaufbereitung.R` | Vollständige Aufbereitung der kleinen Studie |
@@ -156,19 +156,17 @@ flowchart LR
 
 ## Eigene Zugänge: Einstellungen zuerst anpassen {.compact-code}
 
-Die IQB-Studio-Version steht auf der Anmeldeseite. Workspace-IDs und Testmodus gehören zur eigenen Erhebung.
+Die Version steht auf der IQB-Studio-Anmeldeseite. Die Workspace-IDs 1300 und 35 sind Beispiele und werden durch die eigenen IDs ersetzt.
 
 <!-- r-source: R/01_datenabruf.R#api-einstellungen -->
 ```{r}
 #| eval: false
 library(eatPrepTBA)
 
-studio_url <- "https://STUDIO-ADRESSE/"
-studio_version <- "VERSION-DER-ANMELDESEITE"
-studio_workspace_id <- NA_integer_
-testcenter_url <- "https://TESTCENTER-ADRESSE/"
-testcenter_workspace_id <- NA_integer_
-test_mode <- "run-hot-return"
+studio_version <- "21.0.0" # genaue Version der Anmeldeseite übernehmen
+studio_workspace_id <- 1300 # Beispiel; eigenen Workspace eintragen
+testcenter_url <- "https://iqb-testcenter2.de/"
+testcenter_workspace_id <- 35 # Beispiel; eigenen Workspace eintragen
 ```
 <!-- /r-source -->
 
@@ -177,11 +175,11 @@ test_mode <- "run-hot-return"
 
 ## Was bedeutet der Testmodus?
 
-`test_mode` legt fest, welche Testpersonen-Logins [`get_design()`](https://iqb-research.github.io/eatPrepTBA/reference/get_design.html) aus den Testpersonen-Dateien berücksichtigt.
+[`get_design()`](https://iqb-research.github.io/eatPrepTBA/reference/get_design.html) berücksichtigt standardmäßig Testpersonen-Logins mit `mode = "run-hot-return"`. Deshalb benötigt der Beispielaufruf kein zusätzliches Argument.
 
 `run-hot-return` bedeutet: Antworten und Logs speichern, Zeit- und Navigationsbeschränkungen anwenden und bei erneuter Anmeldung die bisherige Sitzung fortsetzen.
 
-Den Wert aus der eigenen Erhebung übernehmen. Ein anderer Modus kann zu einem anderen Personenkreis im Design führen.
+Bei einem anderen Testdurchführungsmodus `mode` ausdrücklich angeben. Der Filter betrifft die Testpersonen im Design, nicht die Anmeldung des Administrationskontos.
 
 [Der Modus filtert das Design; er stellt nicht nachträglich die Testdurchführung um.]{.small}
 
@@ -189,7 +187,7 @@ Den Wert aus der eigenen Erhebung übernehmen. Ein anderer Modus kann zu einem a
 
 ## IQB-Studio: Aufgabeninformationen laden {.compact-code}
 
-Nach Anmeldung den Workspace mit den Aufgaben auswählen.
+Ohne `base_url` verwendet `login_studio()` die Installation **www.iqb-studio.de**. Danach den Workspace mit den Aufgaben auswählen.
 
 <!-- r-source: R/01_datenabruf.R#api-vorbereiten -->
 ```{r}
@@ -201,8 +199,7 @@ dir.create("data_eigen", showWarnings = FALSE)
 <!-- r-source: R/01_datenabruf.R#studio-daten-abrufen -->
 ```{r}
 #| eval: false
-studio_login <- login_studio(base_url = studio_url,
-                             app_version = studio_version)
+studio_login <- login_studio(app_version = studio_version, keyring = TRUE)
 studio <- access_workspace(studio_login, ws_id = studio_workspace_id)
 
 units <- get_units(studio, metadata = TRUE, unit_definition = TRUE)
@@ -213,6 +210,20 @@ saveRDS(units, "data_eigen/units.rds")
 `metadata = TRUE` bereitet die Metadaten auf. `unit_definition = TRUE` lädt zusätzlich die technische Aufgabendefinition.
 
 [Vorlage für eigene Zugänge: 01_datenabruf.R](R/01_datenabruf.R){.script-link}
+
+## Anmeldung: Passwortspeicher und Fehlermeldungen
+
+**`keyring = TRUE`** speichert die Zugangsdaten lokal im Passwortspeicher des Betriebssystems und verwendet sie bei weiteren Anmeldungen erneut.
+
+| Beobachtung | Nächster Schritt |
+|---|---|
+| **HTTP 401 Unauthorized** | Installation und Zugangsdaten prüfen. Mit `keyring = FALSE` einmal frisch eingeben. |
+| Gespeicherte Zugangsdaten sind veraltet | Einmal `keyring = TRUE, change_key = TRUE` verwenden, um sie zu ersetzen. |
+| **HTTP 521** | `app_version` auf die genaue Version der Anmeldeseite setzen, einschließlich eines möglichen Beta-Zusatzes. |
+
+Nach einem IQB-Studio-Update erneut anmelden und das Workspace-Objekt neu erstellen.
+
+[Die auskommentierten Aufrufe stehen in R/01_datenabruf.R.](R/01_datenabruf.R){.small}
 
 ## Aufgabendefinition und Unit-Tabelle
 
@@ -246,7 +257,7 @@ Die Daten wurden passend zum Screenshot synthetisch aufgebaut. Es sind keine auf
 <!-- r-source: R/02_daten_verstehen.R#demo-einlesen -->
 ```{r}
 #| eval: false
-library(eatPrepTBA)
+library(eatPrepTBA) # eatAutoCode nicht separat laden.
 library(dplyr)
 library(tidyr)
 
@@ -319,12 +330,14 @@ In diesem Beispiel wird **01** als Item ausgewertet. Die drei Ausgangsvariablen 
 <!-- r-source: R/01_datenabruf.R#studio-schema-ansehen -->
 ```{r}
 #| eval: false
-units <- add_coding_scheme(units)
-names(units$unit_codes[[1]])
+units <- add_coding_scheme(units) # coding_scheme wird zu unit_codes aufbereitet.
+View(units)
 ```
 <!-- /r-source -->
 
 Dieser Schritt ist zum Nachsehen nützlich. [`code_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/code_responses.html) mit `prepare = TRUE` bereitet das Kodierschema bei Bedarf selbst auf.
+
+[`View(units)` öffnet die vollständige Tabelle in RStudio. `units$unit_codes[[1]]` zeigt die Kodierinformationen der ersten Unit.]{.small}
 
 ## Testcenter: Antworten abrufen {.compact-code}
 
@@ -473,7 +486,7 @@ Das vollständige Testdesign beschreibt die vorgesehenen Personen, Booklets und 
 <!-- r-source: R/01_datenabruf.R#design-abrufen -->
 ```{r}
 #| eval: false
-design <- get_design(testcenter, units = units, mode = test_mode)
+design <- get_design(testcenter, units = units)
 saveRDS(design, "data_eigen/design.rds")
 ```
 <!-- /r-source -->
@@ -506,6 +519,8 @@ Dazu müssen Testpersonen-XML und zugehörige Booklet-XMLs im Workspace vorliege
 Es führt die Kodierung aus und gibt die Ergebnisse an eatPrepTBA zurück.
 :::
 :::
+
+[Im Workshop `library(eatPrepTBA)` laden. Ein zusätzliches `library(eatAutoCode)` würde dessen gleichnamige Funktion `code_responses()` in den Vordergrund stellen.]{.small}
 
 ## Was macht der IQB-Autocoder?
 
@@ -629,7 +644,7 @@ Das Arbeitsverzeichnis ist der entpackte Projektordner.
 <!-- r-source: R/03_datenaufbereitung.R#workflow-start -->
 ```{r}
 #| eval: false
-library(eatPrepTBA)
+library(eatPrepTBA) # lädt eatAutoCode mit; nicht separat laden
 library(dplyr)
 library(tidyr)
 person_columns <- c("group_id", "login_name", "login_code")
@@ -652,7 +667,7 @@ units <- readRDS("data/units.rds")
 design <- readRDS("data/design.rds")
 responses <- read_responses("data/Responses.csv")
 
-# Bei einem gespeicherten API-Abruf diese Zeile statt read_responses() nutzen:
+# Nach einem API-Abruf alternativ:
 # responses <- readRDS("data_eigen/responses.rds")
 
 count(responses, booklet_id)
@@ -706,7 +721,7 @@ B1 enthält U1–U5; B2 enthält U1–U4 und U6. Für Personen mit B1 ist U6 des
 ```{r}
 #| eval: false
 response_keys <- c("group_id", "login_name", "login_code",
-                   "booklet_id", "unit_key")
+                  "booklet_id", "unit_key")
 
 unknown_units <- anti_join(responses, units, by = "unit_key")
 outside_design <- anti_join(responses, design, by = response_keys)
@@ -790,7 +805,7 @@ codes_manual <- readr::read_csv("data/codes_manual.csv",
 <!-- r-source: R/03_datenaufbereitung.R#manuelle-codes-vorschau -->
 ```{r}
 #| eval: false
-head(codes_manual, 3) |> print(width = 90)
+head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
 ```
 <!-- /r-source -->
 
@@ -810,7 +825,7 @@ Die sechs Kennungen ordnen den **`code_id`** einer Antwort zu. Die Punktzahl wir
 ```{r}
 #| eval: false
 coded <- code_responses(responses, units, prepare = TRUE,
-                        codes_manual = codes_manual)
+                       codes_manual = codes_manual)
 count(coded, code_status, code_type)
 saveRDS(coded, "checkpoints/03_coded.rds")
 ```
@@ -957,7 +972,7 @@ item_data <- add_item_id(analysis_data, units)
 unmapped <- item_data |>
   filter(is.na(item_id) | trimws(item_id) == "") |>
   distinct(unit_key, variable_id)
-print(unmapped)
+print(unmapped) # sollte U3/Q1 und U3/Q2 zeigen
 
 item_data <- filter(item_data, !is.na(item_id), trimws(item_id) != "")
 item_data <- mutate(item_data, item = paste0(unit_key, "__", item_id))
@@ -1004,11 +1019,11 @@ U3/TOTAL wird ein Item; die Basisvariablen Q1 und Q2 erhalten keine zusätzliche
 #| eval: false
 unresolved <- item_data |>
   filter(code_status %in% c("UNSET", "CODING_INCOMPLETE", "DERIVE_PENDING",
-                            "CODING_ERROR", "DERIVE_ERROR",
-                            "INTENDED_INCOMPLETE") |
+                           "CODING_ERROR", "DERIVE_ERROR",
+                           "INTENDED_INCOMPLETE") |
          code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
-                           "INTENDED_INCOMPLETE"))
-stopifnot(nrow(unresolved) == 0)
+                          "INTENDED_INCOMPLETE"))
+stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen
 ```
 <!-- /r-source -->
 
@@ -1100,7 +1115,7 @@ Die Kennwerte der synthetischen Studie zeigen, wie die Ausgabe zu lesen ist.
 category_stats <- psychometrics |>
   filter(item_id == "U1_Q1", !is.na(category_id)) |>
   select(category_id, code_id, category_n, category_p_valid, category_pbc)
-print(category_stats)
+print(category_stats) # sollte A: 21, B: 5 und C: 12 Antworten zeigen
 ```
 <!-- /r-source -->
 
@@ -1124,7 +1139,7 @@ code_stats_mc <- psychometrics |>
   filter(item_id == "U1_Q1") |>
   select(code_id, code_score, code_n, code_p_valid, code_pbc) |>
   distinct()
-print(code_stats_mc)
+print(code_stats_mc) # sollte für Code 0 insgesamt 17 Antworten zeigen
 ```
 <!-- /r-source -->
 
@@ -1149,7 +1164,7 @@ score_stats <- item_data |>
   filter(item_id == "U1_Q1") |>
   count(code_score, name = "score_n") |>
   mutate(score_p = score_n / sum(score_n))
-print(score_stats)
+print(score_stats) # sollte 18 Personen mit 0 und 21 mit 1 Punkt zeigen
 ```
 <!-- /r-source -->
 
@@ -1264,12 +1279,12 @@ Das lokale Beispiel enthält zwei Sessions mit 15 Ereignissen.
 ```{r}
 #| eval: false
 logs <- read_logs("data/Logs.csv")
-# Nach einem API-Abruf alternativ: logs <- readRDS("data_eigen/logs.rds")
+# Alternativ nach API-Abruf: logs <- readRDS("data_eigen/logs.rds")
 
-# Ältere Exporte enthalten nur einen Unit-Namen, keinen getrennten Alias.
+# Ältere Exporte haben keinen getrennten Unit-Alias.
 if (!"unit_alias" %in% names(logs)) logs$unit_alias <- logs$unit_key
 
-count(logs, group_id, login_name, booklet_id)
+count(logs, group_id, login_name, booklet_id) # P001: 9, P002: 6 Ereignisse
 ```
 <!-- /r-source -->
 
@@ -1292,7 +1307,6 @@ logs |>
 ```{r}
 #| eval: false
 inventory <- summarise_log_inventory(logs)
-inventory |> select(log_type, n, known_log_type, supported_parser)
 ```
 <!-- /r-source -->
 
@@ -1320,7 +1334,6 @@ qc <- summarise_log_qc(logs, anomalies = anomalies)
 
 anomalies |>
   select(login_name, booklet_id, anomaly_code, severity, evidence)
-qc |> select(group_id, login_name, booklet_id, log_qc_flag)
 ```
 <!-- /r-source -->
 
@@ -1343,13 +1356,12 @@ P002 meldet einen Playerfehler ohne erfolgreichen Start. `anomalies` enthält di
 #| eval: false
 unit_times <- estimate_unit_times(logs, include_environment = FALSE)
 
-# Die Funktion liefert Millisekunden; die Ausgabe verwendet Sekunden.
+# Millisekunden in Sekunden umrechnen:
 times <- unit_times |>
   transmute(group_id, login_name, login_code, booklet_id, unit_key,
             unit_n_play, unit_time_s = unit_time / 1000,
             unit_loadtime_s = unit_loadtime / 1000,
             n_run_no_load, n_failed_loadings)
-times |> select(login_name, unit_key, unit_time_s, unit_loadtime_s)
 ```
 <!-- /r-source -->
 
@@ -1377,9 +1389,6 @@ focus_summary <- focus |>
             focus_lost_s = total_focus_lost_time / 1000,
             max_focus_lost_s = max_focus_lost_time / 1000,
             has_unresolved_focus_loss)
-
-focus_summary |>
-  select(login_name, n_focus_lost, focus_lost_s, has_unresolved_focus_loss)
 ```
 <!-- /r-source -->
 
@@ -1440,15 +1449,11 @@ Ein **Codebuch** macht Variablen, Codes, Beschreibungen und Scores als Tabelle l
 <!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-settings -->
 ```{r}
 #| eval: false
-studio_url <- "https://STUDIO-ADRESSE/"
-studio_version <- "VERSION-DER-ANMELDESEITE"
-studio_workspace_id <- NA_integer_
-selected_units <- c("UNIT-1", "UNIT-2")  # NULL wählt alle Units.
-missing_profile <- "IQB-Standard"  # Name in IQB-Studio; NULL ohne Profil.
+studio_version <- "21.0.0" # Version der eigenen Anmeldeseite übernehmen
+studio_workspace_id <- 1300 # Beispiel: eigene Workspace-ID einsetzen
+selected_units <- c("UNIT-1", "UNIT-2") # Eigene Unit-Namen; NULL für alle
+missing_profile <- "IQB-Standard" # Eigenen Profilnamen prüfen; NULL ohne Profil
 export_path <- "outputs/codebooks_studio"
-if (is.na(studio_workspace_id)) {
-  stop("Zuerst IQB-Studio-Adresse, Version, Workspace, Units und Profil anpassen.")
-}
 dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
 ```
 <!-- /r-source -->
@@ -1456,12 +1461,12 @@ dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
 <!-- r-source: R/06_kodiermanuale_studio.R#studio-codebook-login -->
 ```{r}
 #| eval: false
-login <- login_studio(base_url = studio_url, app_version = studio_version)
+login <- login_studio(app_version = studio_version, keyring = TRUE)
 workspace <- access_workspace(login, ws_id = studio_workspace_id)
 ```
 <!-- /r-source -->
 
-Vorlage für eigene Daten: Adresse, Version, Workspace und Auswahl anpassen. Der unveränderte Schutzstopp verhindert eine Anmeldung mit Platzhaltern.
+Vorlage für eigene Daten: Version, Workspace und Unit-Auswahl anpassen. Die Anmeldung verwendet www.iqb-studio.de und den lokalen Passwortspeicher.
 
 ## Codebuch aus IQB-Studio abrufen {.compact-code}
 
@@ -1508,7 +1513,7 @@ Die DOCX-Datei wird unter `export_path` gespeichert. Ihr Name stammt aus dem Wor
 #| eval: false
 cb <- readr::read_csv("data/codebook.csv", show_col_types = FALSE,
                       col_types = readr::cols(code_id = readr::col_character()))
-count(cb, unit_key, variable_id)
+count(cb, unit_key, variable_id) # 10 Variablen aus 6 Units
 ```
 <!-- /r-source -->
 
@@ -1549,7 +1554,7 @@ selected_cb <- cb |>
 #| eval: false
 selected_cb |>
   filter(unit_key == "U4", variable_id == "TEXT") |>
-  print()
+  print() # Code 2: Score 1; Code 1: Score 0.5
 ```
 <!-- /r-source -->
 
@@ -1609,7 +1614,7 @@ Excel enthält die Blätter `Codebuch` und `Auswahl`; die CSV enthält die ausge
 
 ## Quellen und Paketstand
 
-- eatPrepTBA **0.9.8.9041**, Commit `5e1a0ac` (17.10.2026).
+- eatPrepTBA **0.9.8.9042** (`ea782df`), eatAutoCode **0.5.0.9008**; geprüft am 24.10.2026.
 - [Standardworkflow](https://iqb-research.github.io/eatPrepTBA/articles/standard-workflow.html) und [API-Einführung](https://iqb-research.github.io/eatPrepTBA/articles/working-with-iqb-apis.html).
 - [Logdaten](https://iqb-research.github.io/eatPrepTBA/articles/log-data.html) und [Codebücher](https://iqb-research.github.io/eatPrepTBA/articles/prepare-codebooks.html).
 - Codegestaltung: [eatPrep-Workshop 2024](https://iqb-research.github.io/IQB-Methods/docs/R_tutorials/eatPrep2024_files/eatPrep2024.html).

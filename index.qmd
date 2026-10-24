@@ -22,7 +22,7 @@ Der Workshop behandelt den Paketaufbau, die Aufbereitung von Antworten und Metad
 ::: {.workshop-card}
 ### Vorbereiten
 
-R-Pakete installieren, ZIP entpacken, Funktionstest ausführen. [Zur Vorbereitung](setup.qmd).
+ZIP entpacken, Pakete bei Bedarf installieren, Versionen und Beispieldateien prüfen. [Zur Vorbereitung](setup.qmd).
 :::
 ::: {.workshop-card}
 ### Nachvollziehen
@@ -58,7 +58,7 @@ Der Ablauf richtet sich nach den Inhalten und Fragen; es gibt keine festen Zeitv
 
 | Skript | Zweck |
 |---|---|
-| [00_installation.R](R/00_installation.R){download="00_installation.R"} | Funktionstest vor dem Workshop |
+| [00_installation.R](R/00_installation.R){download="00_installation.R"} | Installation, Paketversionen und Beispieldateien |
 | [01_datenabruf.R](R/01_datenabruf.R){download="01_datenabruf.R"} | Vorlage für eigene IQB-Studio-/Testcenter-Zugänge |
 | [02_daten_verstehen.R](R/02_daten_verstehen.R){download="02_daten_verstehen.R"} | JSON, Partial Credit und gespeicherte Codes am kleinen Beispiel |
 | [03_datenaufbereitung.R](R/03_datenaufbereitung.R){download="03_datenaufbereitung.R"} | Vollständige Datenaufbereitung und Datensatzexport |
@@ -66,12 +66,12 @@ Der Ablauf richtet sich nach den Inhalten und Fragen; es gibt keine festen Zeitv
 | [05_kodiermanuale.R](R/05_kodiermanuale.R){download="05_kodiermanuale.R"} | Lokales Codebuch als Excel und CSV |
 | [06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R){download="06_kodiermanuale_studio.R"} | Codebuch und Kodiermanual aus dem eigenen IQB-Studio |
 
-Die Skripte verwenden die Ordnerstruktur des Materialpakets. Für die gemeinsamen Beispiele genügen die enthaltenen lokalen Dateien; nur die beiden API-Vorlagen benötigen später eigene Zugänge. Zum Lesen der HTML-Materialien reicht ein Browser. Quarto wird benötigt, um die Materialien selbst neu zu rendern.
+Die Skripte verwenden die Ordnerstruktur des Materialpakets. `00_installation.R` abschnittsweise ausführen und nur bei Bedarf installieren. Die erste Kodierung folgt im Rechenbeispiel von Skript `02`. Für die gemeinsamen Beispiele genügen die enthaltenen lokalen Dateien; die beiden API-Vorlagen benötigen angepasste Angaben und eigene Zugänge. Zum Lesen der HTML-Materialien reicht ein Browser. Quarto wird benötigt, um die Materialien selbst neu zu rendern.
 
 ::: {.callout-note}
 ## Stand der Arbeitsfassung
 
-18.10.2026 · Paketbasis eatPrepTBA 0.9.8.9041 (Commit `5e1a0ac`). Die verwendete Paketumgebung und technische Prüfung sind im Materialpaket dokumentiert. Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.
+24.10.2026 · eatPrepTBA 0.9.8.9042 (Commit `ea782df`), eatAutoCode 0.5.0.9008 und IQB-Autocoder 5.5.0. Die genaue Paketumgebung und technische Prüfung sind im Materialpaket dokumentiert. Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.
 :::
 
 [Zur IQB-Methods-Website](https://iqb-research.github.io/IQB-Methods/)

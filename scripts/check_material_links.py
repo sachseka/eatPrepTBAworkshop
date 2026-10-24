@@ -50,11 +50,14 @@ with zipfile.ZipFile(ROOT / 'downloads' / 'WSeatPrepTBA-material.zip') as archiv
                  'workshop_mod2.qmd', 'workshop_mod3.qmd', 'kodiermanual.docx', 'exercises.qmd', 'solutions.qmd', '03_exercises.R')
     assert not any(set(Path(name).parts).intersection(forbidden)
                    for name in archive.namelist())
+    assert not any(Path(name).name.endswith('_mod.R') for name in archive.namelist())
     assert archive.testzip() is None
 assert not any((SITE / name).exists() for name in
                ('integration', 'review', '.library', 'workshop_mod.html', 'workshop_mod2.html',
                 'exercises.html', 'solutions.html'))
 payload = ROOT / 'integration/payload/docs/R_tutorials/eatPrepTBA2026_files'
+assert not any((SITE / 'R').rglob('*_mod.R'))
+assert not any((payload / 'R').rglob('*_mod.R'))
 assert not any((payload / name).exists() for name in
                ('integration', 'review', '.library', 'workshop_mod.html', 'workshop_mod2.html',
                 'exercises.html', 'solutions.html'))

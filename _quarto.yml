@@ -18,6 +18,7 @@ project:
     - downloads/**
     - data/**
     - R/**
+    - '!R/**/*_mod.R'
     - checkpoints/**
     - outputs/codebook.xlsx
     - '!integration/**'

@@ -14,8 +14,9 @@ keinen Zugang zu IQB-Studio oder Testcenter.
 ## Einstieg
 
 1. Repository herunterladen oder klonen und `WSeatPrepTBA.Rproj` öffnen.
-2. Pakete gemäß [Vorbereitung](setup.qmd) installieren und
-   [00_installation.R](R/00_installation.R) ausführen.
+2. [00_installation.R](R/00_installation.R) öffnen und die Abschnitte gemäß
+   [Vorbereitung](setup.qmd) einzeln ausführen: bei Bedarf installieren,
+   dann Versionen abfragen, Pakete laden und Beispieldateien prüfen.
 3. Die passenden R-Skripte mit den Folien und dem [Handout](handout.qmd)
    Schritt für Schritt nachvollziehen.
 
@@ -33,7 +34,7 @@ entstandenen Tabellen.
 
 | Skript | Inhalt |
 |---|---|
-| [00_installation.R](R/00_installation.R) | Installation und Funktionstest |
+| [00_installation.R](R/00_installation.R) | Installation, Paketversionen und Beispieldateien |
 | [01_datenabruf.R](R/01_datenabruf.R) | Vorlage für eigene IQB-Studio- und Testcenter-Zugänge |
 | [02_daten_verstehen.R](R/02_daten_verstehen.R) | JSON, Partial Credit und gespeicherte Codes |
 | [03_datenaufbereitung.R](R/03_datenaufbereitung.R) | Antworten bis zum Skalierungsdatensatz aufbereiten |
@@ -42,9 +43,14 @@ entstandenen Tabellen.
 | [06_kodiermanuale_studio.R](R/06_kodiermanuale_studio.R) | Codebuch und DOCX direkt aus IQB-Studio |
 
 Die beiden API-Vorlagen benötigen eigene Zugangsdaten sowie angepasste
-Server- und Workspace-Angaben. Sie werden beim Rendern nicht ausgeführt.
+Server- und Workspace-Angaben. Die eingetragenen Werte sind Beispiele.
+Die Vorlagen werden im lokalen Workshop und beim Rendern nicht ausgeführt.
 Für eigene Studien sind außerdem Kennungen, Bereichszuordnung und
 Missing-Regeln anzupassen.
+
+`library(eatPrepTBA)` lädt eatAutoCode intern mit. eatAutoCode nicht separat
+laden, damit `code_responses()` aus eatPrepTBA verwendet wird. Die erste
+Kodierung wird im Rechenbeispiel von Skript `02` überprüft.
 
 ## Materialien neu erzeugen
 
@@ -57,7 +63,7 @@ quarto preview
 ```
 
 Vor dem Rendern übernimmt `scripts/sync_snippets.py` die markierten
-Codeabschnitte aus `R/` in Folien und Handout. Änderungen an diesen
+Codeabschnitte aus `R/` in Vorbereitung, Folien und Handout. Änderungen an diesen
 Codeblöcken werden deshalb in den R-Dateien vorgenommen. Die lokalen
 Beispiele werden beim Rendern berechnet; die Website entsteht in `_site/`.
 
@@ -75,8 +81,10 @@ und `checkpoints/`.
 
 ## Datenstand und Quellen
 
-Materialstand: 18.10.2026. Paketbasis: eatPrepTBA 0.9.8.9041
-(Commit `5e1a0ac`). `renv.lock` dokumentiert die Paketversionen;
+Materialstand: 24.10.2026. Verwendet werden eatPrepTBA 0.9.8.9042
+(Commit `ea782df`), eatAutoCode 0.5.0.9008 (Commit `54f39a8`)
+und IQB-Autocoder 5.5.0. Die Installation bezieht den aktuellen GitHub-Stand;
+`renv.lock` dokumentiert die genaue Paketumgebung des Workshops.
 [VALIDATION.md](VALIDATION.md) beschreibt die durchgeführten Prüfungen.
 
 Die synthetische Lesestudie umfasst sechs Units, acht Items, zwei Booklets

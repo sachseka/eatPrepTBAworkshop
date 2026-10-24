@@ -28,7 +28,7 @@ def replace(match):
 
 changed = []
 count = 0
-for name in ('workshop.qmd', 'handout.qmd'):
+for name in ('workshop.qmd', 'handout.qmd', 'setup.qmd'):
     path = ROOT / name
     source = path.read_text(encoding='utf-8-sig')
     result, number = SNIPPET.subn(replace, source)

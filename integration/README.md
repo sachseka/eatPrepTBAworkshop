@@ -53,8 +53,8 @@ eine Vorschau unter `pr-preview/pr-<Nummer>/`. Nach Merge nach main wird die
 Hauptwebsite veröffentlicht. Der vollständige Hauptwebsite-Build wurde im Rahmen
 dieses Workshop-Projekts nicht ausgeführt; nur die Einbindung wird lokal geprüft.
 
-Materialstand ist der 18.10.2026; die Paketbasis ist eatPrepTBA 0.9.8.9041
-(Commit `5e1a0ac`). Die technische Prüfung steht in `VALIDATION.md`.
+Materialstand ist der 24.10.2026; die Paketbasis ist eatPrepTBA 0.9.8.9042
+(Commit `ea782df`). Die technische Prüfung steht in `VALIDATION.md`.
 
 Die Workshop-Quellen werden im Repository
 [eatPrepTBAworkshop](https://github.com/sachseka/eatPrepTBAworkshop) gepflegt.

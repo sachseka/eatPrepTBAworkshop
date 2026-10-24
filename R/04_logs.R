@@ -1,21 +1,20 @@
-# Logdaten: Überblick, Zeiten und Fokusverluste.
-# Zuerst WSeatPrepTBA.Rproj öffnen. Alle Daten sind lokal und synthetisch.
+# 1. Pakete und Logdaten
+
 library(eatPrepTBA)
 library(dplyr)
 dir.create("outputs", showWarnings = FALSE)
 
-# 1. Testcenter-Export einlesen. Für eigene Daten den Dateipfad ersetzen.
 # ---- logs-read ----
 logs <- read_logs("data/Logs.csv")
-# Nach einem API-Abruf alternativ: logs <- readRDS("data_eigen/logs.rds")
+# Alternativ nach API-Abruf: logs <- readRDS("data_eigen/logs.rds")
 
-# Ältere Exporte enthalten nur einen Unit-Namen, keinen getrennten Alias.
+# Ältere Exporte haben keinen getrennten Unit-Alias.
 if (!"unit_alias" %in% names(logs)) logs$unit_alias <- logs$unit_key
 
-count(logs, group_id, login_name, booklet_id)
+count(logs, group_id, login_name, booklet_id) # P001: 9, P002: 6 Ereignisse
 # ---- /logs-read ----
 
-# So sehen einzelne Logeinträge aus.
+# Einzelne Ereignisse ansehen:
 # ---- logs-rohdaten-vorschau ----
 logs |>
   filter(startsWith(log_entry, "PLAYER") | startsWith(log_entry, "FOCUS")) |>
@@ -23,63 +22,59 @@ logs |>
   head(4) |> print(width = 90)
 # ---- /logs-rohdaten-vorschau ----
 
-# 2. Welche Ereignisse sind vorhanden?
+# 2. Ereignistypen zählen
+
 # ---- logs-inventory ----
 inventory <- summarise_log_inventory(logs)
-inventory |> select(log_type, n, known_log_type, supported_parser)
 # ---- /logs-inventory ----
 
-# Welche Ereignistypen kommen vor?.
 # ---- logs-inventar-vorschau ----
 inventory |>
   select(log_type, n, known_log_type, supported_parser) |>
   head(5) |> print()
 # ---- /logs-inventar-vorschau ----
 
-# 3. Auffälligkeiten prüfen, bevor Zeiten interpretiert werden.
+# 3. Auffälligkeiten prüfen
+
 # ---- logs-qc ----
 anomalies <- detect_log_anomalies(logs)
 qc <- summarise_log_qc(logs, anomalies = anomalies)
 
 anomalies |>
   select(login_name, booklet_id, anomaly_code, severity, evidence)
-qc |> select(group_id, login_name, booklet_id, log_qc_flag)
 # ---- /logs-qc ----
 
-# Ergebnis der Prüfung je Session.
 # ---- logs-qc-vorschau ----
 qc |>
   select(login_name, booklet_id, log_qc_flag, n_anomalies) |>
-  print()
+  print() # P001: ok; P002: critical
 # ---- /logs-qc-vorschau ----
-# Ein QC-Flag ist ein Prüfhinweis, keine automatische Ausschlussregel.
-# Im Beispiel startet der Player bei P002 nicht und meldet einen Fehler.
+# Bei P002 startet der Player nicht. QC-Flags vor einem Ausschluss prüfen.
 
-# 4. Beobachtete Bearbeitungs- und Ladezeiten je Session und Unit.
+# 4. Bearbeitungs- und Ladezeiten je Unit
+
 # ---- logs-times ----
 unit_times <- estimate_unit_times(logs, include_environment = FALSE)
 
-# Die Funktion liefert Millisekunden; die Ausgabe verwendet Sekunden.
+# Millisekunden in Sekunden umrechnen:
 times <- unit_times |>
   transmute(group_id, login_name, login_code, booklet_id, unit_key,
             unit_n_play, unit_time_s = unit_time / 1000,
             unit_loadtime_s = unit_loadtime / 1000,
             n_run_no_load, n_failed_loadings)
-times |> select(login_name, unit_key, unit_time_s, unit_loadtime_s)
 # ---- /logs-times ----
 
-# Beobachtete Zeiten in Sekunden.
 # ---- logs-zeiten-vorschau ----
 times |>
   select(login_name, unit_key, unit_time_s, unit_loadtime_s) |>
-  print()
+  print() # P001: 11,65 s Bearbeitung, 0,35 s Laden; P002: keine Zeitzeile
 # ---- /logs-zeiten-vorschau ----
-# unit_time: ab RUNNING bis zum nächsten Unit-Start oder beobachteten Ende.
-# Ohne RUNNING entsteht keine Zeitzeile: Fehlende Zeit ist keine Null.
-# Fokusverluste sind darin enthalten; dies ist keine reine Arbeitszeit.
-# unit_loadtime kommt aus LOADING/RUNNING, nicht aus LOADCOMPLETE$loadTime.
+# unit_time: ab RUNNING bis zum nächsten Laden oder beobachteten Ende.
+# Enthält auch Fokusverluste; ohne RUNNING fehlt die Zeitzeile.
+# unit_loadtime: Zeit zwischen LOADING und RUNNING.
 
-# 5. Fokusverluste auf Session-Ebene zusammenfassen.
+# 5. Fokusverluste je Session
+
 # ---- logs-focus ----
 focus <- summarise_log_focus(logs)
 focus_summary <- focus |>
@@ -88,23 +83,19 @@ focus_summary <- focus |>
             focus_lost_s = total_focus_lost_time / 1000,
             max_focus_lost_s = max_focus_lost_time / 1000,
             has_unresolved_focus_loss)
-
-focus_summary |>
-  select(login_name, n_focus_lost, focus_lost_s, has_unresolved_focus_loss)
 # ---- /logs-focus ----
 
-# Abgeschlossene und offene Fokusverluste.
 # ---- logs-fokus-vorschau ----
 focus_summary |>
   select(login_name, n_focus_lost, focus_lost_s, has_unresolved_focus_loss) |>
-  print()
+  print() # P001: 2,5 s; P002: offener Fokusverlust
 # ---- /logs-fokus-vorschau ----
-# Nur HAS_NOT -> HAS ergibt hier eine abgeschlossene Dauer.
-# Ein offener Fokusverlust trägt keine Dauer zur Summe bei.
-# Deshalb kann die Summe 0 sein, obwohl ein Fokusverlust protokolliert wurde.
-# Fokusverluste allein belegen weder Unaufmerksamkeit noch Täuschung.
+# Nur abgeschlossene Intervalle (HAS_NOT -> HAS) zählen zur Dauer.
+# Daher steht bei P002 trotz Fokusverlust eine Summe von 0 Sekunden.
+# Ein Fokusverlust allein belegt keine Unaufmerksamkeit oder Täuschung.
 
-# 6. Pro Session QC und Fokus zusammenführen und Ergebnisse speichern.
+# 6. Ergebnisse zusammenführen und speichern
+
 # ---- logs-export ----
 session_keys <- c("group_id", "login_name", "login_code", "booklet_id")
 session_overview <- qc |>
@@ -119,13 +110,10 @@ saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
              unit_times = unit_times, focus = focus), "outputs/log_qc.rds")
 # ---- /logs-export ----
 
-# QC und Fokus in einer Session-Tabelle.
 # ---- logs-session-vorschau ----
 session_overview |>
   select(login_name, log_qc_flag, n_focus_lost, focus_lost_s) |>
   print()
 # ---- /logs-session-vorschau ----
 
-# Für eigene Daten: Exportpfad prüfen und auffällige Sessions einzeln ansehen.
-# Unit-Zeiten und Session-Fokus haben unterschiedliche Auswertungsebenen.
-# Die Fokusdauer einer Session daher nicht von jeder Unit-Zeit abziehen.
+# Fokusdauer gilt pro Session: nicht von jeder einzelnen Unit-Zeit abziehen.
