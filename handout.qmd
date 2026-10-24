@@ -874,6 +874,21 @@ Der Ausgangsworkflow verwendet ausdrücklich die Paketvoreinstellungen. Die endg
 
 Die Tabelle beschreibt die abschließende Zuweisung. [`code_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/code_responses.html) verwendet Missing-Codes beim Einfügen manueller Codes zunächst zur Zuordnung eines Status; seine Standardwerte sind nicht mit allen abschließenden Scores identisch. Bei eigenen Missing-Regeln wird dieselbe explizite Tabelle mit `code_id`, `code_status`, `code_score` und `code_type` über `missings` an beide relevanten Funktionen übergeben.
 
+#### Status, Code-Art, Code-ID und Score unterscheiden
+
+**Beispiel: P006 · U5/Q1 nach `complete_design()`**
+
+| Spalte | Aussage | Wert im Beispiel |
+|---|---|---|
+| `code_status` | Technischer Bearbeitungs- bzw. Kodierstatus | `DISPLAYED`: angezeigt |
+| `code_type` | Bedeutung der Bewertung, einschließlich Missing-Art | `MISSING_BY_OMISSION`: ausgelassen |
+| `code_id` | Kennnummer des Codes innerhalb der Variable | `-99` |
+| `code_score` | Zugehörige Punktzahl für die Auswertung | `0` |
+
+Mit der Regel „abschließende Auslassungen als nicht erreicht“ bleibt der Status **`DISPLAYED`**. Die übrigen Felder ändern sich zu **`MISSING_NOT_REACHED`**, **−96** und **`NA`**.
+
+Der Status allein beschreibt damit weder die endgültige Missing-Art noch die Punktzahl. Die Code-ID ist ebenfalls keine Punktzahl.
+
 Die erste Alternative setzt nur `recode_omissions_to_not_reached = TRUE`:
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-regeln-vergleichen -->
@@ -1142,24 +1157,86 @@ domains$domain <- "Lesen"
 psychometrics <- evaluate_psychometrics(analysis_data, units, domains = domains)
 psychometrics <- add_item_id(psychometrics, units)
 
-code_stats <- psychometrics |>
-  filter(!is.na(item_id)) |>
-  mutate(item = paste0(unit_key, item_id)) |>
-  select(item, unit_key, variable_id, code_id, code_score,
-         code_n, code_p_valid, code_pbc) |>
-  distinct()
+psychometrics <- psychometrics |>
+  mutate(item = if_else(is.na(item_id), NA_character_, paste0(unit_key, item_id))) |>
+  relocate(unit_key, variable_id, item, item_id)
 ```
 <!-- /r-source -->
+
+Die Ausgabe bleibt vollständig erhalten: **37 Zeilen und 21 Spalten**, einschließlich der Basisvariablen ohne eigene Item-Verknüpfung. Die Spalte `item` wird im Skript aus `unit_key` und `item_id` ergänzt; `domain` dokumentiert hier den Bereich Lesen. Die folgenden Ausschnitte dienen nur der Darstellung. Exportiert wird stets das gesamte Objekt `psychometrics`.
+
+| Spalte | Bedeutung |
+|---|---|
+| `unit_key` | Kurzname der Unit |
+| `variable_id` | Variable innerhalb der Unit, einschließlich abgeleiteter Variablen |
+| `item` | Vollständige Itemkennung im Workshop, z. B. `U501`; ohne Verknüpfung `NA` |
+| `item_id` | Itemnummer aus den Metadaten, als Text mit führender Null |
+| `variable_source_type` | Herkunft der Variable, z. B. `BASE` oder `SUM_SCORE` |
+| `code_id` | Zugewiesener Code einschließlich Missing-Codes |
+| `code_type` | Art der Bewertung, z. B. `FULL_CREDIT`, `PARTIAL_CREDIT`, `RESIDUAL_AUTO` oder eine Missing-Art |
+| `code_score` | Zum Code gehörige Punktzahl |
+| `code_n` | Häufigkeit des Codes |
+| `code_n_total` | Vorgesehene Fälle dieser Variable unter den verwendeten Personen |
+| `code_n_valid` | Davon Fälle mit Score ungleich `NA`; auch 0 zählt |
+| `code_p_total` | `code_n / code_n_total` |
+| `code_p_valid` | `code_n / code_n_valid`; bei fehlendem Score ebenfalls `NA` |
+| `code_pbc` | Korrelation des Code-Vorkommens mit dem Bereichsscore |
+| `category_id` | Antwortkategorie, z. B. A, B oder C |
+| `category_label` | Bezeichnung der Antwortkategorie |
+| `category_n` | Häufigkeit der Antwortkategorie |
+| `category_p_total` | `category_n / code_n_total` |
+| `category_p_valid` | `category_n / code_n_valid` |
+| `category_pbc` | Korrelation des Kategorie-Vorkommens mit dem Bereichsscore |
+| `domain` | Bereich, aus dessen Itemwerten der Vergleichsscore entsteht |
+
+Die Kategorie- und Codekennwerte stehen in einer gemeinsamen Tabelle. Code 0 erscheint bei U101 deshalb zweimal: einmal für B, einmal für C. **`code_n` nicht über alle Exportzeilen summieren.** Für eine reine Codetabelle zuerst die Codespalten auswählen und mit `distinct()` auf eine Zeile je Code reduzieren.
+
+Die Definitionen beziehen sich auf den dokumentierten Paketstand; [Funktionsreferenz zu `evaluate_psychometrics()`](https://iqb-research.github.io/eatPrepTBA/reference/evaluate_psychometrics.html).
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-csv -->
 ```{r}
 #| eval: false
 csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
 writeLines("sep=;", csv)
-write.csv2(code_stats, csv, row.names = FALSE)
+write.csv2(psychometrics, csv, row.names = FALSE)
 close(csv)
+saveRDS(psychometrics, "Daten/Ergebnisse/psychometrics.rds")
 ```
 <!-- /r-source -->
+
+#### Kennungen und Herkunft
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-variablen -->
+```{r}
+#| eval: false
+variable_info <- psychometrics |>
+  filter(unit_key == "U3") |>
+  distinct(unit_key, variable_id, item, item_id, variable_source_type)
+print(variable_info) # Q1/Q2: BASE; TOTAL: SUM_SCORE
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+print(variable_info)
+```
+
+#### Code-Art und Punktzahl
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-codearten -->
+```{r}
+#| eval: false
+code_info <- psychometrics |>
+  filter(item == "U301") |>
+  distinct(code_id, code_type, code_score)
+print(code_info) # Code 1: Teilpunkte; Code 2: volle Punktzahl
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+print(code_info)
+```
 
 Das Multiple-Choice-Item `U101` hat drei Antwortkategorien: A, B und C. A erhält Code 1 und einen Punkt. B und C erhalten gemeinsam Code 0 und null Punkte. Damit lassen sich drei Auswertungsebenen unterscheiden:
 
@@ -1235,7 +1312,85 @@ print(score_stats)
 
 Die Kategorieauswertung enthält 38 regulär kodierte Antworten. Code- und Scoreauswertung enthalten zusätzlich eine ungültige Antwort, die nach der gewählten Missing-Regel null Punkte erhält. Der Nenner von `category_p_valid` beträgt trotzdem 39, weil auch diese Antwort einen gültigen Score hat. Die Anteile der drei Antwortkategorien summieren sich daher zu 38/39.
 
-Die `*_n`-Spalten zählen Fälle. `*_p_valid` beschreibt Anteile unter Antworten mit Score ungleich `NA`. `*_pbc` beschreibt den Zusammenhang zwischen dem Auftreten einer Kategorie oder eines Codes und dem mittleren Itemscore des Bereichs; der eigene Itemscore ist in diesem Mittelwert enthalten. Die kleine synthetische Studie erklärt den Rechenweg und erlaubt keine belastbare empirische Itembewertung.
+#### Fallzahlen, Anteile und Zusammenhang
+
+Bei **U501** sind 20 Personen für die Aufgabe vorgesehen. Ein Not-reached-Fall hat Score `NA`; deshalb beträgt `code_n_valid` 19. Eine Auslassung mit Score 0 zählt zum gültigen Nenner. Sechs richtige Antworten ergeben `code_p_total = 6/20 = 0.30` und `code_p_valid = 6/19 ≈ 0.316`. Für den Not-reached-Code bleibt `code_p_valid = NA`.
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-nenner -->
+```{r}
+#| eval: false
+denominator_stats <- psychometrics |>
+  filter(item == "U501") |>
+  distinct(code_id, code_score, code_n, code_n_total, code_n_valid)
+print(denominator_stats) # insgesamt 20 Fälle, davon 19 mit gültigem Score
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+print(denominator_stats)
+```
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-anteile -->
+```{r}
+#| eval: false
+proportion_stats <- psychometrics |>
+  filter(item == "U501") |>
+  distinct(code_id, code_n, code_p_total, code_p_valid)
+print(proportion_stats) # Code 1: 6/20 = 0.30 und 6/19 = 0.316
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+print(proportion_stats)
+```
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-kategoriedetails -->
+```{r}
+#| eval: false
+category_details <- psychometrics |>
+  filter(item == "U501", !is.na(category_id)) |>
+  select(category_id, category_label, category_n,
+         category_p_total, category_p_valid)
+print(category_details)
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+print(category_details)
+```
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-pbc -->
+```{r}
+#| eval: false
+discrimination_stats <- psychometrics |>
+  filter(item == "U101", !is.na(category_id)) |>
+  select(category_id, code_id, domain, category_pbc, code_pbc)
+print(discrimination_stats)
+```
+<!-- /r-source -->
+
+```{r}
+#| echo: false
+print(discrimination_stats)
+```
+
+Die Kategorien verwenden dieselben Nenner: Sieben Antworten auf Distraktor B bei U501 ergeben `7/20 = 0.35` und `7/19 ≈ 0.368`. Die Kategorien müssen nicht alle Fälle mit gültigem Score abdecken: Eine Auslassung mit Score 0 zählt zum Nenner, ist aber keine reguläre Antwortkategorie.
+
+PBC steht für **punktbiseriale Korrelation**. Der Bereichsscore ist je Person der **Mittelwert der verknüpften Item-Scores** im Bereich; `NA` wird dabei ausgelassen. Der eigene Itemscore bleibt enthalten, es erfolgt **keine Part-whole-Korrektur**. `code_pbc` korreliert diesen Mittelwert mit dem Auftreten des jeweiligen Codes, `category_pbc` mit dem Auftreten der jeweiligen Kategorie. Positive Werte bedeuten häufigeres Auftreten bei höheren Bereichsscores, negative bei niedrigeren. Fehlende Variation kann zu `NA` führen.
+
+Die Fallbasis unterscheidet sich: Codekorrelationen berücksichtigen auch Missing-Codes, Kategorie-Korrelationen nur Antworten mit `code_id >= 0`. Bei U101 ergeben Code 1 und Kategorie A deshalb leicht verschiedene Werte: etwa **0,309** bei 39 Fällen und **0,312** bei 38 Fällen. Bei abgeleiteten Variablen ohne Antwortkategorien können die `category_*`-Spalten `NA` enthalten. Die kleine synthetische Studie zeigt den Rechenweg; sie erlaubt keine belastbare empirische Itembewertung.
+
+`psychometrics.rds` erhält alle Datentypen. Beim Rückimport der vollständigen CSV bleibt die führende Null von `item_id` mit einer expliziten Zeichenvariable erhalten:
+
+```r
+read.csv2("Daten/Ergebnisse/psychometrics.csv", skip = 1,
+          fileEncoding = "UTF-16LE", colClasses = c(item_id = "character"))
+```
+
+
 
 ### 2.7 Skalierungsdatensatz erstellen und exportieren
 

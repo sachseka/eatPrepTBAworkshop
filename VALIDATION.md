@@ -7,15 +7,15 @@ Browserprüfung sind erfolgreich abgeschlossen.
 
 - Vier R-Prüfskripte erfolgreich: Rechenaufgabe, vollständige Aufbereitung,
   Ausführung der Folienblöcke sowie Log- und Excel-Ergebnisse.
-- 49 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
-  151 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
-- 96 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
+- 52 lokale Folien-Codeblöcke in ihrer Reihenfolge ausgeführt;
+  160 eingebettete Abschnitte in Folien, Handout und Vorbereitung mit den R-Dateien abgeglichen.
+- 103 Codebereiche über eindeutige Textanker in `scripts/snippets.json` geprüft;
   die R-Skripte benötigen keine technischen Abschnittsmarker mehr.
 - Kategorie-, Code- und Scorehäufigkeiten des MC-Beispiels geprüft.
 - 26 verwendete Paketfunktionen statisch geprüft, keine Argumentprobleme.
-- 96 Folien und 96 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
+- 103 Folien und 103 PDF-Seiten; keine Inhalts- oder Codeüberläufe,
   JavaScript-Fehler, fehlgeschlagenen Ressourcen oder Navigationsprobleme.
-- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 95 PDF-Seiten
+- Titelfolie ohne Kapitelanzeige und Footer; die übrigen 102 PDF-Seiten
   enthalten die Abschnittsnavigation.
 - Einstieg und drei Arbeitsblöcke in der Navigation; drei Ausführungsphasen
   von ca. zehn Minuten, jeweils unmittelbar gefolgt von „Fragen?“.
@@ -55,10 +55,23 @@ Browserprüfung sind erfolgreich abgeschlossen.
   korrekt und erhält Umlaute sowie numerische Werte. Keine bestehenden
   Arbeitsmappen oder Excel-Einstellungen wurden verändert.
 - Die echten Exporte wurden zusätzlich vollständig in Excel mit ihren
-  CSV-Quelldaten verglichen: `psychometrics.csv` 25 × 8,
+  CSV-Quelldaten verglichen: `psychometrics.csv` 37 × 21,
   `scaling_data.csv` 39 × 11 und `log_unit_times.csv` 1 × 10
   (jeweils ohne Überschrift). Scores, Wahrscheinlichkeiten und Zeiten sind
   Zahlen; vollständige Itemkennungen wie `U101` bleiben erhalten.
+- `psychometrics.csv` exportiert alle Spalten und Kategoriezeilen der
+  Kennwertetabelle, einschließlich der Basisvariablen ohne eigene Item-ID.
+  `psychometrics.rds` bewahrt zusätzlich die ursprünglichen Datentypen.
+  Die lokale Itemnummer `01` bleibt beim CSV-Rückimport mit
+  `colClasses = c(item_id = "character")` erhalten; Excel liest sie als Zahl.
+- Nennerbeispiel U501 geprüft: 20 vorgesehene Fälle, 19 mit Score ungleich
+  `NA`; sechs richtige Antworten ergeben 6/20 bzw. 6/19. Kategorie B ergibt
+  entsprechend 7/20 bzw. 7/19. Wiederholte Codezeilen bleiben für die
+  Kategorieauswertung erhalten und werden nur für Codeauszüge verdichtet.
+- PBC am installierten Funktionscode und durch unabhängige Nachrechnung
+  geprüft: U101/Code 1 rund 0,309 bei 39 Fällen, Kategorie A rund 0,312 bei
+  38 Fällen. Der Vergleichsscore ist der mittlere Itemscore im Bereich,
+  einschließlich des betrachteten Items; Kategorien schließen Missing-Codes aus.
 - Alle erzeugten Dateien liegen unter `Daten/Ergebnisse/`. Die nummerierten
   RDS-Dateien 01–05 gehören zu derselben Studie und enden beim breiten
   Skalierungsdatensatz. Dieser enthält drei ursprüngliche Testcenter-Kennungen

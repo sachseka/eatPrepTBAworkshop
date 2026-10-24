@@ -61,14 +61,35 @@ stopifnot(all(score_stats$score_n == c(18, 21)))
 stopifnot(!any(grepl("^score_", names(psychometrics))))
 stopifnot(isTRUE(all.equal(sum(category_stats$category_p_valid), 38 / 39)))
 
-# Der Kennwertexport enthält volle Itemkennungen, keine zusätzlichen Basisvariablen.
+# Der vollständige Export erhält Kennwerte und die ursprüngliche Zeilenstruktur.
 exported_stats <- read.csv2("Daten/Ergebnisse/psychometrics.csv", skip = 1,
-                            fileEncoding = "UTF-16LE")
-stopifnot(setequal(exported_stats$item, item_columns))
-stopifnot(!any(exported_stats$unit_key == "U3" &
-               exported_stats$variable_id %in% c("Q1", "Q2")))
-stopifnot(isTRUE(all.equal(exported_stats, as.data.frame(code_stats),
+                            fileEncoding = "UTF-16LE",
+                            colClasses = c(item_id = "character"))
+expected_stats_columns <- c(
+  "unit_key", "variable_id", "item", "item_id", "variable_source_type",
+  "code_id", "code_type", "code_score", "code_n", "code_n_total",
+  "code_n_valid", "code_p_total", "code_p_valid", "code_pbc", "category_id",
+  "category_label", "category_n", "category_p_total", "category_p_valid",
+  "category_pbc", "domain")
+stopifnot(setequal(names(exported_stats), expected_stats_columns))
+stopifnot(nrow(exported_stats) == 37L, ncol(exported_stats) == 21L)
+stopifnot(setequal(na.omit(exported_stats$item), item_columns))
+stopifnot(any(exported_stats$unit_key == "U3" & is.na(exported_stats$item)))
+stopifnot(isTRUE(all.equal(exported_stats, as.data.frame(psychometrics),
                            check.attributes = FALSE)))
+stopifnot(identical(readRDS("Daten/Ergebnisse/psychometrics.rds"), psychometrics))
+
+# U501: 20 vorgesehene Fälle; Not reached fehlt im Nenner der gültigen Scores.
+stopifnot(all(denominator_stats$code_n_total == 20L),
+          all(denominator_stats$code_n_valid == 19L))
+right <- filter(proportion_stats, code_id == 1)
+stopifnot(right$code_n == 6L, right$code_p_total == 6 / 20,
+          right$code_p_valid == 6 / 19)
+stopifnot(is.na(filter(proportion_stats, code_id == -96)$code_p_valid))
+distractor_b <- filter(category_details, category_id == "B")
+stopifnot(distractor_b$category_n == 7L,
+          distractor_b$category_p_total == 7 / 20,
+          distractor_b$category_p_valid == 7 / 19)
 
 # Der CSV-Export erhält die Werte und die Zuordnung zu den Personen.
 exported <- read.csv2("Daten/Ergebnisse/scaling_data.csv", skip = 1,

@@ -1024,6 +1024,21 @@ design_coded |>
 
 [Das sind Paketvoreinstellungen. Studienspezifische Regeln ausdrücklich festlegen.]{.small}
 
+## Status, Code-Art, Code-ID und Score unterscheiden
+
+**Beispiel: P006 · U5/Q1 nach `complete_design()`**
+
+| Spalte | Aussage | Wert im Beispiel |
+|---|---|---|
+| `code_status` | Technischer Bearbeitungs- bzw. Kodierstatus | `DISPLAYED`: angezeigt |
+| `code_type` | Bedeutung der Bewertung, einschließlich Missing-Art | `MISSING_BY_OMISSION`: ausgelassen |
+| `code_id` | Kennnummer des Codes innerhalb der Variable | `-99` |
+| `code_score` | Zugehörige Punktzahl für die Auswertung | `0` |
+
+Mit der Regel „abschließende Auslassungen als nicht erreicht“ bleibt der Status **`DISPLAYED`**. Die übrigen Felder ändern sich zu **`MISSING_NOT_REACHED`**, **−96** und **`NA`**.
+
+Der Status allein beschreibt damit weder die endgültige Missing-Art noch die Punktzahl. Die Code-ID ist ebenfalls keine Punktzahl.
+
 ## Abschließende Auslassungen umkodieren {.compact-code .object-preview}
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#missing-regeln-vergleichen -->
@@ -1235,9 +1250,7 @@ missing_summary |>
 
 `n_items` zählt vorgesehene Items. Nicht vorgesehene Aufgaben gehen nicht als fehlende Antworten in den Nenner ein.
 
-## Psychometrische Kennwerte berechnen {.compact-code}
-
-Die Bereichszuordnung muss zur eigenen Studie passen.
+## Psychometrische Kennwerte berechnen {.compact-code .object-preview}
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-berechnen -->
 ```{r}
@@ -1248,18 +1261,72 @@ domains$domain <- "Lesen"
 psychometrics <- evaluate_psychometrics(analysis_data, units, domains = domains)
 psychometrics <- add_item_id(psychometrics, units)
 
-code_stats <- psychometrics |>
-  filter(!is.na(item_id)) |>
-  mutate(item = paste0(unit_key, item_id)) |>
-  select(item, unit_key, variable_id, code_id, code_score,
-         code_n, code_p_valid, code_pbc) |>
-  distinct()
+psychometrics <- psychometrics |>
+  mutate(item = if_else(is.na(item_id), NA_character_, paste0(unit_key, item_id))) |>
+  relocate(unit_key, variable_id, item, item_id)
 ```
 <!-- /r-source -->
 
-Die Kennwerte der synthetischen Studie zeigen, wie die Ausgabe zu lesen ist.
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+psychometrics |>
+  filter(item == "U101") |>
+  select(item, code_id, code_n, category_id, category_n) |>
+  head(4) |> print()
+```
+:::
 
-[Zum Skript: 03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R){.script-link}
+Vollständige Ausgabe: **37 Zeilen, 21 Spalten**. Codes wiederholen sich je Antwortkategorie.
+
+## Kennungen und Herkunft der Variablen {.compact-code .object-preview}
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-variablen -->
+```{r}
+#| eval: false
+variable_info <- psychometrics |>
+  filter(unit_key == "U3") |>
+  distinct(unit_key, variable_id, item, item_id, variable_source_type)
+print(variable_info) # Q1/Q2: BASE; TOTAL: SUM_SCORE
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+print(variable_info)
+```
+:::
+
+`unit_key` und `variable_id` identifizieren die Variable. `item_id` ist die Itemnummer aus den Metadaten, `item` die zusammengesetzte Kennung.
+
+**`BASE`:** direkte Antwortvariable. **`SUM_SCORE`:** aus den Scores anderer Variablen abgeleitet. Q1 und Q2 bleiben in der Kennwertetabelle, auch ohne eigene Item-ID.
+
+## Code-ID, Code-Art und Punktzahl {.compact-code .object-preview}
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-codearten -->
+```{r}
+#| eval: false
+code_info <- psychometrics |>
+  filter(item == "U301") |>
+  distinct(code_id, code_type, code_score)
+print(code_info) # Code 1: Teilpunkte; Code 2: volle Punktzahl
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+print(code_info)
+```
+:::
+
+`code_id` bezeichnet den Code; `code_type` beschreibt seine Bedeutung. `code_score` ist die zugehörige Punktzahl.
+
+Bei U301 bedeutet Code 1 **Teilpunkte** (`PARTIAL_CREDIT`), Code 2 **volle Punktzahl** (`FULL_CREDIT`). `RESIDUAL_AUTO` ist hier der automatische Restcode mit 0 Punkten; Missing-Arten stehen ebenfalls in `code_type`.
 
 ## Antwortkategorie, Code und Score
 
@@ -1325,6 +1392,116 @@ print(code_stats_mc)
 Code 0 umfasst B und C: **5 + 12 = 17 Antworten**. Die ungültige Antwort bleibt
 als Code −98 erkennbar. `distinct()` entfernt wiederholte Codezeilen aus der
 gemeinsamen Kategorie- und Codeausgabe.
+
+## Fallzahlen: insgesamt und mit gültigem Score {.compact-code .object-preview}
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-nenner -->
+```{r}
+#| eval: false
+denominator_stats <- psychometrics |>
+  filter(item == "U501") |>
+  distinct(code_id, code_score, code_n, code_n_total, code_n_valid)
+print(denominator_stats) # insgesamt 20 Fälle, davon 19 mit gültigem Score
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+print(denominator_stats)
+```
+:::
+
+**U501:** `code_n` zählt den jeweiligen Code. `code_n_total` zählt alle **20 vorgesehenen Fälle** unter den ausgewählten Personen; `code_n_valid` die **19 Fälle mit Score ungleich `NA`**.
+
+„Valid“ bedeutet hier **vorhandener Score**. Die Auslassung mit Score 0 zählt mit, Not reached mit `NA` nicht.
+
+## Anteile: Der Nenner macht den Unterschied {.compact-code .object-preview}
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-anteile -->
+```{r}
+#| eval: false
+proportion_stats <- psychometrics |>
+  filter(item == "U501") |>
+  distinct(code_id, code_n, code_p_total, code_p_valid)
+print(proportion_stats) # Code 1: 6/20 = 0.30 und 6/19 = 0.316
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+print(proportion_stats)
+```
+:::
+
+**Code 1:** `code_p_total` = 6/20 = **30 %**; `code_p_valid` = 6/19 ≈ **31,6 %**.
+
+Die Spalten enthalten Anteile zwischen 0 und 1. Für einen Code mit `code_score = NA` bleibt auch `code_p_valid` gleich `NA`.
+
+Die wiederholten Codezeilen werden vor der Darstellung mit `distinct()` zusammengefasst.
+
+## Antwortkategorien: Bezeichnungen und Anteile {.compact-code .object-preview}
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-kategoriedetails -->
+```{r}
+#| eval: false
+category_details <- psychometrics |>
+  filter(item == "U501", !is.na(category_id)) |>
+  select(category_id, category_label, category_n,
+         category_p_total, category_p_valid)
+print(category_details)
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+print(category_details)
+```
+:::
+
+`category_id` ist der Antwortwert, `category_label` seine Bezeichnung. `category_n` zählt diese Kategorie.
+
+Auch hier gelten die Nenner **20 insgesamt** und **19 mit gültigem Score**: Distraktor B wurde siebenmal gewählt → `category_p_total` = **35 %**, `category_p_valid` ≈ **36,8 %**.
+
+Bei Variablen ohne solche Antwortkategorien können die `category_*`-Spalten `NA` enthalten.
+
+## PBC: punktbiseriale Korrelation {.compact-code .object-preview}
+
+<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-pbc -->
+```{r}
+#| eval: false
+discrimination_stats <- psychometrics |>
+  filter(item == "U101", !is.na(category_id)) |>
+  select(category_id, code_id, domain, category_pbc, code_pbc)
+print(discrimination_stats)
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+print(discrimination_stats)
+```
+:::
+
+`code_pbc` und `category_pbc` korrelieren das **Auftreten** eines Codes bzw. einer Kategorie mit dem mittleren Itemscore der Person im Bereich `domain`.
+
+## PBC richtig einordnen
+
+- **Vergleichsscore:** mittlerer Score der verknüpften Items im Bereich. Fehlende Scores werden ausgelassen.
+- **Positives Vorzeichen:** Der Code bzw. die Kategorie tritt häufiger bei höheren Bereichsscores auf; bei negativem Vorzeichen häufiger bei niedrigeren.
+- **Keine Part-whole-Korrektur:** Der eigene Itemscore bleibt im Bereichsmittelwert enthalten.
+- **Unterschiedliche Fallbasis:** Codes berücksichtigen auch Missing-Codes; Kategorien nur Antworten mit `code_id >= 0`.
+
+Bei U101: **Code 1 ≈ 0,309** auf Basis von 39 Fällen; **Kategorie A ≈ 0,312** auf Basis von 38 Fällen.
+
+[`evaluate_psychometrics()`: Funktionsreferenz](https://iqb-research.github.io/eatPrepTBA/reference/evaluate_psychometrics.html){.small}
 
 ## Scores: Welche Punktzahlen gehen in die Skalierung? {.compact-code .object-preview}
 
@@ -1405,40 +1582,6 @@ tibble(Personen = nrow(scaling_data), Items = length(item_columns))
 
 Die drei Testcenter-Kennungen bleiben im Datensatz. Die Prüfungen kontrollieren die Personenzahl und numerische Itemspalten.
 
-## Kennwerte und Skalierungsdaten für Excel speichern {.compact-code .object-preview}
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-csv -->
-```{r}
-#| eval: false
-csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(code_stats, csv, row.names = FALSE)
-close(csv)
-```
-<!-- /r-source -->
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#skalierung-csv -->
-```{r}
-#| eval: false
-csv <- file("Daten/Ergebnisse/scaling_data.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(scaling_data, csv, row.names = FALSE)
-close(csv)
-```
-<!-- /r-source -->
-
-::: {.r-console}
-```{r}
-#| eval: true
-#| echo: false
-export_files <- c("scaling_data.csv", "psychometrics.csv")
-data.frame(Datei = export_files,
-           Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |>
-  print(row.names = FALSE)
-```
-:::
-
-**`sep=;` gibt Excel das Trennzeichen vor.** UTF-16LE erhält Umlaute; `write.csv2()` schreibt Dezimalkommas. Zum Wiedereinlesen in R: `read.csv2(pfad, skip = 1, fileEncoding = "UTF-16LE")`.
 
 ## Ergebnisse aus einer durchgehenden Aufbereitung {.compact-code}
 
@@ -1640,16 +1783,6 @@ Fokusdauer gilt pro Session, Bearbeitungszeit pro Unit. Die Session-Fokusdauer l
 
 ## Logergebnisse speichern {.compact-code}
 
-<!-- r-source: Syntaxen/04_logs.R#logs-zeiten-csv -->
-```{r}
-#| eval: false
-csv <- file("Daten/Ergebnisse/log_unit_times.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(times, csv, row.names = FALSE)
-close(csv)
-```
-<!-- /r-source -->
-
 <!-- r-source: Syntaxen/04_logs.R#logs-rds -->
 ```{r}
 #| eval: false
@@ -1795,19 +1928,13 @@ selected_cb |>
 
 Bei U4/TEXT bedeutet Code 2 einen Punkt, Code 1 einen halben Punkt. Die Code-ID ist keine Punktzahl.
 
-## Codebuch als Excel und CSV speichern {.compact-code}
+## Codebuch als Excel speichern {.compact-code}
 
-<!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-excel -->
+<!-- r-source: Syntaxen/05_kodiermanuale.R#codebook-xlsx -->
 ```{r}
 #| eval: false
 writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
                     "Daten/Ergebnisse/codebook.xlsx")
-
-# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
-csv <- file("Daten/Ergebnisse/codebook.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(selected_cb, csv, row.names = FALSE)
-close(csv)
 ```
 <!-- /r-source -->
 
@@ -1830,7 +1957,7 @@ tibble(Datei = basename(codebook_files),
 ```
 :::
 
-Excel enthält die Blätter `Codebuch` und `Auswahl`; die CSV enthält die ausgewählten Units.
+Excel enthält die Blätter `Codebuch` und `Auswahl`. Das Skript speichert die Auswahl außerdem als CSV.
 
 ## Pause und Ausprobieren {.pause .exercise}
 

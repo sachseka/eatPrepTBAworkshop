@@ -446,16 +446,16 @@
         "domains <- distinct(units, unit_key)"
       ],
       "end": [
-        "         code_n, code_p_valid, code_pbc) |>",
-        "  distinct()"
+        "  relocate(unit_key, variable_id, item, item_id)"
       ]
     },
     "kennwerte-vorschau": {
       "start": [
-        "code_stats |>"
+        "psychometrics |>",
+        "  filter(item == \"U101\") |>"
       ],
       "end": [
-        "  select(item, code_id, code_n, code_p_valid, code_pbc) |>",
+        "  select(item, code_id, code_n, category_id, category_n) |>",
         "  head(4) |> print()"
       ]
     },
@@ -583,8 +583,7 @@
         "csv <- file(\"Daten/Ergebnisse/psychometrics.csv\", \"wt\", encoding = \"UTF-16LE\")"
       ],
       "end": [
-        "write.csv2(code_stats, csv, row.names = FALSE)",
-        "close(csv)"
+        "saveRDS(psychometrics, \"Daten/Ergebnisse/psychometrics.rds\")"
       ]
     },
     "missings-berechnen": {
@@ -593,6 +592,54 @@
       ],
       "end": [
         "       n_not_reached, n_by_omission, prop_missing)"
+      ]
+    },
+    "kennwerte-variablen": {
+      "start": [
+        "variable_info <- psychometrics |>"
+      ],
+      "end": [
+        "print(variable_info) # Q1/Q2: BASE; TOTAL: SUM_SCORE"
+      ]
+    },
+    "kennwerte-codearten": {
+      "start": [
+        "code_info <- psychometrics |>"
+      ],
+      "end": [
+        "print(code_info) # Code 1: Teilpunkte; Code 2: volle Punktzahl"
+      ]
+    },
+    "kennwerte-nenner": {
+      "start": [
+        "denominator_stats <- psychometrics |>"
+      ],
+      "end": [
+        "print(denominator_stats) # insgesamt 20 Fälle, davon 19 mit gültigem Score"
+      ]
+    },
+    "kennwerte-anteile": {
+      "start": [
+        "proportion_stats <- psychometrics |>"
+      ],
+      "end": [
+        "print(proportion_stats) # Code 1: 6/20 = 0.30 und 6/19 = 0.316"
+      ]
+    },
+    "kennwerte-kategoriedetails": {
+      "start": [
+        "category_details <- psychometrics |>"
+      ],
+      "end": [
+        "print(category_details)"
+      ]
+    },
+    "kennwerte-pbc": {
+      "start": [
+        "discrimination_stats <- psychometrics |>"
+      ],
+      "end": [
+        "print(discrimination_stats)"
       ]
     }
   },
@@ -767,6 +814,14 @@
       ],
       "end": [
         "       Bytes = file.info(codebook_files)$size) |> print()"
+      ]
+    },
+    "codebook-xlsx": {
+      "start": [
+        "writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),"
+      ],
+      "end": [
+        "                    \"Daten/Ergebnisse/codebook.xlsx\")"
       ]
     }
   },
