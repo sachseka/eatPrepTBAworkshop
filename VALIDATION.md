@@ -21,6 +21,9 @@ Browserprüfung sind erfolgreich abgeschlossen.
   von ca. zehn Minuten, jeweils unmittelbar gefolgt von „Fragen?“.
 - Alle 92 Inhaltslinks der Folien öffnen ein neues Tab; Kapitelsprünge
   bleiben innerhalb der Präsentation.
+- Die öffentliche Materialseite liegt unter
+  https://sachseka.github.io/eatPrepTBAworkshop/; Folien und Downloads
+  werden aus dem geprüften statischen Build auf `gh-pages` bereitgestellt.
 
 ## Dokumentierte Umgebung
 

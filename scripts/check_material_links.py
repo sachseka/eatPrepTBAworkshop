@@ -44,7 +44,12 @@ required = [
 with zipfile.ZipFile(ROOT / 'downloads' / 'WSeatPrepTBA-material.zip') as archive:
     for name in required:
         data = archive.read('WSeatPrepTBA/' + name)
-        if data != (ROOT / name).read_bytes():
+        expected = (ROOT / name).read_bytes()
+        # Git may convert text files to CRLF on a Windows checkout.
+        if Path(name).suffix in {'.R', '.csv', '.lock'}:
+            data = data.replace(b'\r\n', b'\n')
+            expected = expected.replace(b'\r\n', b'\n')
+        if data != expected:
             raise SystemExit(f'Archive content differs: {name}')
     forbidden = ('.git', '.library', 'review', 'integration', '_site', 'workshop_mod.qmd',
                  'workshop_mod2.qmd', 'workshop_mod3.qmd', 'kodiermanual.docx', 'exercises.qmd', 'solutions.qmd', '03_exercises.R')
