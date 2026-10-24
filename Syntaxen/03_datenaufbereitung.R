@@ -73,7 +73,9 @@ coded_auto |>
 codes_manual <- readr::read_csv("Daten/codes_manual.csv",
   col_types = readr::cols(.default = "c", code_id = "i"))
 
-head(codes_manual, 3) |> print(width = 90) # sollte 7 Spalten zeigen
+codes_manual |>
+  select(login_name, value, code_id) |>
+  head(3) |> print(width = 100)
 
 # Ursprüngliche Antworten erneut kodieren, einschließlich Ableitungen.
 coded <- code_responses(responses, units, prepare = TRUE,

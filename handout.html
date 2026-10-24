@@ -1220,7 +1220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p>Die Prüfung richtet sich auf die späteren Itemvariablen und die für ihre Berechnung benötigten Ausgangsvariablen. Die abschließende Missing-Zuweisung folgt erst mit <a href="https://iqb-research.github.io/eatPrepTBA/reference/complete_design.html" target="_blank" rel="noopener noreferrer"><code>complete_design()</code></a>.</p>
-<p>In der Mini-Studie benötigt U4 eine manuelle Bewertung. Die Tabelle der manuellen Codes enthält die Personenkennung, <code>booklet_id</code>, <code>unit_key</code>, <code>variable_id</code> und <code>code_id</code>: genau einen Code pro zu kodierender Antwort. Kennungen werden als Text eingelesen, <code>code_id</code> als Ganzzahl.</p>
+<p>In der Mini-Studie benötigt U4 eine manuelle Bewertung. Die Tabelle der manuellen Codes enthält die Personenkennung, <code>booklet_id</code>, <code>unit_key</code>, <code>variable_id</code> und <code>code_id</code>: genau einen Code pro zu kodierender Antwort. Die zusätzliche Spalte <code>value</code> zeigt den Freitext, den eine Person bewertet hat. Kennungen und Antworttexte werden als Text eingelesen, <code>code_id</code> als Ganzzahl.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-einlesen -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>codes_manual <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"Daten/codes_manual.csv"</span>,</span>
@@ -1230,17 +1230,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Die Personen- und Variablenschlüssel ordnen die manuelle Kategorie der ursprünglichen Antwort zu. Die Punktzahl kommt aus dem Kodierschema.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#manuelle-codes-vorschau -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(codes_manual, <span class="dv">3</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">90</span>) <span class="co"># sollte 7 Spalten zeigen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>codes_manual <span class="sc">|&gt;</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(login_name, value, code_id) <span class="sc">|&gt;</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">100</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 7
-  group_id login_name login_code booklet_id unit_key variable_id code_id
-  &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;         &lt;int&gt;
-1 WS       P001       SYN001     B1         U4       TEXT              1
-2 WS       P002       SYN002     B1         U4       TEXT              2
-3 WS       P003       SYN003     B1         U4       TEXT              0</code></pre>
+<pre><code># A tibble: 3 × 3
+  login_name value                                      code_id
+  &lt;chr&gt;      &lt;chr&gt;                                        &lt;int&gt;
+1 P001       Die Bibliothek ist am Samstag offen.             1
+2 P002       Ja, laut Aushang: Samstag 10 bis 14 Uhr.         2
+3 P003       Nein, am Wochenende ist immer geschlossen.       0</code></pre>
 </div>
 </div>
 <p>Erneut die ursprünglichen <code>responses</code> übergeben. So werden manuelle Codes eingefügt und davon abhängige Variablen neu berechnet. Ohne manuelle Kodierung genügt anstelle dieses Abschnitts <code>coded &lt;- coded_auto</code>.</p>
@@ -2233,8 +2235,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   Datei              Bytes
   &lt;chr&gt;              &lt;dbl&gt;
 1 scaling_data.csv    3164
-2 analysis_long.rds   2401
-3 design_items.rds    2497
+2 analysis_long.rds   2497
+3 design_items.rds    2590
 4 missing_counts.csv   516</code></pre>
 </div>
 </div>
