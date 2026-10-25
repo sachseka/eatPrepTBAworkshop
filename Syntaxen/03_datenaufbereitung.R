@@ -178,9 +178,7 @@ item_data |>
 unresolved <- item_data |>
   filter(code_status %in% c("UNSET", "CODING_INCOMPLETE", "DERIVE_PENDING",
                            "CODING_ERROR", "DERIVE_ERROR",
-                           "INTENDED_INCOMPLETE") |
-         code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
-                          "INTENDED_INCOMPLETE"))
+                           "INTENDED_INCOMPLETE"))
 # Sollte eine leere Tabelle ergeben.
 unresolved |>
   select(login_name, item, code_status, code_type) |>

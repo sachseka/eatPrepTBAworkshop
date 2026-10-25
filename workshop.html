@@ -265,7 +265,7 @@ eatPrepTBA
 <li><a href="downloads/WSeatPrepTBA-material.zip" target="_blank" rel="noopener noreferrer">Materialpaket herunterladen</a>: nur <strong><code>Syntaxen/</code></strong>, <strong><code>Daten/</code></strong> und <strong><code>WSeatPrepTBA.Rproj</code></strong>.</li>
 <li>ZIP vollständig entpacken und <strong><code>WSeatPrepTBA.Rproj</code></strong> in RStudio öffnen.</li>
 </ul>
-<p><strong><a href="Syntaxen/00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></strong> öffnen: Pakete bei Bedarf installieren, dann laden und die Beispieldateien prüfen.</p>
+<p><strong><a href="Syntaxen/00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></strong> öffnen: Pakete bei Bedarf installieren, Versionen abfragen und Pakete laden.</p>
 <p><a href="downloads/workshop.pdf" target="_blank" rel="noopener noreferrer">Folien separat als PDF herunterladen</a></p>
 </section>
 <section id="materialien-und-skripte" class="slide level2 script-table">
@@ -281,7 +281,7 @@ eatPrepTBA
 <tbody>
 <tr class="odd">
 <td><a href="Syntaxen/00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></td>
-<td>Pakete installieren, laden und Dateien prüfen</td>
+<td>Pakete installieren, Versionen abfragen und Pakete laden</td>
 </tr>
 <tr class="even">
 <td><a href="Syntaxen/01_datenabruf.R" target="_blank" rel="noopener noreferrer">01_datenabruf.R</a></td>
@@ -912,7 +912,7 @@ eatPrepTBA
 <h2>Pause und Ausprobieren</h2>
 <p><span class="time">Ca. 10 Minuten</span></p>
 <p><strong>Skripte <a href="Syntaxen/00_installation.R" target="_blank" rel="noopener noreferrer">00</a>, <a href="Syntaxen/01_datenabruf.R" target="_blank" rel="noopener noreferrer">01</a> und <a href="Syntaxen/02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02</a> ansehen.</strong></p>
-<p>In <strong>00</strong> die Pakete laden und Dateien prüfen; Installationszeilen nur bei Bedarf ausführen. Anschließend <strong>02</strong> von oben nach unten ausführen und die Ausgaben ansehen.</p>
+<p>In <strong>00</strong> die Paketversionen abfragen und Pakete laden; Installationszeilen nur bei Bedarf ausführen. Anschließend <strong>02</strong> von oben nach unten ausführen und die Ausgaben ansehen.</p>
 <p><strong>01</strong> bleibt die Abrufvorlage für eigene Zugangsdaten. Offene Fragen für die anschließende Runde festhalten.</p>
 </section>
 <section id="fragen-1" class="slide level2 pause">
@@ -1539,7 +1539,6 @@ eatPrepTBA
 </section>
 <section id="item-ids-unit-kurzname-und-itemnummer" class="slide level2">
 <h2>Item-IDs: Unit-Kurzname und Itemnummer</h2>
-<p><strong>Bildungstrend ab 2027 in TBA · Konvention vom 14.03.2025</strong></p>
 <table class="caption-top">
 <colgroup>
 <col style="width: 20%">
@@ -1690,9 +1689,7 @@ eatPrepTBA
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a>unresolved <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
 <span id="cb65-2"><a></a>  <span class="fu">filter</span>(code_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"UNSET"</span>, <span class="st">"CODING_INCOMPLETE"</span>, <span class="st">"DERIVE_PENDING"</span>,</span>
 <span id="cb65-3"><a></a>                           <span class="st">"CODING_ERROR"</span>, <span class="st">"DERIVE_ERROR"</span>,</span>
-<span id="cb65-4"><a></a>                           <span class="st">"INTENDED_INCOMPLETE"</span>) <span class="sc">|</span></span>
-<span id="cb65-5"><a></a>         code_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"NO_CODING"</span>, <span class="st">"CODING_INCOMPLETE"</span>, <span class="st">"DERIVE_PENDING"</span>,</span>
-<span id="cb65-6"><a></a>                          <span class="st">"INTENDED_INCOMPLETE"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb65-4"><a></a>                           <span class="st">"INTENDED_INCOMPLETE"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -1703,7 +1700,7 @@ eatPrepTBA
 </div>
 </div>
 </div>
-<p>Hier ist die Tabelle leer. Insbesondere <code>NO_CODING</code> (−93) bleibt vor einem Export für zu bewertende Items zu klären; technische Hilfsvariablen können unkodiert bleiben.</p>
+<p>Hier ist die Tabelle leer. Der Filter wählt ausschließlich die sechs genannten Werte von <code>code_status</code> aus; <code>code_type</code> ist kein Auswahlkriterium.</p>
 </section>
 <section id="missing-anteile-je-person" class="slide level2 compact-code object-preview">
 <h2>Missing-Anteile je Person</h2>

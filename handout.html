@@ -233,7 +233,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><a href="Syntaxen/00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a></td>
-<td>Pakete installieren, laden und Dateien prüfen</td>
+<td>Pakete installieren, Versionen abfragen und Pakete laden</td>
 </tr>
 <tr class="even">
 <td><a href="Syntaxen/01_datenabruf.R" target="_blank" rel="noopener noreferrer">01_datenabruf.R</a></td>
@@ -1746,15 +1746,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="offene-kodierungen-klären" class="level3">
 <h3 class="anchored" data-anchor-id="offene-kodierungen-klären">2.5 Offene Kodierungen klären</h3>
-<p>Offene Itemkodierungen und Kodierfehler dürfen nicht unbemerkt in den Skalierungsdatensatz gelangen. Die Tabelle <code>unresolved</code> zeigt die entsprechenden Fälle. Projektspezifische zusätzliche Status benötigen ebenfalls eine Prüfung.</p>
+<p>Die Tabelle <code>unresolved</code> zeigt Itemzeilen mit einem der sechs unten genannten Werte von <code>code_status</code>. <code>code_type</code> ist kein Auswahlkriterium.</p>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#offene-codes-pruefen -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>unresolved <span class="ot">&lt;-</span> item_data <span class="sc">|&gt;</span></span>
 <span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(code_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"UNSET"</span>, <span class="st">"CODING_INCOMPLETE"</span>, <span class="st">"DERIVE_PENDING"</span>,</span>
 <span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"CODING_ERROR"</span>, <span class="st">"DERIVE_ERROR"</span>,</span>
-<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"INTENDED_INCOMPLETE"</span>) <span class="sc">|</span></span>
-<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>         code_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"NO_CODING"</span>, <span class="st">"CODING_INCOMPLETE"</span>, <span class="st">"DERIVE_PENDING"</span>,</span>
-<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>                          <span class="st">"INTENDED_INCOMPLETE"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"INTENDED_INCOMPLETE"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Hier ist die Tabelle leer. Bei eigenen Daten zeigt sie die Itemzeilen, deren Kodierung noch geklärt werden muss.</p>
