@@ -29,7 +29,7 @@ im Browser lesbar.
 ::: {.workshop-card}
 ### Vorbereiten
 
-ZIP entpacken, Pakete bei Bedarf installieren, Versionen und Beispieldateien prüfen. [Zur Vorbereitung](setup.qmd).
+ZIP entpacken, Pakete bei Bedarf installieren, Paketversionen abfragen und Pakete laden. [Zur Vorbereitung](setup.qmd).
 :::
 ::: {.workshop-card}
 ### Nachvollziehen
@@ -70,7 +70,7 @@ Die Skripte bleiben als Vorlage für die Arbeit mit eigenen Daten nutzbar.
 
 | Skript | Zweck |
 |---|---|
-| [00_installation.R](Syntaxen/00_installation.R){download="00_installation.R"} | Installation, Paketversionen und Beispieldateien |
+| [00_installation.R](Syntaxen/00_installation.R){download="00_installation.R"} | Pakete installieren und laden, Paketversionen abfragen |
 | [01_datenabruf.R](Syntaxen/01_datenabruf.R){download="01_datenabruf.R"} | Vorlage für eigene IQB-Studio-/Testcenter-Zugänge |
 | [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R){download="02_daten_verstehen.R"} | JSON, Partial Credit und gespeicherte Codes am kleinen Beispiel |
 | [03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R){download="03_datenaufbereitung.R"} | Vollständige Datenaufbereitung und Datensatzexport |

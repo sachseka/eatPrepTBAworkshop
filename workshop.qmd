@@ -88,7 +88,7 @@ Nach jedem Arbeitsblock: **ca. 10 Minuten zum Ausprobieren**, anschließend Frag
 - [Materialpaket herunterladen](downloads/WSeatPrepTBA-material.zip): nur **`Syntaxen/`**, **`Daten/`** und **`WSeatPrepTBA.Rproj`**.
 - ZIP vollständig entpacken und **`WSeatPrepTBA.Rproj`** in RStudio öffnen.
 
-**[00_installation.R](Syntaxen/00_installation.R)** öffnen: Pakete bei Bedarf installieren, dann laden und die Beispieldateien prüfen.
+**[00_installation.R](Syntaxen/00_installation.R)** öffnen: Pakete bei Bedarf installieren, Versionen abfragen und Pakete laden.
 
 [Folien separat als PDF herunterladen](downloads/workshop.pdf)
 
@@ -99,7 +99,7 @@ Das [Handout](handout.qmd) enthält Code, Ausgaben und Erläuterungen.
 
 | Datei in `Syntaxen/` | Verwendung |
 |---|---|
-| [00_installation.R](Syntaxen/00_installation.R) | Pakete installieren, laden und Dateien prüfen |
+| [00_installation.R](Syntaxen/00_installation.R) | Pakete installieren, Versionen abfragen und Pakete laden |
 | [01_datenabruf.R](Syntaxen/01_datenabruf.R) | Daten aus IQB-Studio und Testcenter beziehen |
 | [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R) | JSON, vorhandene Codes und Rechenaufgabe |
 | [03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R) | Vollständige Aufbereitung der kleinen Studie |
@@ -670,7 +670,7 @@ print(pc_items |> select(login_name, item_id, value, code_id, code_score))
 
 **Skripte [00](Syntaxen/00_installation.R), [01](Syntaxen/01_datenabruf.R) und [02](Syntaxen/02_daten_verstehen.R) ansehen.**
 
-In **00** die Pakete laden und Dateien prüfen; Installationszeilen nur bei Bedarf ausführen. Anschließend **02** von oben nach unten ausführen und die Ausgaben ansehen.
+In **00** die Paketversionen abfragen und Pakete laden; Installationszeilen nur bei Bedarf ausführen. Anschließend **02** von oben nach unten ausführen und die Ausgaben ansehen.
 
 **01** bleibt die Abrufvorlage für eigene Zugangsdaten. Offene Fragen für die anschließende Runde festhalten.
 
@@ -1105,8 +1105,6 @@ distinct(analysis_data, login_name) |> summarise(n_personen = n()) |> print()
 
 ## Item-IDs: Unit-Kurzname und Itemnummer
 
-**Bildungstrend ab 2027 in TBA · Konvention vom 14.03.2025**
-
 | Fach / Schulstufe | Kompetenzbereich | Projekt / Pool | Unitnummer | Itemnummer |
 |:---:|:---:|:---:|:---:|:---:|
 | `D` | `H` | `B` | `001` | `01` |
@@ -1197,9 +1195,7 @@ U3/TOTAL wird ein Item; die Basisvariablen Q1 und Q2 erhalten keine zusätzliche
 unresolved <- item_data |>
   filter(code_status %in% c("UNSET", "CODING_INCOMPLETE", "DERIVE_PENDING",
                            "CODING_ERROR", "DERIVE_ERROR",
-                           "INTENDED_INCOMPLETE") |
-         code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
-                          "INTENDED_INCOMPLETE"))
+                           "INTENDED_INCOMPLETE"))
 ```
 <!-- /r-source -->
 
@@ -1213,7 +1209,7 @@ unresolved |>
 ```
 :::
 
-Hier ist die Tabelle leer. Insbesondere `NO_CODING` (−93) bleibt vor einem Export für zu bewertende Items zu klären; technische Hilfsvariablen können unkodiert bleiben.
+Hier ist die Tabelle leer. Der Filter wählt ausschließlich die sechs genannten Werte von `code_status` aus; `code_type` ist kein Auswahlkriterium.
 
 ## Missing-Anteile je Person {.compact-code .object-preview}
 

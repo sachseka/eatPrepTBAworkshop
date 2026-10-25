@@ -11,8 +11,8 @@ Serverzugänge sind für die lokalen Beispiele nicht erforderlich.
 
 Materialseite, Folien und Downloadpaket zeigen; das entpackte R-Projekt
 öffnen. Die Vorbereitung erfolgt abschnittsweise in `Syntaxen/00_installation.R`:
-Pakete bei Bedarf installieren, Versionen abfragen, Pakete laden und Dateien
-prüfen. Das Materialpaket enthält nur `Syntaxen/`, `Daten/` und die
+Pakete bei Bedarf installieren, Versionen abfragen und Pakete laden.
+Das Materialpaket enthält nur `Syntaxen/`, `Daten/` und die
 Projektdatei. Die PDF-Folien werden separat heruntergeladen.
 
 ## 1. Paket und erste Kodierung
@@ -40,7 +40,7 @@ Die Funktionsreferenz bleibt im Handout verlinkt. Wiederholte vollständige
 Funktionslisten sind im Vortrag nicht erforderlich.
 
 **Pause und Ausprobieren, etwa zehn Minuten:** Skripte `00`, `01` und `02`
-ansehen. In `00` Pakete laden und Dateien prüfen, anschließend `02` ausführen,
+ansehen. In `00` Paketversionen abfragen und Pakete laden, anschließend `02` ausführen,
 sofern noch nicht parallel geschehen. `01` bleibt eine Vorlage für eigene
 Zugänge. Anschließend folgt die Folie **„Fragen?“**.
 

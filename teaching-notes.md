@@ -3,7 +3,7 @@
 ## Vorbereitung
 
 - R-Projekt und `Syntaxen/00_installation.R` öffnen; Abschnitte einzeln ausführen.
-  Nur bei Bedarf installieren, danach Versionen und Beispieldateien prüfen.
+  Nur bei Bedarf installieren, danach Paketversionen abfragen und Pakete laden.
 - eatAutoCode nicht separat laden: Beide Pakete enthalten `code_responses()`;
   für den Workshop wird die Funktion aus eatPrepTBA benötigt.
 - Die lokalen Skripte `02` bis `05` vollständig ausführen.
@@ -41,7 +41,7 @@ Das zusätzliche Beispiel zu `prepare_coded()` bleibt als optionaler
 Abschnitt 8 in Skript `02` und im Handout. Es erhält keine eigene Folie.
 
 **Pause und Ausprobieren, etwa zehn Minuten:** Skripte `00`, `01` und `02`
-ansehen. In `00` Pakete laden und Dateien prüfen, dann `02` ausführen,
+ansehen. In `00` Paketversionen abfragen und Pakete laden, dann `02` ausführen,
 sofern noch nicht parallel geschehen. Skript `01` ist eine Vorlage für
 eigene Zugänge. Anschließend auf der Folie **„Fragen?“** offene Punkte
 sammeln und besprechen.

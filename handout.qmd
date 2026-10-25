@@ -18,7 +18,7 @@ Dieses Handout folgt den drei Arbeitsblöcken des Workshops: Paket und erste Kod
 
 | Skript | Verwendung |
 |---|---|
-| [00_installation.R](Syntaxen/00_installation.R) | Pakete installieren, laden und Dateien prüfen |
+| [00_installation.R](Syntaxen/00_installation.R) | Pakete installieren, Versionen abfragen und Pakete laden |
 | [01_datenabruf.R](Syntaxen/01_datenabruf.R) | Vorlage für den Abruf eigener IQB-Studio- und Testcenter-Daten |
 | [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R) | Units, Kodierschema und Antworten an einer Rechenaufgabe nachvollziehen; gespeicherte Codes optional |
 | [03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R) | Antworten kodieren, Missing-Regeln vergleichen und Skalierungsdaten exportieren |
@@ -1081,7 +1081,7 @@ item_data |>
 
 ### 2.5 Offene Kodierungen klären
 
-Offene Itemkodierungen und Kodierfehler dürfen nicht unbemerkt in den Skalierungsdatensatz gelangen. Die Tabelle `unresolved` zeigt die entsprechenden Fälle. Projektspezifische zusätzliche Status benötigen ebenfalls eine Prüfung.
+Die Tabelle `unresolved` zeigt Itemzeilen mit einem der sechs unten genannten Werte von `code_status`. `code_type` ist kein Auswahlkriterium.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#offene-codes-pruefen -->
 ```{r}
@@ -1089,9 +1089,7 @@ Offene Itemkodierungen und Kodierfehler dürfen nicht unbemerkt in den Skalierun
 unresolved <- item_data |>
   filter(code_status %in% c("UNSET", "CODING_INCOMPLETE", "DERIVE_PENDING",
                            "CODING_ERROR", "DERIVE_ERROR",
-                           "INTENDED_INCOMPLETE") |
-         code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
-                          "INTENDED_INCOMPLETE"))
+                           "INTENDED_INCOMPLETE"))
 ```
 <!-- /r-source -->
 

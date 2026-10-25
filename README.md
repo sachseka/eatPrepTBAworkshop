@@ -19,7 +19,7 @@ keinen Zugang zu IQB-Studio oder Testcenter.
    vollständig entpacken und `WSeatPrepTBA.Rproj` öffnen.
 2. [00_installation.R](Syntaxen/00_installation.R) öffnen und die Abschnitte gemäß
    [Vorbereitung](https://sachseka.github.io/eatPrepTBAworkshop/setup.html) einzeln ausführen: bei Bedarf installieren,
-   dann Versionen abfragen, Pakete laden und Beispieldateien prüfen.
+   dann Versionen abfragen und Pakete laden.
 3. Die passenden R-Skripte mit den [Folien](https://sachseka.github.io/eatPrepTBAworkshop/workshop.html)
    und dem [Handout](https://sachseka.github.io/eatPrepTBAworkshop/handout.html)
    Schritt für Schritt nachvollziehen.
@@ -53,7 +53,7 @@ entstandenen Tabellen.
 
 | Skript | Inhalt |
 |---|---|
-| [00_installation.R](Syntaxen/00_installation.R) | Installation, Paketversionen und Beispieldateien |
+| [00_installation.R](Syntaxen/00_installation.R) | Pakete installieren und laden, Paketversionen abfragen |
 | [01_datenabruf.R](Syntaxen/01_datenabruf.R) | Vorlage für eigene IQB-Studio- und Testcenter-Zugänge |
 | [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R) | JSON, Partial Credit und gespeicherte Codes |
 | [03_datenaufbereitung.R](Syntaxen/03_datenaufbereitung.R) | Antworten bis zum Skalierungsdatensatz aufbereiten |

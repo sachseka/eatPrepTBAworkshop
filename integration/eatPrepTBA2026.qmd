@@ -32,7 +32,7 @@ Arbeitsblöcke ist Zeit zum Ausführen der Skripte und für Fragen vorgesehen.
 
 Einzelne R-Skripte:
 
-- [Installation, Paketversionen und Beispieldateien](eatPrepTBA2026_files/Syntaxen/00_installation.R)
+- [Pakete installieren und laden, Paketversionen abfragen](eatPrepTBA2026_files/Syntaxen/00_installation.R)
 - [Datenabruf mit eigenen Zugängen](eatPrepTBA2026_files/Syntaxen/01_datenabruf.R)
 - [JSON, Partial Credit und gespeicherte Codes](eatPrepTBA2026_files/Syntaxen/02_daten_verstehen.R)
 - [Datenaufbereitung und Skalierungsdatensatz](eatPrepTBA2026_files/Syntaxen/03_datenaufbereitung.R)
