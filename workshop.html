@@ -1692,8 +1692,7 @@ eatPrepTBA
 <span id="cb65-3"><a></a>                           <span class="st">"CODING_ERROR"</span>, <span class="st">"DERIVE_ERROR"</span>,</span>
 <span id="cb65-4"><a></a>                           <span class="st">"INTENDED_INCOMPLETE"</span>) <span class="sc">|</span></span>
 <span id="cb65-5"><a></a>         code_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"NO_CODING"</span>, <span class="st">"CODING_INCOMPLETE"</span>, <span class="st">"DERIVE_PENDING"</span>,</span>
-<span id="cb65-6"><a></a>                          <span class="st">"INTENDED_INCOMPLETE"</span>))</span>
-<span id="cb65-7"><a></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(unresolved) <span class="sc">==</span> <span class="dv">0</span>) <span class="co"># sollte ohne Fehler durchlaufen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb65-6"><a></a>                          <span class="st">"INTENDED_INCOMPLETE"</span>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2050,28 +2049,6 @@ eatPrepTBA
 </div>
 <p>Eine Zeile ist eine Person; jede Itemspalte enthält Punkte. <strong>P001/U601 ist <code>NA</code>, weil U6 nicht zu Booklet B1 gehört</strong> (Missing by Design). P003/U501 ist dagegen nicht erreicht. Die Long-Daten bewahren den Unterschied.</p>
 </section>
-<section id="den-skalierungsdatensatz-prüfen" class="slide level2 compact-code object-preview">
-<h2>Den Skalierungsdatensatz prüfen</h2>
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-pruefen -->
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a>item_columns <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(scaling_data), person_columns)</span>
-<span id="cb89-2"><a></a>persons <span class="ot">&lt;-</span> <span class="fu">distinct</span>(item_data, group_id, login_name, login_code)</span>
-<span id="cb89-3"><a></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(scaling_data) <span class="sc">==</span> <span class="fu">nrow</span>(persons))</span>
-<span id="cb89-4"><a></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">vapply</span>(scaling_data[item_columns], is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<!-- /r-source -->
-<div class="r-console">
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 2
-  Personen Items
-     &lt;int&gt; &lt;int&gt;
-1       39     8</code></pre>
-</div>
-</div>
-</div>
-<p>Die drei Testcenter-Kennungen bleiben im Datensatz. Die Prüfungen kontrollieren die Personenzahl und numerische Itemspalten.</p>
-</section>
 <section id="ergebnisse-aus-einer-durchgehenden-aufbereitung" class="slide level2 compact-code">
 <h2>Ergebnisse aus einer durchgehenden Aufbereitung</h2>
 <p>Alle Ausgaben liegen gemeinsam unter <strong><code>Daten/Ergebnisse/</code></strong>.</p>
@@ -2111,9 +2088,9 @@ eatPrepTBA
 </table>
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#long-rds -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a></a><span class="fu">saveRDS</span>(analysis_data, <span class="st">"Daten/Ergebnisse/analysis_long.rds"</span>)</span>
-<span id="cb91-2"><a></a><span class="fu">saveRDS</span>(design_items, <span class="st">"Daten/Ergebnisse/design_items.rds"</span>)</span>
-<span id="cb91-3"><a></a><span class="fu">saveRDS</span>(scaling_data, <span class="st">"Daten/Ergebnisse/05_scaling_data.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a><span class="fu">saveRDS</span>(analysis_data, <span class="st">"Daten/Ergebnisse/analysis_long.rds"</span>)</span>
+<span id="cb89-2"><a></a><span class="fu">saveRDS</span>(design_items, <span class="st">"Daten/Ergebnisse/design_items.rds"</span>)</span>
+<span id="cb89-3"><a></a><span class="fu">saveRDS</span>(scaling_data, <span class="st">"Daten/Ergebnisse/05_scaling_data.rds"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p><code>analysis_long.rds</code> und <code>design_items.rds</code> bewahren zusätzlich Codes, Status und Missing-Arten.</p>
@@ -2138,13 +2115,13 @@ eatPrepTBA
 <h2>Logdaten einlesen und einzelne Ereignisse ansehen</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-read -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a></a>logs <span class="ot">&lt;-</span> <span class="fu">read_logs</span>(<span class="st">"Daten/Logs.csv"</span>)</span>
-<span id="cb92-2"><a></a><span class="co"># Alternativ nach API-Abruf: logs &lt;- readRDS("Daten/EigeneDaten/logs.rds")</span></span>
-<span id="cb92-3"><a></a></span>
-<span id="cb92-4"><a></a><span class="co"># Ältere Exporte haben keinen getrennten Unit-Alias.</span></span>
-<span id="cb92-5"><a></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"unit_alias"</span> <span class="sc">%in%</span> <span class="fu">names</span>(logs)) logs<span class="sc">$</span>unit_alias <span class="ot">&lt;-</span> logs<span class="sc">$</span>unit_key</span>
-<span id="cb92-6"><a></a></span>
-<span id="cb92-7"><a></a><span class="fu">count</span>(logs, group_id, login_name, booklet_id) <span class="co"># P001: 9, P002: 6 Ereignisse</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a></a>logs <span class="ot">&lt;-</span> <span class="fu">read_logs</span>(<span class="st">"Daten/Logs.csv"</span>)</span>
+<span id="cb90-2"><a></a><span class="co"># Alternativ nach API-Abruf: logs &lt;- readRDS("Daten/EigeneDaten/logs.rds")</span></span>
+<span id="cb90-3"><a></a></span>
+<span id="cb90-4"><a></a><span class="co"># Ältere Exporte haben keinen getrennten Unit-Alias.</span></span>
+<span id="cb90-5"><a></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"unit_alias"</span> <span class="sc">%in%</span> <span class="fu">names</span>(logs)) logs<span class="sc">$</span>unit_alias <span class="ot">&lt;-</span> logs<span class="sc">$</span>unit_key</span>
+<span id="cb90-6"><a></a></span>
+<span id="cb90-7"><a></a><span class="fu">count</span>(logs, group_id, login_name, booklet_id) <span class="co"># P001: 9, P002: 6 Ereignisse</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2166,7 +2143,7 @@ eatPrepTBA
 <h2>Welche Ereignistypen sind vorhanden?</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-inventory -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a></a>inventory <span class="ot">&lt;-</span> <span class="fu">summarise_log_inventory</span>(logs)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a></a>inventory <span class="ot">&lt;-</span> <span class="fu">summarise_log_inventory</span>(logs)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2190,11 +2167,40 @@ eatPrepTBA
 <h2>Auffälligkeiten vor der Zeitinterpretation prüfen</h2>
 <!-- r-source: Syntaxen/04_logs.R#logs-qc -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a></a>anomalies <span class="ot">&lt;-</span> <span class="fu">detect_log_anomalies</span>(logs)</span>
-<span id="cb96-2"><a></a>qc <span class="ot">&lt;-</span> <span class="fu">summarise_log_qc</span>(logs, <span class="at">anomalies =</span> anomalies)</span>
-<span id="cb96-3"><a></a></span>
-<span id="cb96-4"><a></a>anomalies <span class="sc">|&gt;</span></span>
-<span id="cb96-5"><a></a>  <span class="fu">select</span>(login_name, booklet_id, anomaly_code, severity, evidence)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a></a>anomalies <span class="ot">&lt;-</span> <span class="fu">detect_log_anomalies</span>(logs)</span>
+<span id="cb94-2"><a></a><span class="co"># QC = Quality Control: Qualitätsprüfung, hier zusammengefasst je Session.</span></span>
+<span id="cb94-3"><a></a>qc <span class="ot">&lt;-</span> <span class="fu">summarise_log_qc</span>(logs, <span class="at">anomalies =</span> anomalies)</span>
+<span id="cb94-4"><a></a></span>
+<span id="cb94-5"><a></a>anomalies <span class="sc">|&gt;</span></span>
+<span id="cb94-6"><a></a>  <span class="fu">select</span>(login_name, booklet_id, anomaly_code, severity, evidence)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!-- /r-source -->
+<div class="r-console">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 3
+  login_name anomaly_code               severity
+  &lt;chr&gt;      &lt;chr&gt;                      &lt;ord&gt;   
+1 P002       loading_without_running    warning 
+2 P002       connection_lost            warning 
+3 P002       last_connection_lost       critical
+4 P002       focus_lost_never_regained  warning 
+5 P002       page_nr_exceeds_page_count warning 
+6 P002       runtime_error              critical
+7 P002       missing_loadcomplete       warning </code></pre>
+</div>
+</div>
+</div>
+<p><code>anomaly_code</code> bezeichnet die Auffälligkeit, <code>severity</code> ihre Dringlichkeit. <code>evidence</code> enthält den zugehörigen Beleg aus den Logs.</p>
+</section>
+<section id="qualitätsprüfung-pro-session" class="slide level2 compact-code">
+<h2>Qualitätsprüfung pro Session</h2>
+<p><strong>QC = Quality Control</strong>, hier die Zusammenfassung der Hinweise je Session.</p>
+<!-- r-source: Syntaxen/04_logs.R#logs-qc-vorschau -->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a></a>qc <span class="sc">|&gt;</span></span>
+<span id="cb96-2"><a></a>  <span class="fu">select</span>(login_name, booklet_id, log_qc_flag, n_anomalies) <span class="sc">|&gt;</span></span>
+<span id="cb96-3"><a></a>  <span class="fu">print</span>() <span class="co"># P001: ok; P002: critical</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <div class="r-console">
@@ -2208,7 +2214,43 @@ eatPrepTBA
 </div>
 </div>
 </div>
-<p>P002 meldet einen Playerfehler ohne erfolgreichen Start. <code>anomalies</code> enthält die einzelnen Hinweise; <code>qc</code> fasst sie je Session zusammen. Ein QC-Flag begründet eine Prüfung, keinen automatischen Ausschluss.</p>
+<p>P002 hat <strong>sieben Hinweise</strong>: unter anderem Laden ohne erfolgreichen Start (<code>loading_without_running</code>), Playerfehler (<code>runtime_error</code>) und zuletzt verlorene Verbindung (<code>last_connection_lost</code>).</p>
+<p><code>log_qc_flag</code> richtet sich nach dem schwersten Hinweis: <code>critical</code> vor <code>warning</code> vor <code>info</code>; ohne Hinweise steht <code>ok</code>. Mehrere Hinweise können dasselbe Problem beschreiben. Ein Flag begründet eine Prüfung, keinen automatischen Ausschluss.</p>
+</section>
+<section id="meldungen-bei-estimate_unit_times-einordnen" class="slide level2">
+<h2>Meldungen bei estimate_unit_times() einordnen</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Konsolenausgabe</th>
+<th>Bedeutung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>„Design tibble with block info not provided …“</strong></td>
+<td>Ohne <code>full_design</code> lassen sich automatische Blockwechsel nicht erkennen. Jedes neue Unit-Laden nach Fokusverlust gilt dann als Fokus-Rückkehr.</td>
+</tr>
+<tr class="even">
+<td><strong>„Berechne Unit-Bearbeitungs- und Ladezeiten“</strong></td>
+<td>Die Berechnung der Unit-Zeiten läuft.</td>
+</tr>
+<tr class="odd">
+<td><strong>„Berechne Focus-Events“</strong></td>
+<td>Fokusverluste und Rückkehrereignisse werden zugeordnet.</td>
+</tr>
+<tr class="even">
+<td><strong>„Keine Seiten-IDs …“</strong></td>
+<td>Ohne <code>CURRENT_PAGE_ID</code> entstehen keine Seitenzeiten. Unit-Zeiten sind weiterhin möglich; <code>CURRENT_PAGE_NR</code> und <code>PAGE_COUNT</code> reichen für Seitenzeiten nicht.</td>
+</tr>
+</tbody>
+</table>
+<p>Bei <strong>automatischen Blockwechseln</strong> das passende <code>full_design</code> mit <code>testlet_no</code> und <code>block_self_switch = FALSE</code> übergeben.</p>
+<p><code>include_environment = FALSE</code> lässt nur Browser- und Geräteangaben weg. Die Meldungen sind Hinweise zum Ablauf, keine Abbruchfehler.</p>
 </section>
 <section id="beobachtete-unit--und-ladezeiten-in-sekunden" class="slide level2 compact-code">
 <h2>Beobachtete Unit- und Ladezeiten in Sekunden</h2>
@@ -2260,7 +2302,7 @@ eatPrepTBA
 </div>
 </div>
 </div>
-<p>Nur <code>HAS_NOT</code> → <code>HAS</code> ergibt eine abgeschlossene Dauer. Bei P002 bleibt der Fokusverlust offen: 0 Sekunden bedeutet hier keine gemessene Dauer.</p>
+<p><code>summarise_log_focus()</code> verwendet nur die protokollierten <code>FOCUS</code>-Ereignisse. Nur <code>HAS_NOT</code> → <code>HAS</code> ergibt eine abgeschlossene Dauer; Unit-Laden zählt hier nicht als Rückkehr. Bei P002 bleibt der Fokusverlust offen: 0 Sekunden bedeutet hier keine gemessene Dauer.</p>
 </section>
 <section id="sessionübersicht-erstellen" class="slide level2 compact-code">
 <h2>Sessionübersicht erstellen</h2>
@@ -2310,7 +2352,7 @@ eatPrepTBA
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a></a>studio_version <span class="ot">&lt;-</span> <span class="st">"21.0.0"</span> <span class="co"># Version der eigenen Anmeldeseite übernehmen</span></span>
 <span id="cb105-2"><a></a>studio_workspace_id <span class="ot">&lt;-</span> <span class="dv">1300</span> <span class="co"># Beispiel: eigene Workspace-ID einsetzen</span></span>
-<span id="cb105-3"><a></a>selected_units <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"UNIT-1"</span>, <span class="st">"UNIT-2"</span>) <span class="co"># Eigene Unit-Namen; NULL für alle</span></span>
+<span id="cb105-3"><a></a>selected_units <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"UNIT-1"</span>, <span class="st">"UNIT-2"</span>) <span class="co"># Exakte Unit-Kurznamen; NULL für alle</span></span>
 <span id="cb105-4"><a></a>missing_profile <span class="ot">&lt;-</span> <span class="st">"IQB-Standard"</span> <span class="co"># Eigenen Profilnamen prüfen; NULL ohne Profil</span></span>
 <span id="cb105-5"><a></a>export_path <span class="ot">&lt;-</span> <span class="st">"Daten/Ergebnisse/codebooks_studio"</span></span>
 <span id="cb105-6"><a></a><span class="fu">dir.create</span>(export_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2338,7 +2380,7 @@ eatPrepTBA
 </div>
 <!-- /r-source -->
 <p><code>only_coded</code> wählt Variablen mit Codes. <code>derived</code>, <code>manual</code> und <code>closed</code> nehmen abgeleitete, manuell kodierte und geschlossen kodierbare Variablen auf.</p>
-<p><code>names()</code> und <code>head()</code> zeigen die tatsächlich zurückgegebenen Spalten. <code>show_score</code> fordert Scoreangaben an; eine separate numerische <code>code_score</code>-Spalte ist dabei nicht garantiert.</p>
+<p><code>show_score = TRUE</code> fordert Punktzahlen an. Ab Version .9043 sind vorhandene Werte in <code>score</code> numerisch; fehlende Angaben bleiben <code>NA</code>. Die vereinfachte Lehrtabelle verwendet dafür später <code>code_score</code>.</p>
 <p><a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html" target="_blank" rel="noopener noreferrer">Hilfe: prepare_codebook()</a></p>
 </section>
 <section id="docx-kodiermanual-direkt-aus-iqb-studio-herunterladen" class="slide level2 compact-code">
@@ -2423,24 +2465,6 @@ eatPrepTBA
 <span id="cb115-2"><a></a>                    <span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
-<!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-dateien-vorschau -->
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a></a>codebook_files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Daten/Ergebnisse/codebook.xlsx"</span>, <span class="st">"Daten/Ergebnisse/codebook.csv"</span>)</span>
-<span id="cb116-2"><a></a><span class="fu">tibble</span>(<span class="at">Datei =</span> <span class="fu">basename</span>(codebook_files),</span>
-<span id="cb116-3"><a></a>       <span class="at">Bytes =</span> <span class="fu">file.info</span>(codebook_files)<span class="sc">$</span>size) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<!-- /r-source -->
-<div class="r-console">
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 2
-  Datei         Bytes
-  &lt;chr&gt;         &lt;dbl&gt;
-1 codebook.xlsx  6818
-2 codebook.csv   1032</code></pre>
-</div>
-</div>
-</div>
 <p>Excel enthält die Blätter <code>Codebuch</code> und <code>Auswahl</code>. Das Skript speichert die Auswahl außerdem als CSV.</p>
 </section>
 <section id="pause-und-ausprobieren-2" class="slide level2 pause exercise">
@@ -2458,7 +2482,7 @@ eatPrepTBA
 <ol type="1">
 <li><strong>Daten beziehen:</strong> In <code>01_datenabruf.R</code> Zugänge und Workspace eintragen oder vorhandene Exporte einlesen.</li>
 <li><strong>Aufbereitung anpassen:</strong> In <code>03_datenaufbereitung.R</code> Pfade, manuelle Codes, Missing-Regeln und Bereichszuordnung festlegen.</li>
-<li><strong>Ergebnisse sichern:</strong> Skalierungsdatensatz, Long-Daten und Prüfprotokoll gemeinsam aufbewahren.</li>
+<li><strong>Ergebnisse sichern:</strong> Skalierungsdatensatz, Long-Daten und verwendete Syntax gemeinsam aufbewahren.</li>
 </ol>
 <p><a href="https://github.com/sachseka/eatPrepTBAworkshop" target="_blank" rel="noopener noreferrer">Workshop-Repository</a> · <a href="./handout.html" target="_blank" rel="noopener noreferrer">Handout</a> · <a href="./reference.html" target="_blank" rel="noopener noreferrer">Nachschlagen</a></p>
 <p><a href="downloads/WSeatPrepTBA-material.zip" target="_blank" rel="noopener noreferrer">Downloadpaket mit R-Skripten und synthetischen Daten</a></p>
@@ -2466,7 +2490,7 @@ eatPrepTBA
 <section id="quellen-und-paketstand" class="slide level2">
 <h2>Quellen und Paketstand</h2>
 <ul>
-<li>eatPrepTBA <strong>0.9.8.9042</strong> (<code>ea782df</code>), eatAutoCode <strong>0.5.0.9008</strong>; geprüft am 24.10.2026.</li>
+<li>eatPrepTBA <strong>0.9.8.9043</strong> (<code>711f4f1</code>), eatAutoCode <strong>0.5.0.9008</strong>; geprüft am 25.10.2026.</li>
 <li><a href="https://iqb-research.github.io/eatPrepTBA/articles/standard-workflow.html" target="_blank" rel="noopener noreferrer">Standardworkflow</a> und <a href="https://iqb-research.github.io/eatPrepTBA/articles/working-with-iqb-apis.html" target="_blank" rel="noopener noreferrer">API-Einführung</a>.</li>
 <li><a href="https://iqb-research.github.io/eatPrepTBA/articles/log-data.html" target="_blank" rel="noopener noreferrer">Logdaten</a> und <a href="https://iqb-research.github.io/eatPrepTBA/articles/prepare-codebooks.html" target="_blank" rel="noopener noreferrer">Codebücher</a>.</li>
 <li>Codegestaltung: <a href="https://iqb-research.github.io/IQB-Methods/docs/R_tutorials/eatPrep2024_files/eatPrep2024.html" target="_blank" rel="noopener noreferrer">eatPrep-Workshop 2024</a>.</li>

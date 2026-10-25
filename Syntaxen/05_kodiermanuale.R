@@ -26,18 +26,11 @@ selected_cb |>
 
 # 3. Excel und CSV speichern
 
+# Excel enthält zwei Blätter: Codebuch und Auswahl.
 writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
                     "Daten/Ergebnisse/codebook.xlsx")
 
-# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
-csv <- file("Daten/Ergebnisse/codebook.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(selected_cb, csv, row.names = FALSE)
-close(csv)
-
-# Excel enthält zwei Blätter: Codebuch und Auswahl.
-codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
-tibble(Datei = basename(codebook_files),
-       Bytes = file.info(codebook_files)$size) |> print()
+write.csv2(selected_cb, "Daten/Ergebnisse/codebook.csv",
+           row.names = FALSE, na = "")
 
 # Für eigene Daten: prepare_codebook() und DOCX-Download in Skript 06.

@@ -151,8 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#voraussetzungen" id="toc-voraussetzungen" class="nav-link active" data-scroll-target="#voraussetzungen">Voraussetzungen</a></li>
   <li><a href="#material-entpacken" id="toc-material-entpacken" class="nav-link" data-scroll-target="#material-entpacken">1. Material entpacken</a></li>
   <li><a href="#pakete-vorbereiten" id="toc-pakete-vorbereiten" class="nav-link" data-scroll-target="#pakete-vorbereiten">2. Pakete vorbereiten</a></li>
-  <li><a href="#beispieldateien-prüfen" id="toc-beispieldateien-prüfen" class="nav-link" data-scroll-target="#beispieldateien-prüfen">3. Beispieldateien prüfen</a></li>
-  <li><a href="#die-arbeitsskripte-bereitlegen" id="toc-die-arbeitsskripte-bereitlegen" class="nav-link" data-scroll-target="#die-arbeitsskripte-bereitlegen">4. Die Arbeitsskripte bereitlegen</a></li>
+  <li><a href="#die-arbeitsskripte-bereitlegen" id="toc-die-arbeitsskripte-bereitlegen" class="nav-link" data-scroll-target="#die-arbeitsskripte-bereitlegen">3. Die Arbeitsskripte bereitlegen</a></li>
   <li><a href="#wenn-etwas-nicht-klappt" id="toc-wenn-etwas-nicht-klappt" class="nav-link" data-scroll-target="#wenn-etwas-nicht-klappt">Wenn etwas nicht klappt</a></li>
   <li><a href="#nur-für-autorinnen-materialien-rendern" id="toc-nur-für-autorinnen-materialien-rendern" class="nav-link" data-scroll-target="#nur-für-autorinnen-materialien-rendern">Nur für Autor:innen: Materialien rendern</a></li>
   </ul>
@@ -189,67 +188,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="material-entpacken">1. Material entpacken</h2>
 <p>Das <a href="downloads/WSeatPrepTBA-material.zip" target="_blank" rel="noopener noreferrer">Materialpaket</a> vollständig herunterladen und entpacken. Es enthält nur <code>Syntaxen/</code>, <code>Daten/</code> und <code>WSeatPrepTBA.Rproj</code>. Anschließend die Projektdatei und <a href="Syntaxen/00_installation.R" target="_blank" rel="noopener noreferrer">00_installation.R</a> öffnen. Das Arbeitsverzeichnis ist damit der entpackte Projektordner.</p>
 <p>Die <a href="downloads/workshop.pdf" target="_blank" rel="noopener noreferrer">Folien als PDF</a> stehen separat zum Download bereit. <a href="./workshop.html" target="_blank" rel="noopener noreferrer">Folien</a> und <a href="./handout.html" target="_blank" rel="noopener noreferrer">Handout</a> lassen sich direkt im Browser lesen.</p>
-<p>Das Skript abschnittsweise ausführen: Die Installationszeilen werden nur bei Bedarf benötigt. Danach folgen Versionsabfrage, Laden der Pakete und Prüfung der Beispieldateien.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">file.exists</span>(<span class="st">"Daten/Responses.csv"</span>)  <span class="co"># muss TRUE ergeben</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<p>Das Skript abschnittsweise ausführen: Die Installationszeilen werden nur bei Bedarf benötigt. Danach folgen Versionsabfrage und Laden der Pakete.</p>
 </section>
 <section id="pakete-vorbereiten" class="level2">
 <h2 class="anchored" data-anchor-id="pakete-vorbereiten">2. Pakete vorbereiten</h2>
 <p>Der Installationsblock bezieht eatPrepTBA von GitHub und installiert die benötigten Abhängigkeiten. Die Installation sollte vor dem Workshop abgeschlossen sein.</p>
 <!-- r-source: Syntaxen/00_installation.R#pakete-installieren -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pak"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="fu">c</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"iqb-research/eatPrepTBA"</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"readr"</span>, <span class="st">"tibble"</span>, <span class="st">"writexl"</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pak"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="fu">c</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"iqb-research/eatPrepTBA"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"readr"</span>, <span class="st">"tibble"</span>, <span class="st">"writexl"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>Die verwendeten Paketversionen anschließend abfragen:</p>
 <!-- r-source: Syntaxen/00_installation.R#paketversionen -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"eatPrepTBA"</span>)  <span class="co"># Workshopstand: 0.9.8.9042</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"eatAutoCode"</span>) <span class="co"># Workshopstand: 0.5.0.9008</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"eatPrepTBA"</span>)  <span class="co"># Workshopstand: 0.9.8.9043</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"eatAutoCode"</span>) <span class="co"># Workshopstand: 0.5.0.9008</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
-<p>Materialstand 24.10.2026: eatPrepTBA <strong>0.9.8.9042</strong> (Commit <code>ea782df</code>) und eatAutoCode <strong>0.5.0.9008</strong> (Commit <code>54f39a8</code>) mit IQB-Autocoder <strong>5.5.0</strong>. Eine spätere GitHub-Installation kann neuere Versionen liefern. Die genaue Paketumgebung ist in <a href="https://github.com/sachseka/eatPrepTBAworkshop/blob/main/renv.lock" target="_blank" rel="noopener noreferrer"><code>renv.lock</code> im Repository</a> festgehalten.</p>
+<p>Materialstand 25.10.2026: eatPrepTBA <strong>0.9.8.9043</strong> (Commit <code>711f4f1</code>) und eatAutoCode <strong>0.5.0.9008</strong> (Commit <code>54f39a8</code>) mit IQB-Autocoder <strong>5.5.0</strong>. Eine spätere GitHub-Installation kann neuere Versionen liefern. Die genaue Paketumgebung ist in <a href="https://github.com/sachseka/eatPrepTBAworkshop/blob/main/renv.lock" target="_blank" rel="noopener noreferrer"><code>renv.lock</code> im Repository</a> festgehalten.</p>
 <!-- r-source: Syntaxen/00_installation.R#pakete-laden -->
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatPrepTBA) <span class="co"># eatAutoCode wird intern geladen; nicht separat laden.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(writexl)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatPrepTBA) <span class="co"># eatAutoCode wird intern geladen; nicht separat laden.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(writexl)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <!-- /r-source -->
 <p>eatPrepTBA und eatAutoCode haben beide eine Funktion <code>code_responses()</code>. Für den Workshop wird die Funktion aus eatPrepTBA verwendet; eatAutoCode deshalb nicht zusätzlich mit <code>library()</code> laden.</p>
 <p>Die Kodierung läuft lokal. <code>writexl</code> erstellt den Excel-Export; Microsoft Office und Quarto sind dafür nicht erforderlich. Bei einer fehlgeschlagenen Installation die konkrete Fehlermeldung aufbewahren.</p>
 </section>
-<section id="beispieldateien-prüfen" class="level2">
-<h2 class="anchored" data-anchor-id="beispieldateien-prüfen">3. Beispieldateien prüfen</h2>
-<!-- r-source: Syntaxen/00_installation.R#dateien-pruefen -->
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Daten/units.rds"</span>, <span class="st">"Daten/design.rds"</span>, <span class="st">"Daten/Responses.csv"</span>,</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Daten/codes_manual.csv"</span>, <span class="st">"Daten/Logs.csv"</span>, <span class="st">"Daten/codebook.csv"</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Daten/demo-pc-units.rds"</span>, <span class="st">"Daten/demo-pc-responses.csv"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Daten/demo-stored-codes.csv"</span>, <span class="st">"Daten/demo-coding-report.rds"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Daten/demo-metadata-prepared.rds"</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>missing_files <span class="ot">&lt;-</span> files[<span class="sc">!</span><span class="fu">file.exists</span>(files)]</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(missing_files) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Dateien fehlen: "</span>, <span class="fu">paste</span>(missing_files, <span class="at">collapse =</span> <span class="st">", "</span>),</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">". ZIP vollständig entpacken und WSeatPrepTBA.Rproj öffnen."</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Ja, alles da.</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<!-- /r-source -->
-<p>Wenn alle Dateien vorliegen, erscheint <strong>„Ja, alles da.“</strong> Die erste Kodierung und die Prüfung ihres Ergebnisses folgen im Rechenbeispiel von <a href="Syntaxen/02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">02_daten_verstehen.R</a>.</p>
-</section>
 <section id="die-arbeitsskripte-bereitlegen" class="level2">
-<h2 class="anchored" data-anchor-id="die-arbeitsskripte-bereitlegen">4. Die Arbeitsskripte bereitlegen</h2>
+<h2 class="anchored" data-anchor-id="die-arbeitsskripte-bereitlegen">3. Die Arbeitsskripte bereitlegen</h2>
 <p>Die folgenden Skripte lassen sich im geöffneten R-Projekt Zeile für Zeile ausführen:</p>
 <ul>
 <li><a href="Syntaxen/02_daten_verstehen.R" download="02_daten_verstehen.R" target="_blank" rel="noopener noreferrer">JSON, Partial Credit und gespeicherte Codes</a> am kleinen Beispiel.</li>
@@ -301,8 +276,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="nur-für-autorinnen-materialien-rendern" class="level2">
 <h2 class="anchored" data-anchor-id="nur-für-autorinnen-materialien-rendern">Nur für Autor:innen: Materialien rendern</h2>
 <p>Für Änderungen an den Materialien das <a href="https://github.com/sachseka/eatPrepTBAworkshop" target="_blank" rel="noopener noreferrer">Repository</a> herunterladen oder klonen. Die Quarto-Quellen sind nicht im kleinen Materialpaket enthalten. Quarto CLI und Python 3 installieren, zusätzlich <code>knitr</code> und <code>rmarkdown</code> bereitstellen. Python synchronisiert vor dem Rendern die Codeblöcke in Vorbereitung, Folien und Handout mit den R-Skripten. Im Repositoryordner:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Das Handout führt den vollständigen lokalen Workflow aus. Installation und Live-API-Beispiele werden beim Rendern nicht ausgeführt. Die gerenderte Website liegt anschließend in <code>_site/</code>.</p>
 
 

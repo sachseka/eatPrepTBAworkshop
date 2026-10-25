@@ -203,7 +203,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>CSV für deutsches Excel</td>
-<td><a href="https://stat.ethz.ch/R-manual/R-devel/library/utils/html/write.table.html" target="_blank" rel="noopener noreferrer"><code>write.csv2()</code></a> mit <code>row.names = FALSE</code> und vorangestellter Excel-Zeile <code>sep=;</code></td>
+<td><a href="https://stat.ethz.ch/R-manual/R-devel/library/utils/html/write.table.html" target="_blank" rel="noopener noreferrer"><code>write.csv2()</code></a> mit <code>row.names = FALSE</code> und <code>na = ""</code></td>
 </tr>
 <tr class="odd">
 <td>Missings</td>
@@ -320,7 +320,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="tabelle-codebuch-und-kodiermanual" class="level2">
 <h2 class="anchored" data-anchor-id="tabelle-codebuch-und-kodiermanual">Tabelle, Codebuch und Kodiermanual</h2>
 <p>Die lokale Lehrtabelle in <code>Daten/codebook.csv</code> stammt aus den synthetischen Kodierschemata und enthält eine eigene numerische <code>code_score</code>-Spalte. <code>Syntaxen/05_kodiermanuale.R</code> wählt die gewünschten Units aus und schreibt die Tabelle als Excel und CSV.</p>
-<p>Mit einem eigenen IQB-Studio-Zugang liefert <a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html" target="_blank" rel="noopener noreferrer"><code>prepare_codebook()</code></a> eine aufbereitete Tabelle; <a href="https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html" target="_blank" rel="noopener noreferrer"><code>download_codebook()</code></a> speichert beispielsweise das originale DOCX-Kodiermanual. Die Tabellenstruktur des IQB-Studio-Exports kann von der Lehrtabelle abweichen. Optionen wie <code>show_score = TRUE</code> und <code>missings_profile</code> steuern den Inhalt des Exports. Für eigene Aufgaben die Auswahl und die enthaltenen Kodieranweisungen prüfen.</p>
+<p>Mit einem eigenen IQB-Studio-Zugang liefert <a href="https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html" target="_blank" rel="noopener noreferrer"><code>prepare_codebook()</code></a> eine aufbereitete Tabelle; <a href="https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html" target="_blank" rel="noopener noreferrer"><code>download_codebook()</code></a> speichert beispielsweise das originale DOCX-Kodiermanual. <code>show_score = TRUE</code> fordert Punktzahlen an, die ab .9043 in der numerischen Spalte <code>score</code> stehen; fehlende Angaben bleiben <code>NA</code>. Die Lehrtabelle verwendet dafür <code>code_score</code>. <code>unit_keys</code> erwartet die exakten Unit-Kurznamen, <code>NULL</code> wählt alle Units. <code>missings_profile</code> ergänzt das gewählte Missing-Profil. Für eigene Aufgaben die Auswahl und die enthaltenen Kodieranweisungen prüfen.</p>
 </section>
 <section id="screenshots-zum-nachsehen" class="level2">
 <h2 class="anchored" data-anchor-id="screenshots-zum-nachsehen">Screenshots zum Nachsehen</h2>
@@ -405,7 +405,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="https://iqb-research.github.io/IQB-Methods/docs/R_tutorials/eatPrep2024_files/eatPrep2024.html" target="_blank" rel="noopener noreferrer">eatPrep-Workshop 2024 von Karoline Sachse</a></li>
 <li><a href="https://quarto.org/docs/presentations/revealjs/" target="_blank" rel="noopener noreferrer">Quarto: Reveal.js</a></li>
 </ul>
-<p>Materialstand <strong>24.10.2026</strong>: eatPrepTBA <strong>0.9.8.9042 / ea782df</strong>, eatAutoCode <strong>0.5.0.9008 / 54f39a8</strong> und IQB-Autocoder <strong>5.5.0</strong>. Im <a href="https://github.com/sachseka/eatPrepTBAworkshop" target="_blank" rel="noopener noreferrer">Repository</a> enthält <code>renv.lock</code> die genaue Paketumgebung; die durchgeführten Prüfungen stehen dort in <code>VALIDATION.md</code>. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.</p>
+<p>Materialstand <strong>25.10.2026</strong>: eatPrepTBA <strong>0.9.8.9043 / 711f4f1</strong>, eatAutoCode <strong>0.5.0.9008 / 54f39a8</strong> und IQB-Autocoder <strong>5.5.0</strong>. Im <a href="https://github.com/sachseka/eatPrepTBAworkshop" target="_blank" rel="noopener noreferrer">Repository</a> enthält <code>renv.lock</code> die genaue Paketumgebung; die durchgeführten Prüfungen stehen dort in <code>VALIDATION.md</code>. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.</p>
 
 
 </section>

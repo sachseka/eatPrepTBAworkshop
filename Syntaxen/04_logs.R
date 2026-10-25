@@ -29,18 +29,30 @@ inventory |>
 # 3. Auffälligkeiten prüfen
 
 anomalies <- detect_log_anomalies(logs)
+# QC = Quality Control: Qualitätsprüfung, hier zusammengefasst je Session.
 qc <- summarise_log_qc(logs, anomalies = anomalies)
 
 anomalies |>
   select(login_name, booklet_id, anomaly_code, severity, evidence)
+# anomaly_code: Art des Hinweises; severity: Dringlichkeit; evidence: Beleg.
+# P002: loading_without_running bedeutet Laden ohne erfolgreichen Playerstart.
+# runtime_error: Playerfehler; last_connection_lost: Verbindung zuletzt verloren.
 
 qc |>
   select(login_name, booklet_id, log_qc_flag, n_anomalies) |>
   print() # P001: ok; P002: critical
-# Bei P002 startet der Player nicht. QC-Flags vor einem Ausschluss prüfen.
+# n_anomalies zählt Hinweise, nicht unabhängige Fehler. P002 hat sieben Hinweise.
+# critical stammt vom schwersten Hinweis; vor einem Ausschluss Belege prüfen.
 
 # 4. Bearbeitungs- und Ladezeiten je Unit
 
+# Ohne full_design werden automatische Blockwechsel nicht erkannt.
+# Neues Unit-Laden gilt dann nach Fokusverlust als Fokus-Rückkehr.
+# Bei automatischen Blockwechseln: passendes full_design übergeben und
+# block_self_switch = FALSE setzen. "Berechne ..." zeigt den Arbeitsschritt.
+# "Keine Seiten-IDs": Ohne CURRENT_PAGE_ID gibt es keine Seitenzeiten.
+# CURRENT_PAGE_NR und PAGE_COUNT reichen dafür nicht; Unit-Zeiten bleiben möglich.
+# include_environment = FALSE lässt Browser- und Geräteangaben weg.
 unit_times <- estimate_unit_times(logs, include_environment = FALSE)
 
 # Millisekunden in Sekunden umrechnen:
@@ -71,6 +83,7 @@ focus_summary |>
   select(login_name, n_focus_lost, focus_lost_s, has_unresolved_focus_loss) |>
   print() # P001: 2,5 s; P002: offener Fokusverlust
 # Nur abgeschlossene Intervalle (HAS_NOT -> HAS) zählen zur Dauer.
+# summarise_log_focus() nutzt nur FOCUS-Ereignisse, keine Unit-Ladeereignisse.
 # Daher steht bei P002 trotz Fokusverlust eine Summe von 0 Sekunden.
 # Ein Fokusverlust allein belegt keine Unaufmerksamkeit oder Täuschung.
 
@@ -81,26 +94,10 @@ session_overview <- qc |>
   select(all_of(session_keys), log_qc_flag) |>
   left_join(focus_summary, by = session_keys)
 
-# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
-csv <- file("Daten/Ergebnisse/log_inventory.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(inventory, csv, row.names = FALSE)
-close(csv)
-
-csv <- file("Daten/Ergebnisse/log_anomalies.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(anomalies, csv, row.names = FALSE)
-close(csv)
-
-csv <- file("Daten/Ergebnisse/log_unit_times.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(times, csv, row.names = FALSE)
-close(csv)
-
-csv <- file("Daten/Ergebnisse/log_sessions.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(session_overview, csv, row.names = FALSE)
-close(csv)
+write.csv2(inventory, "Daten/Ergebnisse/log_inventory.csv", row.names = FALSE, na = "")
+write.csv2(anomalies, "Daten/Ergebnisse/log_anomalies.csv", row.names = FALSE, na = "")
+write.csv2(times, "Daten/Ergebnisse/log_unit_times.csv", row.names = FALSE, na = "")
+write.csv2(session_overview, "Daten/Ergebnisse/log_sessions.csv", row.names = FALSE, na = "")
 
 saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
              unit_times = unit_times, focus = focus), "Daten/Ergebnisse/log_qc.rds")

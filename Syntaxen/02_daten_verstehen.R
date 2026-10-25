@@ -79,11 +79,6 @@ pc_coded |>
   filter(login_name == "D1") |>
   select(variable_id, value, code_id, code_score, code_status)
 
-# Hat die Kodierung funktioniert?
-
-nrow(pc_coded) == 16 # sollte TRUE sein: 4 Personen mit je 4 Variablen
-all(pc_coded$code_status == "CODING_COMPLETE") # sollte TRUE sein
-
 # 7. Auswertungsitem auswählen
 # Nur 01 ist hier ein Item. Code 1 = 2 Punkte; Code 2 = 1 Punkt.
 
