@@ -15,7 +15,7 @@ title: "Nachschlagen und vertiefen"
 | Kodierung | [`code_responses()`](https://iqb-research.github.io/eatPrepTBA/reference/code_responses.html) |
 | Codebuch und Kodiermanual aus IQB-Studio | [`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html), [`download_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html) |
 | Lokaler Excel-Export | [`writexl::write_xlsx()`](https://docs.ropensci.org/writexl/reference/write_xlsx.html) |
-| CSV für deutsches Excel | [`write.csv2()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/write.table.html) mit `row.names = FALSE` und vorangestellter Excel-Zeile `sep=;` |
+| CSV für deutsches Excel | [`write.csv2()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/write.table.html) mit `row.names = FALSE` und `na = ""` |
 | Missings | [`complete_design()`](https://iqb-research.github.io/eatPrepTBA/reference/complete_design.html) |
 | Missing-Überblick | [`summarise_missings()`](https://iqb-research.github.io/eatPrepTBA/reference/summarise_missings.html) |
 | Item-Verknüpfung | [`add_item_id()`](https://iqb-research.github.io/eatPrepTBA/reference/add_item_id.html) |
@@ -63,7 +63,7 @@ Die beiden Zugangsvorlagen enthalten Beispielangaben und werden für eigene Real
 
 Die lokale Lehrtabelle in `Daten/codebook.csv` stammt aus den synthetischen Kodierschemata und enthält eine eigene numerische `code_score`-Spalte. `Syntaxen/05_kodiermanuale.R` wählt die gewünschten Units aus und schreibt die Tabelle als Excel und CSV.
 
-Mit einem eigenen IQB-Studio-Zugang liefert [`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html) eine aufbereitete Tabelle; [`download_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html) speichert beispielsweise das originale DOCX-Kodiermanual. Die Tabellenstruktur des IQB-Studio-Exports kann von der Lehrtabelle abweichen. Optionen wie `show_score = TRUE` und `missings_profile` steuern den Inhalt des Exports. Für eigene Aufgaben die Auswahl und die enthaltenen Kodieranweisungen prüfen.
+Mit einem eigenen IQB-Studio-Zugang liefert [`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html) eine aufbereitete Tabelle; [`download_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/download_codebook.html) speichert beispielsweise das originale DOCX-Kodiermanual. `show_score = TRUE` fordert Punktzahlen an, die ab .9043 in der numerischen Spalte `score` stehen; fehlende Angaben bleiben `NA`. Die Lehrtabelle verwendet dafür `code_score`. `unit_keys` erwartet die exakten Unit-Kurznamen, `NULL` wählt alle Units. `missings_profile` ergänzt das gewählte Missing-Profil. Für eigene Aufgaben die Auswahl und die enthaltenen Kodieranweisungen prüfen.
 
 ## Screenshots zum Nachsehen
 
@@ -123,4 +123,4 @@ Diese Ergebnisse sind kein direkter Ersatz für den vollständigen Workflow mit 
 - [eatPrep-Workshop 2024 von Karoline Sachse](https://iqb-research.github.io/IQB-Methods/docs/R_tutorials/eatPrep2024_files/eatPrep2024.html)
 - [Quarto: Reveal.js](https://quarto.org/docs/presentations/revealjs/)
 
-Materialstand **24.10.2026**: eatPrepTBA **0.9.8.9042 / ea782df**, eatAutoCode **0.5.0.9008 / 54f39a8** und IQB-Autocoder **5.5.0**. Im [Repository](https://github.com/sachseka/eatPrepTBAworkshop) enthält `renv.lock` die genaue Paketumgebung; die durchgeführten Prüfungen stehen dort in `VALIDATION.md`. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.
+Materialstand **25.10.2026**: eatPrepTBA **0.9.8.9043 / 711f4f1**, eatAutoCode **0.5.0.9008 / 54f39a8** und IQB-Autocoder **5.5.0**. Im [Repository](https://github.com/sachseka/eatPrepTBAworkshop) enthält `renv.lock` die genaue Paketumgebung; die durchgeführten Prüfungen stehen dort in `VALIDATION.md`. Die öffentlich gerenderte Paketdokumentation kann zeitlich davon abweichen. Gestaltung: bereitgestellter IQB-Styleguide vom 12.01.2026, IQB-Präsentationsvorlage, originales Paketlogo und Codegestaltung nach dem eatPrep-Workshop 2024.

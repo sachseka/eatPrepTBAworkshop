@@ -14,13 +14,7 @@ Das [Materialpaket](downloads/WSeatPrepTBA-material.zip) vollständig herunterla
 
 Die [Folien als PDF](downloads/workshop.pdf) stehen separat zum Download bereit. [Folien](workshop.qmd) und [Handout](handout.qmd) lassen sich direkt im Browser lesen.
 
-Das Skript abschnittsweise ausführen: Die Installationszeilen werden nur bei Bedarf benötigt. Danach folgen Versionsabfrage, Laden der Pakete und Prüfung der Beispieldateien.
-
-```{r}
-#| eval: false
-getwd()
-file.exists("Daten/Responses.csv")  # muss TRUE ergeben
-```
+Das Skript abschnittsweise ausführen: Die Installationszeilen werden nur bei Bedarf benötigt. Danach folgen Versionsabfrage und Laden der Pakete.
 
 ## 2. Pakete vorbereiten
 
@@ -42,12 +36,12 @@ Die verwendeten Paketversionen anschließend abfragen:
 <!-- r-source: Syntaxen/00_installation.R#paketversionen -->
 ```{r}
 #| eval: false
-packageVersion("eatPrepTBA")  # Workshopstand: 0.9.8.9042
+packageVersion("eatPrepTBA")  # Workshopstand: 0.9.8.9043
 packageVersion("eatAutoCode") # Workshopstand: 0.5.0.9008
 ```
 <!-- /r-source -->
 
-Materialstand 24.10.2026: eatPrepTBA **0.9.8.9042** (Commit `ea782df`) und eatAutoCode **0.5.0.9008** (Commit `54f39a8`) mit IQB-Autocoder **5.5.0**. Eine spätere GitHub-Installation kann neuere Versionen liefern. Die genaue Paketumgebung ist in [`renv.lock` im Repository](https://github.com/sachseka/eatPrepTBAworkshop/blob/main/renv.lock) festgehalten.
+Materialstand 25.10.2026: eatPrepTBA **0.9.8.9043** (Commit `711f4f1`) und eatAutoCode **0.5.0.9008** (Commit `54f39a8`) mit IQB-Autocoder **5.5.0**. Eine spätere GitHub-Installation kann neuere Versionen liefern. Die genaue Paketumgebung ist in [`renv.lock` im Repository](https://github.com/sachseka/eatPrepTBAworkshop/blob/main/renv.lock) festgehalten.
 
 <!-- r-source: Syntaxen/00_installation.R#pakete-laden -->
 ```{r}
@@ -65,29 +59,7 @@ eatPrepTBA und eatAutoCode haben beide eine Funktion `code_responses()`. Für de
 
 Die Kodierung läuft lokal. `writexl` erstellt den Excel-Export; Microsoft Office und Quarto sind dafür nicht erforderlich. Bei einer fehlgeschlagenen Installation die konkrete Fehlermeldung aufbewahren.
 
-## 3. Beispieldateien prüfen
-
-<!-- r-source: Syntaxen/00_installation.R#dateien-pruefen -->
-```{r}
-#| eval: false
-files <- c("Daten/units.rds", "Daten/design.rds", "Daten/Responses.csv",
-           "Daten/codes_manual.csv", "Daten/Logs.csv", "Daten/codebook.csv",
-           "Daten/demo-pc-units.rds", "Daten/demo-pc-responses.csv",
-           "Daten/demo-stored-codes.csv", "Daten/demo-coding-report.rds",
-           "Daten/demo-metadata-prepared.rds")
-missing_files <- files[!file.exists(files)]
-if (length(missing_files) > 0) {
-  stop("Dateien fehlen: ", paste(missing_files, collapse = ", "),
-       ". ZIP vollständig entpacken und WSeatPrepTBA.Rproj öffnen.")
-} else {
-  cat("Ja, alles da.\n")
-}
-```
-<!-- /r-source -->
-
-Wenn alle Dateien vorliegen, erscheint **„Ja, alles da.“** Die erste Kodierung und die Prüfung ihres Ergebnisses folgen im Rechenbeispiel von [02_daten_verstehen.R](Syntaxen/02_daten_verstehen.R).
-
-## 4. Die Arbeitsskripte bereitlegen
+## 3. Die Arbeitsskripte bereitlegen
 
 Die folgenden Skripte lassen sich im geöffneten R-Projekt Zeile für Zeile ausführen:
 

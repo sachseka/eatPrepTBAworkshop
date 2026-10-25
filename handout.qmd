@@ -14,7 +14,7 @@ source("Syntaxen/02_daten_verstehen.R", encoding = "UTF-8")
 
 Dieses Handout folgt den drei Arbeitsblöcken des Workshops: Paket und erste Kodierung, vollständige Aufbereitung bis zur Skalierung sowie Logs und Codebücher. Die Codeblöcke entsprechen den verteilten R-Skripten. Die Ergebnistabellen werden mit den synthetischen Beispieldaten berechnet; dafür ist kein IQB-Studio- oder Testcenter-Zugang erforderlich.
 
-**Materialstand 24.10.2026:** eatPrepTBA 0.9.8.9042 (`ea782df`), eatAutoCode 0.5.0.9008. R-Grundkenntnisse werden vorausgesetzt. Die [Vorbereitung](setup.qmd) beschreibt Installation, Laden der Pakete und Dateiprüfung.
+**Materialstand 25.10.2026:** eatPrepTBA 0.9.8.9043 (`711f4f1`), eatAutoCode 0.5.0.9008. R-Grundkenntnisse werden vorausgesetzt. Die [Vorbereitung](setup.qmd) beschreibt Installation und Laden der Pakete.
 
 | Skript | Verwendung |
 |---|---|
@@ -510,22 +510,6 @@ pc_coded |>
   select(variable_id, value, code_id, code_score, code_status)
 ```
 
-Die Kodierung lässt sich direkt im Rechenbeispiel prüfen. Beide Ausdrücke sollten `TRUE` ergeben:
-
-<!-- r-source: Syntaxen/02_daten_verstehen.R#pc-kodierung-pruefen -->
-```{r}
-#| eval: false
-nrow(pc_coded) == 16 # sollte TRUE sein: 4 Personen mit je 4 Variablen
-all(pc_coded$code_status == "CODING_COMPLETE") # sollte TRUE sein
-```
-<!-- /r-source -->
-
-```{r}
-#| echo: false
-nrow(pc_coded) == 16
-all(pc_coded$code_status == "CODING_COMPLETE")
-```
-
 [`add_item_id()`](https://iqb-research.github.io/eatPrepTBA/reference/add_item_id.html) ergänzt die Verknüpfung aus den Unit-Metadaten. Hier ist nur `01` ein Auswertungsitem; die drei Basisvariablen bleiben Hilfsvariablen.
 
 <!-- r-source: Syntaxen/02_daten_verstehen.R#pc-items-zuordnen -->
@@ -570,7 +554,7 @@ Welche Variablen als Items gelten, welche Missing-Regeln anzuwenden sind und wel
 
 Der vollständige Aufbereitungsweg verwendet eine **separate synthetische Lesestudie**: 40 vorgesehene Personen, sechs Units und acht Auswertungsitems in zwei Booklets. Sie enthält geschlossene, abgeleitete und manuell kodierte Antworten. Die zuvor gezeigten IQB-Studio-Screenshots gehören zur Rechenaufgabe, nicht zu dieser Lesestudie.
 
-Das Skript legt für alle Ausgaben `Daten/Ergebnisse/` an. Der Ordner ist im Download zunächst nicht enthalten. Die RDS-Dateien `01_responses` bis `05_scaling_data` dokumentieren nacheinander die Aufbereitung derselben Beispielstudie; die letzte Datei enthält den breiten Skalierungsdatensatz. Ergebnis-CSV werden mit `write.csv2()` gespeichert: Semikolon als Trennzeichen, Dezimalkomma und keine zusätzliche Zeilennummernspalte. Die erste Zeile `sep=;` teilt Excel das Trennzeichen mit; UTF-16LE erhält Umlaute. Beim erneuten Einlesen dieser Ergebnisdateien in R wird die erste Zeile übersprungen: `read.csv2(pfad, skip = 1, fileEncoding = "UTF-16LE", na.strings = "")`. Die Eingabedateien im Materialpaket behalten ihr ursprüngliches Format.
+Das Skript legt für alle Ausgaben `Daten/Ergebnisse/` an. Der Ordner ist im Download zunächst nicht enthalten. Die RDS-Dateien `01_responses` bis `05_scaling_data` dokumentieren nacheinander die Aufbereitung derselben Beispielstudie; die letzte Datei enthält den breiten Skalierungsdatensatz. Ergebnis-CSV werden mit `write.csv2()` gespeichert: Semikolon als Trennzeichen, Dezimalkomma und keine zusätzliche Zeilennummernspalte. Mit `na = ""` bleiben fehlende Werte als leere Zellen erhalten. Die Eingabedateien im Materialpaket behalten ihr ursprüngliches Format.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#workflow-start -->
 ```{r}
@@ -1108,7 +1092,6 @@ unresolved <- item_data |>
                            "INTENDED_INCOMPLETE") |
          code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
                           "INTENDED_INCOMPLETE"))
-stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen
 ```
 <!-- /r-source -->
 
@@ -1142,11 +1125,8 @@ missing_summary_used <- summarise_missings(design_items, used_only = TRUE)
 
 select(missing_summary, all_of(person_columns), id_used, n_items,
        n_not_reached, n_by_omission, prop_missing)
-# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
-csv <- file("Daten/Ergebnisse/missing_summary.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(missing_summary, csv, row.names = FALSE)
-close(csv)
+write.csv2(missing_summary, "Daten/Ergebnisse/missing_summary.csv",
+           row.names = FALSE, na = "")
 ```
 <!-- /r-source -->
 
@@ -1227,10 +1207,8 @@ Die Definitionen beziehen sich auf den dokumentierten Paketstand; [Funktionsrefe
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#kennwerte-csv -->
 ```{r}
 #| eval: false
-csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(psychometrics, csv, row.names = FALSE, na="")
-close(csv)
+write.csv2(psychometrics, "Daten/Ergebnisse/psychometrics.csv",
+           row.names = FALSE, na = "")
 saveRDS(psychometrics, "Daten/Ergebnisse/psychometrics.rds")
 ```
 <!-- /r-source -->
@@ -1409,8 +1387,7 @@ Die Fallbasis unterscheidet sich: Codekorrelationen berücksichtigen auch Missin
 `psychometrics.rds` erhält alle Datentypen. Beim Rückimport der vollständigen CSV bleibt die führende Null von `item_id` mit einer expliziten Zeichenvariable erhalten:
 
 ```r
-read.csv2("Daten/Ergebnisse/psychometrics.csv", skip = 1,
-          fileEncoding = "UTF-16LE", na.strings = "",
+read.csv2("Daten/Ergebnisse/psychometrics.csv", na.strings = "",
           colClasses = c(item_id = "character"))
 ```
 
@@ -1448,85 +1425,24 @@ scaling_data |>
   head(4) |> print()
 ```
 
-Die anschließende Prüfung vergleicht die Personenzahl mit den Long-Daten und prüft, ob alle Itemspalten numerisch sind. [`vapply()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/lapply.html) wendet dafür dieselbe Prüfung auf jede Itemspalte an. Eine Listenspalte wäre beispielsweise ein Hinweis auf unaufgelöste Mehrfachwerte.
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-pruefen -->
-```{r}
-#| eval: false
-item_columns <- setdiff(names(scaling_data), person_columns)
-persons <- distinct(item_data, group_id, login_name, login_code)
-stopifnot(nrow(scaling_data) == nrow(persons))
-stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
-```
-<!-- /r-source -->
-
 Die vollständige Tabelle enthält 39 Personen und acht Itemspalten. Mit den drei ursprünglichen Testcenter-Kennungen sind es elf Spalten.
 
 <!-- r-source: Syntaxen/03_datenaufbereitung.R#daten-exportieren -->
 ```{r}
 #| eval: false
-csv <- file("Daten/Ergebnisse/scaling_data.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(scaling_data, csv, row.names = FALSE, na="")
-close(csv)
+write.csv2(scaling_data, "Daten/Ergebnisse/scaling_data.csv",
+           row.names = FALSE, na = "")
 saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
 saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
 saveRDS(scaling_data, "Daten/Ergebnisse/05_scaling_data.rds")
 
 missing_counts <- count(design_coded, id_used, code_type)
-csv <- file("Daten/Ergebnisse/missing_counts.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(missing_counts, csv, row.names = FALSE, na="")
-close(csv)
+write.csv2(missing_counts, "Daten/Ergebnisse/missing_counts.csv",
+           row.names = FALSE, na = "")
 ```
 <!-- /r-source -->
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#export-vorschau -->
-```{r}
-#| eval: false
-export_files <- c("scaling_data.csv", "analysis_long.rds",
-                 "design_items.rds", "missing_counts.csv")
-tibble(Datei = export_files,
-       Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
-```
-<!-- /r-source -->
-
-```{r}
-#| echo: false
-export_files <- c("scaling_data.csv", "analysis_long.rds",
-                  "design_items.rds", "missing_counts.csv")
-tibble(Datei = export_files,
-       Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
-```
 
 `scaling_data.csv` enthält Scores und die ursprünglichen Personenkennungen. `analysis_long.rds` bewahrt Codes, Status und Missing-Arten. `design_items.rds` enthält auch die nicht in die Analyse übernommenen Designpersonen. Die Tabelle `missing_counts.csv` zählt alle Variablen einschließlich Hilfsvariablen; für Itemanteile wird `missing_summary.csv` verwendet.
-
-Zum Export gehören auch Paketversionen, Fallzahlen und die getroffenen Regeln. Nach einer Änderung der Analyseentscheidung das Protokoll entsprechend anpassen.
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#workflow-dokumentieren -->
-```{r}
-#| eval: false
-report <- c(
-  "Workflow erfolgreich ausgeführt; allgemeine Prüfungen bestanden.",
-  paste("eatPrepTBA:", packageVersion("eatPrepTBA")),
-  paste("eatAutoCode:", packageVersion("eatAutoCode")),
-  paste("Units:", nrow(units)),
-  paste("Designzeilen:", nrow(design)),
-  paste("Antwortzeilen:", nrow(responses)),
-  paste("Personen im Export:", nrow(scaling_data)),
-  paste("Itemspalten:", length(item_columns)),
-  "Missing-Regeln: Paketvoreinstellungen; beide NR-Optionen FALSE.",
-  "Auswahl: id_used = TRUE; verknüpfte Itemvariablen.",
-  "Keine offenen Itemkodierungen im exportierten Datensatz.",
-  "Fehlende Werte bleiben NA; Testcenter-Kennungen bleiben im Datensatz.")
-
-writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
-capture.output(sessionInfo(), file = "Daten/Ergebnisse/session-info.txt")
-cat(paste(report, collapse = "\n"), "\n")
-```
-<!-- /r-source -->
-
-Die festgelegten synthetischen Lehrfälle werden separat in `scripts/validate_workflow.R` geprüft. Der exportierte Datensatz ist die Grundlage für die anschließende Skalierung.
 
 ## 3. Logs und Codebücher
 
@@ -1596,12 +1512,13 @@ inventory |>
   head(5) |> print()
 ```
 
-Die Anomalietabelle hält einzelne Auffälligkeiten fest; die QC-Tabelle fasst sie je Session zusammen. Eine Session wird hier durch Personenkennung und Booklet beschrieben.
+Die Anomalietabelle hält einzelne Auffälligkeiten fest; `qc` fasst sie je Session zusammen. **QC steht für Quality Control, also Qualitätsprüfung.** Eine Session wird hier durch Personenkennung und Booklet beschrieben.
 
 <!-- r-source: Syntaxen/04_logs.R#logs-qc -->
 ```{r}
 #| eval: false
 anomalies <- detect_log_anomalies(logs)
+# QC = Quality Control: Qualitätsprüfung, hier zusammengefasst je Session.
 qc <- summarise_log_qc(logs, anomalies = anomalies)
 
 anomalies |>
@@ -1609,7 +1526,19 @@ anomalies |>
 ```
 <!-- /r-source -->
 
-Bei P002 sind Auffälligkeiten gespeichert. Das Flag ist ein Prüfhinweis und keine automatische Ausschlussregel.
+`anomaly_code` benennt die Auffälligkeit, `severity` ihre Dringlichkeit und `evidence` den Beleg aus den Logs. `message` enthält eine ausführlichere englische Erklärung. Im Beispiel treten bei P002 sieben Hinweise auf:
+
+| `anomaly_code` | Bedeutung im Beispiel |
+|---|---|
+| `loading_without_running` | Der Player beginnt zu laden, meldet aber keinen erfolgreichen Start (`RUNNING`). |
+| `connection_lost` | Eine verlorene Testcenter-Verbindung wurde protokolliert. |
+| `last_connection_lost` | Auch der letzte protokollierte Verbindungsstatus lautet `LOST`; keine spätere Wiederherstellung ist belegt. |
+| `focus_lost_never_regained` | Nach dem Fokusverlust fehlt ein späteres `FOCUS = HAS` in derselben Session. |
+| `page_nr_exceeds_page_count` | Seitennummer 2 wurde gemeldet, obwohl die Seitenzahl nur 1 beträgt. |
+| `runtime_error` | Der Player protokolliert einen Laufzeitfehler. |
+| `missing_loadcomplete` | Das Ereignis mit Browser-/Geräteinformationen und anfänglicher Ladezeit fehlt. |
+
+`n_anomalies` zählt Hinweise, nicht voneinander unabhängige Fehler. So beziehen sich `connection_lost` und `last_connection_lost` hier auf dasselbe Verbindungsereignis. Das Session-Flag folgt der höchsten Dringlichkeit: `critical` vor `warning` vor `info`; ohne Hinweise steht `ok`. Bei P002 führen der Playerfehler und der zuletzt verlorene Verbindungsstatus zu `critical`. Vor einem Ausschluss sind die Belege und der Testverlauf zu prüfen.
 
 <!-- r-source: Syntaxen/04_logs.R#logs-qc-vorschau -->
 ```{r}
@@ -1629,6 +1558,17 @@ qc |>
 
 
 ### 3.2 Bearbeitungs- und Ladezeiten
+
+Beim folgenden Aufruf erscheinen vier Konsolenmeldungen. Sie erläutern den Ablauf und sind keine Abbruchfehler:
+
+| Meldung | Bedeutung und Konsequenz |
+|---|---|
+| „Design tibble with block info not provided …“ | Es wurde kein `full_design` übergeben. Ohne Blockinformationen lassen sich automatische Blockwechsel nicht erkennen. Die Funktion wertet deshalb jedes neue Unit-Laden nach einem Fokusverlust als Fokus-Rückkehr. |
+| „Berechne Unit-Bearbeitungs- und Ladezeiten“ | Die Zeitintervalle der Units werden berechnet. |
+| „Berechne Focus-Events“ | Fokusverluste und mögliche Rückkehrereignisse werden den Units zugeordnet. Die Funktion berücksichtigt dafür neben `FOCUS` auch Unit-Ladeereignisse und Seitenwechsel. |
+| „Keine Seiten-IDs; Seiten-Bearbeitungszeiten werden nicht berechnet“ | Die Beispieldaten enthalten keine `CURRENT_PAGE_ID`-Ereignisse. `CURRENT_PAGE_NR` und `PAGE_COUNT` ersetzen diese nicht. Unit-Zeiten können trotzdem berechnet werden. |
+
+Bei automatisch gesteuerten Blockwechseln sollte das passende `full_design` mit `testlet_no` übergeben und `block_self_switch = FALSE` gesetzt werden. Dann gilt ein erkannter automatischer Blockwechsel nicht als Beleg für eine aktive Fokus-Rückkehr. Die Beispielsyntax verwendet die vereinfachte Berechnung ohne Blockdesign. `include_environment = FALSE` steuert nur, ob Browser- und Geräteinformationen angefügt werden.
 
 <!-- r-source: Syntaxen/04_logs.R#logs-times -->
 ```{r}
@@ -1695,9 +1635,9 @@ focus_summary |>
 ```
 
 
-Nur ein beobachteter Wechsel von `HAS_NOT` zurück zu `HAS` ergibt hier eine abgeschlossene Dauer. Bei einem offenen Fokusverlust kann die aufsummierte Dauer 0 sein, obwohl ein Verlust protokolliert wurde. Fokusverluste allein belegen weder Unaufmerksamkeit noch Täuschung.
+`summarise_log_focus()` wertet ausschließlich die protokollierten `FOCUS`-Ereignisse aus. Anders als bei der Fokusberechnung in `estimate_unit_times()` gilt ein Unit-Laden oder Seitenwechsel hier nicht als Rückkehr. Nur ein beobachteter Wechsel von `HAS_NOT` zurück zu `HAS` ergibt eine abgeschlossene Dauer. Bei einem offenen Fokusverlust kann die aufsummierte Dauer 0 sein, obwohl ein Verlust protokolliert wurde. Fokusverluste allein belegen weder Unaufmerksamkeit noch Täuschung.
 
-QC und Fokus werden über die Sessionkennung zusammengeführt. Die Unit-Zeiten werden separat gespeichert, weil sie eine andere Auswertungsebene haben. Die Fokusdauer einer Session darf deshalb nicht von jeder Unit-Zeit abgezogen werden.
+Qualitätsprüfung und Fokus werden über die Sessionkennung zusammengeführt. Die Unit-Zeiten werden separat gespeichert, weil sie eine andere Auswertungsebene haben. Die Fokusdauer einer Session darf deshalb nicht von jeder Unit-Zeit abgezogen werden.
 
 <!-- r-source: Syntaxen/04_logs.R#logs-session -->
 ```{r}
@@ -1712,25 +1652,10 @@ session_overview <- qc |>
 <!-- r-source: Syntaxen/04_logs.R#logs-export -->
 ```{r}
 #| eval: false
-csv <- file("Daten/Ergebnisse/log_inventory.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(inventory, csv, row.names = FALSE)
-close(csv)
-
-csv <- file("Daten/Ergebnisse/log_anomalies.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(anomalies, csv, row.names = FALSE)
-close(csv)
-
-csv <- file("Daten/Ergebnisse/log_unit_times.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(times, csv, row.names = FALSE)
-close(csv)
-
-csv <- file("Daten/Ergebnisse/log_sessions.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(session_overview, csv, row.names = FALSE)
-close(csv)
+write.csv2(inventory, "Daten/Ergebnisse/log_inventory.csv", row.names = FALSE, na = "")
+write.csv2(anomalies, "Daten/Ergebnisse/log_anomalies.csv", row.names = FALSE, na = "")
+write.csv2(times, "Daten/Ergebnisse/log_unit_times.csv", row.names = FALSE, na = "")
+write.csv2(session_overview, "Daten/Ergebnisse/log_sessions.csv", row.names = FALSE, na = "")
 
 saveRDS(list(inventory = inventory, anomalies = anomalies, qc = qc,
              unit_times = unit_times, focus = focus), "Daten/Ergebnisse/log_qc.rds")
@@ -1768,7 +1693,7 @@ Ausgangspunkt für eigene Projekte sind die Kodierschemata in IQB-Studio. Daraus
 #| eval: false
 studio_version <- "21.0.0" # Version der eigenen Anmeldeseite übernehmen
 studio_workspace_id <- 1300 # Beispiel: eigene Workspace-ID einsetzen
-selected_units <- c("UNIT-1", "UNIT-2") # Eigene Unit-Namen; NULL für alle
+selected_units <- c("UNIT-1", "UNIT-2") # Exakte Unit-Kurznamen; NULL für alle
 missing_profile <- "IQB-Standard" # Eigenen Profilnamen prüfen; NULL ohne Profil
 export_path <- "Daten/Ergebnisse/codebooks_studio"
 dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
@@ -1783,7 +1708,7 @@ workspace <- access_workspace(login, ws_id = studio_workspace_id)
 ```
 <!-- /r-source -->
 
-[`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html) erstellt aus den Kodierschemata der gewählten Units eine Codebuchtabelle. `head()` zeigt anschließend deren Aufbau. `show_score = TRUE` fordert Scoreangaben an; eine separate numerische Spalte `code_score` ist in dieser Rückgabe nicht garantiert. Das gewählte Missing-Profil ergänzt Codebeschreibungen und ersetzt keine Scorezuweisung im Aufbereitungsworkflow.
+[`prepare_codebook()`](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html) erstellt aus den Kodierschemata der gewählten Units eine Codebuchtabelle. `head()` zeigt anschließend deren Aufbau. `show_score = TRUE` fordert Scoreangaben an. Ab eatPrepTBA 0.9.8.9043 stehen vorhandene Punktzahlen in der numerischen Spalte `score`; fehlende Angaben bleiben `NA`. Die vereinfachte Lehrtabelle im folgenden lokalen Beispiel nennt diese Spalte `code_score`. Das gewählte Missing-Profil ergänzt Codebeschreibungen und ersetzt keine Scorezuweisung im Aufbereitungsworkflow.
 
 <!-- r-source: Syntaxen/06_kodiermanuale_studio.R#studio-codebook-prepare -->
 ```{r}
@@ -1873,29 +1798,10 @@ Die Excel-Datei enthält das gesamte Codebuch und die Auswahl als zwei Tabellenb
 writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
                     "Daten/Ergebnisse/codebook.xlsx")
 
-# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
-csv <- file("Daten/Ergebnisse/codebook.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(selected_cb, csv, row.names = FALSE)
-close(csv)
+write.csv2(selected_cb, "Daten/Ergebnisse/codebook.csv",
+           row.names = FALSE, na = "")
 ```
 <!-- /r-source -->
-
-<!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-dateien-vorschau -->
-```{r}
-#| eval: false
-codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
-tibble(Datei = basename(codebook_files),
-       Bytes = file.info(codebook_files)$size) |> print()
-```
-<!-- /r-source -->
-
-```{r}
-#| echo: false
-codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
-tibble(Datei = basename(codebook_files),
-       Bytes = file.info(codebook_files)$size) |> print()
-```
 
 ## Mit eigenen Daten weiterarbeiten
 

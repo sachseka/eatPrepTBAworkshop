@@ -75,8 +75,8 @@ Block 1 zeigt außerdem den Kodierschema-Prüfbericht mit `get_coding_report()`
 und die Aufbereitung von IQB-Studio-Metadaten mit `add_metadata()`.
 Dabei können Profildefinitionen oder Vokabulare aus dem Internet nachgeladen
 werden. Das Offlinebeispiel verwendet eine vorbereitete Ausgabe.
-CSV-Ergebnisse werden mit `write.csv2(..., row.names = FALSE)` gespeichert:
-eine vorangestellte `sep=;`-Zeile für Excel, Semikolon als Trennzeichen und Komma als Dezimalzeichen für deutsches Excel.
+CSV-Ergebnisse werden mit `write.csv2(..., row.names = FALSE, na = "")`
+gespeichert: Semikolon als Trennzeichen, Dezimalkomma und leere Missing-Zellen.
 Die mitgelieferten Eingabedateien behalten ihr jeweiliges Exportformat.
 
 ## Materialien neu erzeugen
@@ -120,8 +120,8 @@ die Daten bereits enthalten. Die Arbeitsskripte schreiben nach `Daten/Ergebnisse
 
 ## Datenstand und Quellen
 
-Materialstand: 24.10.2026. Verwendet werden eatPrepTBA 0.9.8.9042
-(Commit `ea782df`), eatAutoCode 0.5.0.9008 (Commit `54f39a8`)
+Materialstand: 25.10.2026. Verwendet werden eatPrepTBA 0.9.8.9043
+(Commit `711f4f1`), eatAutoCode 0.5.0.9008 (Commit `54f39a8`)
 und IQB-Autocoder 5.5.0. Die Installation bezieht den aktuellen GitHub-Stand;
 `renv.lock` im Repository dokumentiert die genaue Paketumgebung des Workshops.
 [VALIDATION.md](VALIDATION.md) beschreibt die durchgeführten Prüfungen.

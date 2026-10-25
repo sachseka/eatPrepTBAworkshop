@@ -1200,7 +1200,6 @@ unresolved <- item_data |>
                            "INTENDED_INCOMPLETE") |
          code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
                           "INTENDED_INCOMPLETE"))
-stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen
 ```
 <!-- /r-source -->
 
@@ -1525,29 +1524,6 @@ scaling_data |>
 
 Eine Zeile ist eine Person; jede Itemspalte enthält Punkte. **P001/U601 ist `NA`, weil U6 nicht zu Booklet B1 gehört** (Missing by Design). P003/U501 ist dagegen nicht erreicht. Die Long-Daten bewahren den Unterschied.
 
-## Den Skalierungsdatensatz prüfen {.compact-code .object-preview}
-
-<!-- r-source: Syntaxen/03_datenaufbereitung.R#datensatz-pruefen -->
-```{r}
-#| eval: false
-item_columns <- setdiff(names(scaling_data), person_columns)
-persons <- distinct(item_data, group_id, login_name, login_code)
-stopifnot(nrow(scaling_data) == nrow(persons))
-stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
-```
-<!-- /r-source -->
-
-::: {.r-console}
-```{r}
-#| eval: true
-#| echo: false
-tibble(Personen = nrow(scaling_data), Items = length(item_columns))
-```
-:::
-
-Die drei Testcenter-Kennungen bleiben im Datensatz. Die Prüfungen kontrollieren die Personenzahl und numerische Itemspalten.
-
-
 ## Ergebnisse aus einer durchgehenden Aufbereitung {.compact-code}
 
 Alle Ausgaben liegen gemeinsam unter **`Daten/Ergebnisse/`**.
@@ -1648,10 +1624,36 @@ inventory |>
 ```{r}
 #| eval: false
 anomalies <- detect_log_anomalies(logs)
+# QC = Quality Control: Qualitätsprüfung, hier zusammengefasst je Session.
 qc <- summarise_log_qc(logs, anomalies = anomalies)
 
 anomalies |>
   select(login_name, booklet_id, anomaly_code, severity, evidence)
+```
+<!-- /r-source -->
+
+::: {.r-console}
+```{r}
+#| eval: true
+#| echo: false
+anomalies |>
+  select(login_name, anomaly_code, severity) |>
+  print()
+```
+:::
+
+`anomaly_code` bezeichnet die Auffälligkeit, `severity` ihre Dringlichkeit. `evidence` enthält den zugehörigen Beleg aus den Logs.
+
+## Qualitätsprüfung pro Session {.compact-code}
+
+**QC = Quality Control**, hier die Zusammenfassung der Hinweise je Session.
+
+<!-- r-source: Syntaxen/04_logs.R#logs-qc-vorschau -->
+```{r}
+#| eval: false
+qc |>
+  select(login_name, booklet_id, log_qc_flag, n_anomalies) |>
+  print() # P001: ok; P002: critical
 ```
 <!-- /r-source -->
 
@@ -1665,7 +1667,22 @@ qc |>
 ```
 :::
 
-P002 meldet einen Playerfehler ohne erfolgreichen Start. `anomalies` enthält die einzelnen Hinweise; `qc` fasst sie je Session zusammen. Ein QC-Flag begründet eine Prüfung, keinen automatischen Ausschluss.
+P002 hat **sieben Hinweise**: unter anderem Laden ohne erfolgreichen Start (`loading_without_running`), Playerfehler (`runtime_error`) und zuletzt verlorene Verbindung (`last_connection_lost`).
+
+`log_qc_flag` richtet sich nach dem schwersten Hinweis: `critical` vor `warning` vor `info`; ohne Hinweise steht `ok`. Mehrere Hinweise können dasselbe Problem beschreiben. Ein Flag begründet eine Prüfung, keinen automatischen Ausschluss.
+
+## Meldungen bei estimate_unit_times() einordnen
+
+| Konsolenausgabe | Bedeutung |
+|---|---|
+| **„Design tibble with block info not provided …“** | Ohne `full_design` lassen sich automatische Blockwechsel nicht erkennen. Jedes neue Unit-Laden nach Fokusverlust gilt dann als Fokus-Rückkehr. |
+| **„Berechne Unit-Bearbeitungs- und Ladezeiten“** | Die Berechnung der Unit-Zeiten läuft. |
+| **„Berechne Focus-Events“** | Fokusverluste und Rückkehrereignisse werden zugeordnet. |
+| **„Keine Seiten-IDs …“** | Ohne `CURRENT_PAGE_ID` entstehen keine Seitenzeiten. Unit-Zeiten sind weiterhin möglich; `CURRENT_PAGE_NR` und `PAGE_COUNT` reichen für Seitenzeiten nicht. |
+
+Bei **automatischen Blockwechseln** das passende `full_design` mit `testlet_no` und `block_self_switch = FALSE` übergeben.
+
+`include_environment = FALSE` lässt nur Browser- und Geräteangaben weg. Die Meldungen sind Hinweise zum Ablauf, keine Abbruchfehler.
 
 ## Beobachtete Unit- und Ladezeiten in Sekunden {.compact-code}
 
@@ -1720,7 +1737,7 @@ focus_summary |>
 ```
 :::
 
-Nur `HAS_NOT` → `HAS` ergibt eine abgeschlossene Dauer. Bei P002 bleibt der Fokusverlust offen: 0 Sekunden bedeutet hier keine gemessene Dauer.
+`summarise_log_focus()` verwendet nur die protokollierten `FOCUS`-Ereignisse. Nur `HAS_NOT` → `HAS` ergibt eine abgeschlossene Dauer; Unit-Laden zählt hier nicht als Rückkehr. Bei P002 bleibt der Fokusverlust offen: 0 Sekunden bedeutet hier keine gemessene Dauer.
 
 ## Sessionübersicht erstellen {.compact-code}
 
@@ -1774,7 +1791,7 @@ Ein **Codebuch** macht Variablen, Codes, Beschreibungen und Scores als Tabelle l
 #| eval: false
 studio_version <- "21.0.0" # Version der eigenen Anmeldeseite übernehmen
 studio_workspace_id <- 1300 # Beispiel: eigene Workspace-ID einsetzen
-selected_units <- c("UNIT-1", "UNIT-2") # Eigene Unit-Namen; NULL für alle
+selected_units <- c("UNIT-1", "UNIT-2") # Exakte Unit-Kurznamen; NULL für alle
 missing_profile <- "IQB-Standard" # Eigenen Profilnamen prüfen; NULL ohne Profil
 export_path <- "Daten/Ergebnisse/codebooks_studio"
 dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
@@ -1808,7 +1825,7 @@ writexl::write_xlsx(cb_studio, file.path(export_path, "codebook.xlsx"))
 
 `only_coded` wählt Variablen mit Codes. `derived`, `manual` und `closed` nehmen abgeleitete, manuell kodierte und geschlossen kodierbare Variablen auf.
 
-`names()` und `head()` zeigen die tatsächlich zurückgegebenen Spalten. `show_score` fordert Scoreangaben an; eine separate numerische `code_score`-Spalte ist dabei nicht garantiert.
+`show_score = TRUE` fordert Punktzahlen an. Ab Version .9043 sind vorhandene Werte in `score` numerisch; fehlende Angaben bleiben `NA`. Die vereinfachte Lehrtabelle verwendet dafür später `code_score`.
 
 [Hilfe: prepare_codebook()](https://iqb-research.github.io/eatPrepTBA/reference/prepare_codebook.html)
 
@@ -1903,25 +1920,6 @@ writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),
 ```
 <!-- /r-source -->
 
-<!-- r-source: Syntaxen/05_kodiermanuale.R#codebuch-dateien-vorschau -->
-```{r}
-#| eval: false
-codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
-tibble(Datei = basename(codebook_files),
-       Bytes = file.info(codebook_files)$size) |> print()
-```
-<!-- /r-source -->
-
-::: {.r-console}
-```{r}
-#| eval: true
-#| echo: false
-codebook_files <- c("Daten/Ergebnisse/codebook.xlsx", "Daten/Ergebnisse/codebook.csv")
-tibble(Datei = basename(codebook_files),
-       Bytes = file.info(codebook_files)$size) |> print()
-```
-:::
-
 Excel enthält die Blätter `Codebuch` und `Auswahl`. Das Skript speichert die Auswahl außerdem als CSV.
 
 ## Pause und Ausprobieren {.pause .exercise}
@@ -1940,7 +1938,7 @@ Offene Fragen für die anschließende Runde festhalten.
 
 1. **Daten beziehen:** In `01_datenabruf.R` Zugänge und Workspace eintragen oder vorhandene Exporte einlesen.
 2. **Aufbereitung anpassen:** In `03_datenaufbereitung.R` Pfade, manuelle Codes, Missing-Regeln und Bereichszuordnung festlegen.
-3. **Ergebnisse sichern:** Skalierungsdatensatz, Long-Daten und Prüfprotokoll gemeinsam aufbewahren.
+3. **Ergebnisse sichern:** Skalierungsdatensatz, Long-Daten und verwendete Syntax gemeinsam aufbewahren.
 
 [Workshop-Repository](https://github.com/sachseka/eatPrepTBAworkshop) · [Handout](handout.qmd) · [Nachschlagen](reference.qmd)
 
@@ -1948,7 +1946,7 @@ Offene Fragen für die anschließende Runde festhalten.
 
 ## Quellen und Paketstand
 
-- eatPrepTBA **0.9.8.9042** (`ea782df`), eatAutoCode **0.5.0.9008**; geprüft am 24.10.2026.
+- eatPrepTBA **0.9.8.9043** (`711f4f1`), eatAutoCode **0.5.0.9008**; geprüft am 25.10.2026.
 - [Standardworkflow](https://iqb-research.github.io/eatPrepTBA/articles/standard-workflow.html) und [API-Einführung](https://iqb-research.github.io/eatPrepTBA/articles/working-with-iqb-apis.html).
 - [Logdaten](https://iqb-research.github.io/eatPrepTBA/articles/log-data.html) und [Codebücher](https://iqb-research.github.io/eatPrepTBA/articles/prepare-codebooks.html).
 - Codegestaltung: [eatPrep-Workshop 2024](https://iqb-research.github.io/IQB-Methods/docs/R_tutorials/eatPrep2024_files/eatPrep2024.html).

@@ -12,6 +12,7 @@ for (start in starts) {
 }
 stopifnot(length(starts) >= 25L)
 eval(parse(text = chunks), envir = .GlobalEnv)
+item_columns <- setdiff(names(scaling_data), c("group_id", "login_name", "login_code"))
 stopifnot(nrow(scaling_data) == 39L, length(item_columns) == 8L,
           file.exists("Daten/Ergebnisse/codebook.xlsx"))
 cat(length(starts), "lokale Folien-Codeblöcke der Reihe nach ausgeführt.\n")

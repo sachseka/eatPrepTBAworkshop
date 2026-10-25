@@ -102,10 +102,9 @@ Vorbereitung, Folien und Handout übernehmen den Code aus den R-Skripten.
 Die Bereiche sind über Textanker in `scripts/snippets.json` zugeordnet;
 technische Markierungen in den Teilnehmer-Skripten entfallen. Die Skripte
 enthalten kurze nummerierte Abschnitte und knappe Kommentare.
-CSV-Ergebnisse werden mit `write.csv2(..., row.names = FALSE)` für deutsches
-Excel exportiert. Eine vorangestellte `sep=;`-Zeile gibt das Trennzeichen vor;
-UTF-16LE erhält Umlaute. Beim Rückimport der Ergebnis-CSV in R ist `skip = 1`
-erforderlich. Eingabedateien behalten ihr ursprüngliches Format.
+CSV-Ergebnisse werden mit `write.csv2(..., row.names = FALSE, na = "")`
+exportiert. Fehlende Werte bleiben als leere Zellen erhalten.
+Eingabedateien behalten ihr ursprüngliches Format.
 Das Paketlogo, lesbare Codeblöcke, berechnete Objektauszüge und die
 Kapitelanzeige unterstützen die Orientierung. Die Titelfolie enthält keine
 Kapitelanzeige. Die Quellen der Abbildungen stehen in `assets/README.md`.

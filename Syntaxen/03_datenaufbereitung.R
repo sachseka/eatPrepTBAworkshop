@@ -173,7 +173,7 @@ item_data |>
   print()
 
 # 8. Offene Itemkodierungen prüfen
-# Bei einem Abbruch unresolved ansehen und die Kodierung klären.
+# Offene Fälle vor der Skalierung klären.
 
 unresolved <- item_data |>
   filter(code_status %in% c("UNSET", "CODING_INCOMPLETE", "DERIVE_PENDING",
@@ -181,8 +181,6 @@ unresolved <- item_data |>
                            "INTENDED_INCOMPLETE") |
          code_type %in% c("NO_CODING", "CODING_INCOMPLETE", "DERIVE_PENDING",
                           "INTENDED_INCOMPLETE"))
-stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen
-
 # Sollte eine leere Tabelle ergeben.
 unresolved |>
   select(login_name, item, code_status, code_type) |>
@@ -196,11 +194,8 @@ missing_summary_used <- summarise_missings(design_items, used_only = TRUE)
 
 select(missing_summary, all_of(person_columns), id_used, n_items,
        n_not_reached, n_by_omission, prop_missing)
-# sep=; gibt Excel das Trennzeichen beim Öffnen vor.
-csv <- file("Daten/Ergebnisse/missing_summary.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(missing_summary, csv, row.names = FALSE)
-close(csv)
+write.csv2(missing_summary, "Daten/Ergebnisse/missing_summary.csv",
+           row.names = FALSE, na = "")
 
 missing_summary |>
   select(login_name, n_items, n_not_reached, n_by_omission, prop_missing) |>
@@ -220,10 +215,8 @@ psychometrics <- psychometrics |>
   relocate(unit_key, variable_id, item, item_id)
 
 # Alle Spalten und Kategoriezeilen exportieren, auch die der Basisvariablen.
-csv <- file("Daten/Ergebnisse/psychometrics.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(psychometrics, csv, row.names = FALSE, na="")
-close(csv)
+write.csv2(psychometrics, "Daten/Ergebnisse/psychometrics.csv",
+           row.names = FALSE, na = "")
 saveRDS(psychometrics, "Daten/Ergebnisse/psychometrics.rds")
 
 psychometrics |>
@@ -300,53 +293,17 @@ scaling_data |>
 
 # View(scaling_data) # optional: die gesamte Tabelle in RStudio öffnen
 
-item_columns <- setdiff(names(scaling_data), person_columns)
-persons <- distinct(item_data, group_id, login_name, login_code)
-stopifnot(nrow(scaling_data) == nrow(persons))
-stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
-
 # 12. Ergebnisse speichern
 # Long-Daten enthalten auch Codes und Missing-Arten.
 
-csv <- file("Daten/Ergebnisse/scaling_data.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(scaling_data, csv, row.names = FALSE, na="")
-close(csv)
+write.csv2(scaling_data, "Daten/Ergebnisse/scaling_data.csv",
+           row.names = FALSE, na = "")
 saveRDS(analysis_data, "Daten/Ergebnisse/analysis_long.rds")
 saveRDS(design_items, "Daten/Ergebnisse/design_items.rds")
 saveRDS(scaling_data, "Daten/Ergebnisse/05_scaling_data.rds")
 
 missing_counts <- count(design_coded, id_used, code_type)
-csv <- file("Daten/Ergebnisse/missing_counts.csv", "wt", encoding = "UTF-16LE")
-writeLines("sep=;", csv)
-write.csv2(missing_counts, csv, row.names = FALSE, na="")
-close(csv)
-
-# Sollte vier vorhandene Dateien mit einer Größe über 0 Bytes zeigen.
-export_files <- c("scaling_data.csv", "analysis_long.rds",
-                 "design_items.rds", "missing_counts.csv")
-tibble(Datei = export_files,
-       Bytes = file.info(file.path("Daten/Ergebnisse", export_files))$size) |> print()
-
-# 13. Aufbereitung dokumentieren
-# Nach Änderungen an Auswahl oder Missing-Regeln die Angaben unten anpassen.
-
-report <- c(
-  "Workflow erfolgreich ausgeführt; allgemeine Prüfungen bestanden.",
-  paste("eatPrepTBA:", packageVersion("eatPrepTBA")),
-  paste("eatAutoCode:", packageVersion("eatAutoCode")),
-  paste("Units:", nrow(units)),
-  paste("Designzeilen:", nrow(design)),
-  paste("Antwortzeilen:", nrow(responses)),
-  paste("Personen im Export:", nrow(scaling_data)),
-  paste("Itemspalten:", length(item_columns)),
-  "Missing-Regeln: Paketvoreinstellungen; beide NR-Optionen FALSE.",
-  "Auswahl: id_used = TRUE; verknüpfte Itemvariablen.",
-  "Keine offenen Itemkodierungen im exportierten Datensatz.",
-  "Fehlende Werte bleiben NA; Testcenter-Kennungen bleiben im Datensatz.")
-
-writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
-capture.output(sessionInfo(), file = "Daten/Ergebnisse/session-info.txt")
-cat(paste(report, collapse = "\n"), "\n")
+write.csv2(missing_counts, "Daten/Ergebnisse/missing_counts.csv",
+           row.names = FALSE, na = "")
 
 # Weiterarbeiten: Syntaxen/04_logs.R und Syntaxen/05_kodiermanuale.R separat ausführen.

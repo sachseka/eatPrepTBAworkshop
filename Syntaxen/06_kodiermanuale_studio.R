@@ -5,7 +5,7 @@ library(eatPrepTBA)
 
 studio_version <- "21.0.0" # Version der eigenen Anmeldeseite übernehmen
 studio_workspace_id <- 1300 # Beispiel: eigene Workspace-ID einsetzen
-selected_units <- c("UNIT-1", "UNIT-2") # Eigene Unit-Namen; NULL für alle
+selected_units <- c("UNIT-1", "UNIT-2") # Exakte Unit-Kurznamen; NULL für alle
 missing_profile <- "IQB-Standard" # Eigenen Profilnamen prüfen; NULL ohne Profil
 export_path <- "Daten/Ergebnisse/codebooks_studio"
 dir.create(export_path, recursive = TRUE, showWarnings = FALSE)
@@ -25,7 +25,8 @@ cb_studio <- prepare_codebook(workspace, unit_keys = selected_units,
 names(cb_studio)
 head(cb_studio)
 writexl::write_xlsx(cb_studio, file.path(export_path, "codebook.xlsx"))
-# Scoreangaben stehen ggf. in der Beschreibung, nicht in einer code_score-Spalte.
+# score enthält numerische Punktzahlen, soweit in IQB-Studio hinterlegt.
+# Fehlende Scores erscheinen in Excel als leere Zellen.
 # Das Profil ergänzt Missing-Codes; es legt keine Auswertungsregeln fest.
 
 # 3. Kodiermanual als DOCX herunterladen

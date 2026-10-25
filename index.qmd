@@ -83,7 +83,7 @@ Die Skripte verwenden die Ordnerstruktur des Materialpakets. `00_installation.R`
 ::: {.callout-note}
 ## Stand der Arbeitsfassung
 
-24.10.2026 · eatPrepTBA 0.9.8.9042 (Commit `ea782df`), eatAutoCode 0.5.0.9008 und IQB-Autocoder 5.5.0. Paketumgebung, Quarto-Quellen und technische Prüfung stehen im [Repository](https://github.com/sachseka/eatPrepTBAworkshop). Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.
+25.10.2026 · eatPrepTBA 0.9.8.9043 (Commit `711f4f1`), eatAutoCode 0.5.0.9008 und IQB-Autocoder 5.5.0. Paketumgebung, Quarto-Quellen und technische Prüfung stehen im [Repository](https://github.com/sachseka/eatPrepTBAworkshop). Der Lehrdatensatz ist vollständig synthetisch. IQB-Studio-Screenshots zeigen zum Teil frühere Oberflächen; eine Live-Demo ist zum Nachvollziehen nicht erforderlich.
 :::
 
 [Zur IQB-Methods-Website](https://iqb-research.github.io/IQB-Methods/)

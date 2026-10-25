@@ -8,6 +8,10 @@ case <- function(person, unit, variable) {
 }
 
 # Umfang der unabhängig festgelegten Mini-Studie.
+item_columns <- setdiff(names(scaling_data), person_columns)
+persons <- distinct(item_data, group_id, login_name, login_code)
+stopifnot(nrow(unresolved) == 0L, nrow(scaling_data) == nrow(persons))
+stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))
 stopifnot(nrow(units) == 6L, nrow(design) == 340L, nrow(responses) == 193L)
 stopifnot(nrow(scaling_data) == 39L, ncol(scaling_data) == 11L)
 stopifnot(length(item_columns) == 8L)
@@ -79,8 +83,7 @@ stopifnot(!any(grepl("^score_", names(psychometrics))))
 stopifnot(isTRUE(all.equal(sum(category_stats$category_p_valid), 38 / 39)))
 
 # Der vollständige Export erhält Kennwerte und die ursprüngliche Zeilenstruktur.
-exported_stats <- read.csv2("Daten/Ergebnisse/psychometrics.csv", skip = 1,
-                            fileEncoding = "UTF-16LE", na.strings = "",
+exported_stats <- read.csv2("Daten/Ergebnisse/psychometrics.csv", na.strings = "",
                             colClasses = c(item_id = "character"))
 expected_stats_columns <- c(
   "unit_key", "variable_id", "item", "item_id", "variable_source_type",
@@ -109,19 +112,31 @@ stopifnot(distractor_b$category_n == 7L,
           distractor_b$category_p_valid == 7 / 19)
 
 # Der CSV-Export erhält die Werte und die Zuordnung zu den Personen.
-exported <- read.csv2("Daten/Ergebnisse/scaling_data.csv", skip = 1,
-                      fileEncoding = "UTF-16LE")
+exported <- read.csv2("Daten/Ergebnisse/scaling_data.csv", na.strings = "")
 stopifnot(identical(names(exported), names(scaling_data)))
 stopifnot(isTRUE(all.equal(as.data.frame(exported), as.data.frame(scaling_data),
                            check.attributes = FALSE)))
-csv_connection <- file("Daten/Ergebnisse/scaling_data.csv", encoding = "UTF-16LE")
-csv_lines <- readLines(csv_connection)
-close(csv_connection)
-stopifnot(csv_lines[1] == "sep=;", grepl(';', csv_lines[2], fixed = TRUE),
+csv_lines <- readLines("Daten/Ergebnisse/scaling_data.csv")
+stopifnot(grepl(';', csv_lines[1], fixed = TRUE),
           any(grepl('0,5', csv_lines, fixed = TRUE)))
 stopifnot(identical(readRDS("Daten/Ergebnisse/05_scaling_data.rds"), scaling_data))
 stopifnot(!anyDuplicated(scaling_data[person_columns]))
 
-report <- c(report, "Workshop-Lehrfälle und Export erfolgreich geprüft.")
+# Fehlende Werte erscheinen in allen CSV-Ausgaben als leere Zellen.
+csv_tables <- list(missing_summary = missing_summary, psychometrics = psychometrics,
+                   scaling_data = scaling_data, missing_counts = missing_counts)
+for (name in names(csv_tables)) {
+  csv_path <- file.path("Daten/Ergebnisse", paste0(name, ".csv"))
+  cells <- read.csv2(csv_path, colClasses = "character", na.strings = character())
+  expected <- as.data.frame(csv_tables[[name]])
+  stopifnot(identical(dim(cells), dim(expected)), identical(names(cells), names(expected)))
+  stopifnot(all(as.matrix(cells)[is.na(expected)] == ""))
+}
+
+report <- c("Workshop-Lehrfälle und Export erfolgreich geprüft.",
+            paste("eatPrepTBA:", packageVersion("eatPrepTBA")),
+            paste("Personen im Export:", nrow(scaling_data)),
+            paste("Itemspalten:", length(item_columns)))
 writeLines(report, "Daten/Ergebnisse/validation.txt", useBytes = TRUE)
+capture.output(sessionInfo(), file = "Daten/Ergebnisse/session-info.txt")
 cat("Workshop-Lehrfälle und Export erfolgreich geprüft.\n")

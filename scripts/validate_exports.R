@@ -2,10 +2,8 @@
 # Aus dem Projektordner nach 04_logs.R und 05_kodiermanuale.R ausführen.
 library(dplyr)
 
-times <- read.csv2("Daten/Ergebnisse/log_unit_times.csv", skip = 1,
-                    fileEncoding = "UTF-16LE")
-sessions <- read.csv2("Daten/Ergebnisse/log_sessions.csv", skip = 1,
-                       fileEncoding = "UTF-16LE")
+times <- read.csv2("Daten/Ergebnisse/log_unit_times.csv", na.strings = "")
+sessions <- read.csv2("Daten/Ergebnisse/log_sessions.csv", na.strings = "")
 log_results <- readRDS("Daten/Ergebnisse/log_qc.rds")
 
 # P001: 12.100 - 450 = 11.650 ms; Laden: 450 - 100 = 350 ms.
@@ -37,31 +35,25 @@ stopifnot(nrow(cb_full) == 22L, nrow(cb_selection) == 10L,
                     c(1, 0.5, 0)))
 
 # CSV bleibt ohne Zeilennummern; Dezimalkomma und Beschriftungen bleiben erhalten.
-cb_csv <- read.csv2("Daten/Ergebnisse/codebook.csv", skip = 1,
-                    fileEncoding = "UTF-16LE",
+cb_csv <- read.csv2("Daten/Ergebnisse/codebook.csv", na.strings = "",
                     colClasses = c(code_id = "character"))
 stopifnot(identical(names(cb_csv), names(cb_selection)),
           isTRUE(all.equal(cb_csv, as.data.frame(cb_selection),
                            check.attributes = FALSE)))
-csv_connection <- file("Daten/Ergebnisse/log_unit_times.csv", encoding = "UTF-16LE")
-csv_lines <- readLines(csv_connection)
-close(csv_connection)
-stopifnot(identical(csv_lines[1], "sep=;"),
-          grepl(';', csv_lines[2], fixed = TRUE),
+csv_lines <- readLines("Daten/Ergebnisse/log_unit_times.csv")
+stopifnot(grepl(';', csv_lines[1], fixed = TRUE),
           any(grepl('11,65', csv_lines, fixed = TRUE)))
 
-# Jede CSV für Excel erhält genau eine Trennzeichenzeile und einen UTF-16-BOM.
-csv_paths <- file.path("Daten/Ergebnisse",
-                       c("log_inventory.csv", "log_anomalies.csv",
-                         "log_unit_times.csv", "log_sessions.csv", "codebook.csv"))
-for (csv_path in csv_paths) {
-  csv_connection <- file(csv_path, encoding = "UTF-16LE")
-  csv_header <- readLines(csv_connection, n = 2)
-  close(csv_connection)
-  csv_bytes <- readBin(csv_path, what = "raw", n = 2)
-  stopifnot(identical(csv_header[1], "sep=;"),
-            length(csv_header) == 2L,
-            identical(csv_bytes, as.raw(c(255, 254))))
+# Fehlende Werte erscheinen auch in den Log- und Codebuch-CSV als leere Zellen.
+csv_tables <- list(log_inventory = inventory, log_anomalies = anomalies,
+                   log_unit_times = times, log_sessions = session_overview,
+                   codebook = selected_cb)
+for (name in names(csv_tables)) {
+  csv_path <- file.path("Daten/Ergebnisse", paste0(name, ".csv"))
+  cells <- read.csv2(csv_path, colClasses = "character", na.strings = character())
+  expected <- as.data.frame(csv_tables[[name]])
+  stopifnot(identical(dim(cells), dim(expected)), identical(names(cells), names(expected)))
+  stopifnot(all(as.matrix(cells)[is.na(expected)] == ""))
 }
 
 # IQB-Studio-Vorlage nur parsen: keine Anmeldung und kein Serverzugriff.

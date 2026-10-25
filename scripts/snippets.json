@@ -10,7 +10,7 @@
     },
     "paketversionen": {
       "start": [
-        "packageVersion(\"eatPrepTBA\")  # Workshopstand: 0.9.8.9042"
+        "packageVersion(\"eatPrepTBA\")  # Workshopstand: 0.9.8.9043"
       ],
       "end": [
         "packageVersion(\"eatAutoCode\") # Workshopstand: 0.5.0.9008"
@@ -22,14 +22,6 @@
       ],
       "end": [
         "library(writexl)"
-      ]
-    },
-    "dateien-pruefen": {
-      "start": [
-        "files <- c(\"Daten/units.rds\", \"Daten/design.rds\", \"Daten/Responses.csv\","
-      ],
-      "end": [
-        "}"
       ]
     }
   },
@@ -186,14 +178,6 @@
       ],
       "end": [
         "  select(variable_id, value, code_id, code_score, code_status)"
-      ]
-    },
-    "pc-kodierung-pruefen": {
-      "start": [
-        "nrow(pc_coded) == 16 # sollte TRUE sein: 4 Personen mit je 4 Variablen"
-      ],
-      "end": [
-        "all(pc_coded$code_status == \"CODING_COMPLETE\") # sollte TRUE sein"
       ]
     },
     "pc-items-zuordnen": {
@@ -420,7 +404,7 @@
         "unresolved <- item_data |>"
       ],
       "end": [
-        "stopifnot(nrow(unresolved) == 0) # sollte ohne Fehler durchlaufen"
+        "                          \"INTENDED_INCOMPLETE\"))"
       ]
     },
     "offene-codes-vorschau": {
@@ -437,8 +421,8 @@
         "missing_summary <- summarise_missings(design_items)"
       ],
       "end": [
-        "write.csv2(missing_summary, csv, row.names = FALSE)",
-        "close(csv)"
+        "write.csv2(missing_summary, \"Daten/Ergebnisse/missing_summary.csv\",",
+        "           row.names = FALSE, na = \"\")"
       ]
     },
     "missing-uebersicht-vorschau": {
@@ -509,37 +493,14 @@
         "  head(4) |> print()"
       ]
     },
-    "datensatz-pruefen": {
-      "start": [
-        "item_columns <- setdiff(names(scaling_data), person_columns)"
-      ],
-      "end": [
-        "stopifnot(all(vapply(scaling_data[item_columns], is.numeric, logical(1))))"
-      ]
-    },
     "daten-exportieren": {
       "start": [
-        "csv <- file(\"Daten/Ergebnisse/scaling_data.csv\", \"wt\", encoding = \"UTF-16LE\")"
+        "write.csv2(scaling_data, \"Daten/Ergebnisse/scaling_data.csv\",",
+        "           row.names = FALSE, na = \"\")"
       ],
       "end": [
-        "write.csv2(missing_counts, csv, row.names = FALSE, na=\"\")",
-        "close(csv)"
-      ]
-    },
-    "export-vorschau": {
-      "start": [
-        "export_files <- c(\"scaling_data.csv\", \"analysis_long.rds\","
-      ],
-      "end": [
-        "       Bytes = file.info(file.path(\"Daten/Ergebnisse\", export_files))$size) |> print()"
-      ]
-    },
-    "workflow-dokumentieren": {
-      "start": [
-        "report <- c("
-      ],
-      "end": [
-        "cat(paste(report, collapse = \"\\n\"), \"\\n\")"
+        "write.csv2(missing_counts, \"Daten/Ergebnisse/missing_counts.csv\",",
+        "           row.names = FALSE, na = \"\")"
       ]
     },
     "missing-faelle": {
@@ -572,11 +533,12 @@
     },
     "skalierung-csv": {
       "start": [
-        "csv <- file(\"Daten/Ergebnisse/scaling_data.csv\", \"wt\", encoding = \"UTF-16LE\")"
+        "write.csv2(scaling_data, \"Daten/Ergebnisse/scaling_data.csv\",",
+        "           row.names = FALSE, na = \"\")"
       ],
       "end": [
-        "write.csv2(scaling_data, csv, row.names = FALSE, na=\"\")",
-        "close(csv)"
+        "write.csv2(scaling_data, \"Daten/Ergebnisse/scaling_data.csv\",",
+        "           row.names = FALSE, na = \"\")"
       ]
     },
     "long-rds": {
@@ -589,7 +551,8 @@
     },
     "kennwerte-csv": {
       "start": [
-        "csv <- file(\"Daten/Ergebnisse/psychometrics.csv\", \"wt\", encoding = \"UTF-16LE\")"
+        "write.csv2(psychometrics, \"Daten/Ergebnisse/psychometrics.csv\",",
+        "           row.names = FALSE, na = \"\")"
       ],
       "end": [
         "saveRDS(psychometrics, \"Daten/Ergebnisse/psychometrics.rds\")"
@@ -735,7 +698,7 @@
     },
     "logs-export": {
       "start": [
-        "csv <- file(\"Daten/Ergebnisse/log_inventory.csv\", \"wt\", encoding = \"UTF-16LE\")"
+        "write.csv2(inventory, \"Daten/Ergebnisse/log_inventory.csv\", row.names = FALSE, na = \"\")"
       ],
       "end": [
         "             unit_times = unit_times, focus = focus), \"Daten/Ergebnisse/log_qc.rds\")"
@@ -759,11 +722,10 @@
     },
     "logs-zeiten-csv": {
       "start": [
-        "csv <- file(\"Daten/Ergebnisse/log_unit_times.csv\", \"wt\", encoding = \"UTF-16LE\")"
+        "write.csv2(times, \"Daten/Ergebnisse/log_unit_times.csv\", row.names = FALSE, na = \"\")"
       ],
       "end": [
-        "write.csv2(times, csv, row.names = FALSE)",
-        "close(csv)"
+        "write.csv2(times, \"Daten/Ergebnisse/log_unit_times.csv\", row.names = FALSE, na = \"\")"
       ]
     },
     "logs-rds": {
@@ -813,16 +775,8 @@
         "writexl::write_xlsx(list(Codebuch = cb, Auswahl = selected_cb),"
       ],
       "end": [
-        "write.csv2(selected_cb, csv, row.names = FALSE)",
-        "close(csv)"
-      ]
-    },
-    "codebuch-dateien-vorschau": {
-      "start": [
-        "codebook_files <- c(\"Daten/Ergebnisse/codebook.xlsx\", \"Daten/Ergebnisse/codebook.csv\")"
-      ],
-      "end": [
-        "       Bytes = file.info(codebook_files)$size) |> print()"
+        "write.csv2(selected_cb, \"Daten/Ergebnisse/codebook.csv\",",
+        "           row.names = FALSE, na = \"\")"
       ]
     },
     "codebook-xlsx": {

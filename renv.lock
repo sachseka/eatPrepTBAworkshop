@@ -856,10 +856,10 @@
     },
     "eatPrepTBA": {
       "Package": "eatPrepTBA",
-      "Version": "0.9.8.9042",
+      "Version": "0.9.8.9043",
       "Source": "GitHub",
       "Title": "Prepare IQB Technology Based Assessment (TBA)",
-      "Date": "2026-10-24",
+      "Date": "2026-10-25",
       "Authors@R": "c(person(\"Philipp\", \"Franikowski\", , \"philipp.franikowski@iqb.hu-berlin.de\", role = c(\"aut\"), comment = c(ORCID = \"0000-0002-2109-7388\")), person(given = \"Karoline A.\", family =\"Sachse\", email = \"karoline.sachse@iqb.hu-berlin.de\", role = c(\"cre\", \"aut\"), comment = c(ORCID = \"0000-0001-6688-1267\")), person(given = \"Jakob\", family =\"Schäfer\", email = \"jakob.schaefer@iqb.hu-berlin.de\", role = c(\"ctb\"), comment = c(ORCID = \"0009-0006-2680-0585\")), person(given = \"Kristoph\", family =\"Schumann\", email = \"kristoph.schumann@iqb.hu-berlin.de\", role = c(\"ctb\"), comment = c(ORCID = \"0000-0001-9502-6083\")), person(given = \"Lea\", family = \"Musiolek\", email = \"lea.musiolek@iqb.hu-berlin.de\", role = c(\"ctb\"), comment = c(ORCID = \"0000-0002-3729-2807\")), person(given = \"Alina\", family = \"Apel\", email = \"alina.apel.2@hu-berlin.de\", role = \"ctb\"), person(given = \"Edna\", family =\"Grewers\", email = \"edna.grewers@iqb.hu-berlin.de\", role = c(\"ctb\")) )",
       "Maintainer": "Karoline A. Sachse <karoline.sachse@iqb.hu-berlin.de>",
       "Description": "Provides wrapper functions to interact with the IQB Studio and the IQB Testcenter APIs.  Moreover, provides routines for preparing, unpacking, and blending data from these different resources, including response JSONs distributed across question-slot columns.",
@@ -900,7 +900,9 @@
       ],
       "Suggests": [
         "knitr",
-        "rmarkdown"
+        "readxl",
+        "rmarkdown",
+        "writexl"
       ],
       "Remotes": "iqb-research/eatAutoCode, iqb-research/eatWidget",
       "Config/testthat/edition": "3",
@@ -910,9 +912,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "eatPrepTBA",
       "RemoteUsername": "iqb-research",
-      "RemotePkgRef": "iqb-research/eatPrepTBA",
-      "RemoteRef": "ea782df422f1aea853704dcfce7533273b429ba2",
-      "RemoteSha": "ea782df422f1aea853704dcfce7533273b429ba2",
+      "RemoteRef": "711f4f128b7d12c078648ede9302b177c73db5c2",
+      "RemoteSha": "711f4f128b7d12c078648ede9302b177c73db5c2",
       "NeedsCompilation": "no",
       "Author": "Philipp Franikowski [aut] (ORCID: <https://orcid.org/0000-0002-2109-7388>), Karoline A. Sachse [cre, aut] (ORCID: <https://orcid.org/0000-0001-6688-1267>), Jakob Schäfer [ctb] (ORCID: <https://orcid.org/0009-0006-2680-0585>), Kristoph Schumann [ctb] (ORCID: <https://orcid.org/0000-0001-9502-6083>), Lea Musiolek [ctb] (ORCID: <https://orcid.org/0000-0002-3729-2807>), Alina Apel [ctb], Edna Grewers [ctb]",
       "Depends": [
